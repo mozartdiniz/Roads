@@ -15,6 +15,7 @@
     Ro.version = '0.1';
 
     Ro.Utils = {
+
         CallBackManager: function (request, options) {
 
             if (typeof options !== 'undefined') {
@@ -34,11 +35,35 @@
         FindRoute: function () {
 
             var hash = window.location.hash;
+            var rex;
 
-            if (typeof window.Ro.routeList[hash] !== 'undefined') {
-                if (typeof window.Ro.routeList[hash] === 'function') {
-                    window.Ro.routeList[hash]();
+            for (var key in window.Ro.routeList) {
+                if (typeof window.Ro.routeList[key] !== 'function') {
+
+                    rex = new RegExp(key);
+
+                    if (hash.match(rex)) {
+                        Ro.Utils.CallRouterFunction(hash, window.Ro.routeList[key]);
+                    }
                 }
+            }
+
+        },
+
+        CallRouterFunction: function (hash, routeListItem) {
+
+            var parameters = hash.match(/(\/\w+\/)|\/\w+$/g);
+
+            if(parameters !== null) {
+                parameters = parameters.map(function(x){
+                    return x.replace("/", "").replace("/", "");
+                });
+            }
+
+            if (parameters) {
+                routeListItem.referencedFunction.apply(this, parameters);
+            } else {
+                routeListItem.referencedFunction();
             }
 
         },
@@ -135,8 +160,8 @@
 
         this.url = null;
 
-        // model name is used to make default RESTful requests and to identify
-        // a model in store object
+        // model name is used to make default RESTful
+        // requests and to identify a model in store object
         this.name = null;
 
         //fields defines name and type for used fields
@@ -156,12 +181,10 @@
         // do validation before create and update
         this.validate = function () {
 
-            var defaultReturn = {
+            return {
                 isValid: true,
                 messages: []
             };
-
-            return defaultReturn;
         };
 
         this.select = function (field) {
@@ -287,11 +310,11 @@
                 saveRequest.data = JSON.stringify(this.selectAll());
                 saveRequest.send();
 
-            } else {
-
-                return validation.messages;
+                return true;
 
             }
+
+            return validation.messages;
 
         };
 
@@ -576,7 +599,20 @@
 
         this.addRoute = function (key, referencedFunction) {
 
-            window.Ro.routeList[key] = referencedFunction;
+            this.saveRoute(key, referencedFunction);
+
+        };
+
+        this.saveRoute = function (key, referencedFunction) {
+
+            var routePatterns = key.replace(/\//g, "\\/").replace(/(\(\?)?:\w+/gi, "\\w+") + "$";
+
+            var objToSave = {
+                fullRoute: key,
+                referencedFunction: referencedFunction
+            };
+
+            window.Ro.routeList[routePatterns] = objToSave;
 
         };
 
@@ -593,5 +629,6 @@
     window.Ro.Store = new Ro.Store();
     window.Ro.routeList = {};
     window.Ro.Utils.AddRouterListeners();
+
 
 })();

@@ -821,9 +821,161 @@
 
     };
 
-    Ro.View = function () {
+    /**
+     *
+     * @param screenName Will be used to identify your scren in screenLists
+     * @param visible if true, view will be displayed before created
+     * @constructor
+     */
+    Ro.View = function (screenName) {
+
+        var roViewManager = new Ro.ViewsManager();
+
+        this.el = null;
+
+        if (typeof screenName === 'undefined') {
+            this.name = 'view_' + parseInt(Math.random(9)*100, 10);
+        } else {
+            this.name = screenName;
+        }
+
+        this.createBaseStructure = function () {
+
+            var baseDiv                   = document.createElement('div');
+            var baseSection               = document.createElement('section');
+            var baseSectionDefaultContent = document.createElement('section');
+
+            baseDiv.className = 'screen';
+            baseDiv.setAttribute('screenName', screenName);
+
+            baseSection.className = 'view';
+            baseSectionDefaultContent.className = 'scroll';
+
+            baseSection.appendChild(baseSectionDefaultContent);
+            baseDiv.appendChild(baseSection);
+
+            this.el = baseDiv;
+
+            Ro.viewsList[screenName] = {
+                show: false,
+                el: this.el
+            };
+
+            document.body.appendChild(baseDiv);
+
+            roViewManager.putViewsInPosition();
 
 
+        };
+
+        this.addHeader = function (title) {
+
+            var header  = document.createElement('header');
+            var hGroup  = document.createElement('hgroup');
+            var span    = document.createElement('span');
+            var lImtem  = document.createElement('hgroup');
+            var rImtem  = document.createElement('hgroup');
+
+            lImtem.className = 'leftItem';
+            rImtem.className = 'rightItem';
+
+            var section = null;
+
+            hGroup.className = 'centerItem';
+            hGroup.appendChild(span);
+
+            header.appendChild(lImtem);
+            header.appendChild(hGroup);
+            header.appendChild(rImtem);
+
+            section = this.el.querySelector('section.view > section');
+            section.parentNode.insertBefore(header, section);
+
+            if (title !== 'undefined') {
+                this.setHeaderTitle(title);
+            }
+
+        };
+
+        this.setHeaderTitle = function (title) {
+
+            var hTContainer = this.el.querySelector('header hgroup span');
+            var titleEl = document.createTextNode(title);
+
+            hTContainer.appendChild(titleEl);
+
+        };
+
+        this.addHeaderButton = function(obj) {
+
+            var btn      = document.createElement('button');
+            var btnPlace = this.getBtnPlace(obj.type);
+            btn.className = this.getBtnClassName(obj.type);
+
+            if (typeof obj.customClass !== 'undefined') {
+
+                btn.className += ' ' + obj.customClass;
+
+            }
+
+            btn.setAttribute('data-title', obj.text);
+
+            if (typeof obj.onClick !== 'undefined') {
+                btn.addEventListener('click', obj.onClick);
+            }
+
+            btnPlace.appendChild(btn);
+
+        };
+
+        this.getBtnClassName = function (type) {
+
+            switch (type) {
+                case 'leftNav':
+                    return 'left';
+                case 'rightNav':
+                    return 'right';
+                case 'leftButton':
+                    return 'button';
+                case 'rightButton':
+                    return 'button';
+                default:
+                    return 'button';
+            }
+
+        };
+
+        this.getBtnPlace = function (type) {
+
+            switch (type) {
+                case 'leftNav':
+                    return this.el.querySelector('header > hgroup.leftItem');
+                case 'rightNav':
+                    return this.el.querySelector('header > hgroup.rightItem');
+                case 'leftButton':
+                    return this.el.querySelector('header > hgroup.leftItem');
+                case 'rightButton':
+                    return this.el.querySelector('header > hgroup.rightItem');
+                default:
+                    return this.el.querySelector('header > hgroup.leftItem');
+            }
+        };
+
+
+        this.addFooter = function () {
+
+            var footer  = document.createElement('footer');
+            var section = this.el.querySelector('section.view');
+
+            section.appendChild(footer);
+
+        };
+
+        this.init = function () {
+            this.createBaseStructure();
+        };
+
+        this.init();
 
     };
 

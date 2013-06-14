@@ -618,6 +618,209 @@
 
     };
 
+    Ro.ViewsManager = function () {
+
+        this.putViewsInPosition = function () {
+
+            var views = window.Ro.viewsList;
+
+            for (var view in views) {
+                if (typeof views[view] !== 'function') {
+
+                    if (views[view].show === true) {
+                        this.showView(view);
+                    } else {
+                        this.hideView(view);
+                    }
+
+                }
+            }
+
+        };
+
+        this.showView = function (viewName) {
+
+            var views = window.Ro.viewsList;
+
+            views[viewName].el.style.left = '0';
+            views[viewName].el.style.top  = '0';
+
+        };
+
+        this.hideView = function (viewName) {
+
+            var views = window.Ro.viewsList;
+
+            views[viewName].el.style.left = document.documentElement.clientWidth * 10 + 'px';
+            views[viewName].el.style.top  = document.documentElement.clientHeight * 10 + 'px';
+
+        };
+
+        this.toggleViewVisibility = function (viewName) {
+
+            var views = window.Ro.viewsList;
+
+            for (var view in views) {
+                if (typeof views[view] !== 'function') {
+
+                    if (view === viewName) {
+                        views[view].show = true;
+                    } else {
+                        views[view].show = false;
+                    }
+                }
+            }
+
+        };
+
+        this.prepareToSlide = function (previusView, direction) {
+
+            var views = window.Ro.viewsList;
+
+            for (var view in views) {
+                if (typeof views[view] !== 'function') {
+
+                    if (views[view].show) {
+
+                        views[view].el.style.webkitAnimation = '';
+                        views[view].el.style.MozAnimation = '';
+                        views[view].el.style.zIndex = 3;
+
+                        switch (direction) {
+                            case 'left':
+                                views[view].el.style.left  = document.documentElement
+                                                                        .clientWidth + 'px';
+                                views[view].el.style.right = '';
+                                views[view].el.style.top   = 0 + 'px';
+                                break;
+                            case 'right':
+                                views[view].el.style.right = document.documentElement
+                                                                        .clientWidth + 'px';
+                                views[view].el.style.left  = '';
+                                views[view].el.style.top  = 0 + 'px';
+                                break;
+                            case 'bottom':
+                                views[view].el.style.left = 0 + 'px';
+                                views[view].el.style.right = '';
+                                views[view].el.style.top  = document.documentElement
+                                                                        .clientHeight + 'px';
+                                break;
+                            default:
+                                views[view].el.style.left = document.documentElement
+                                                                        .clientWidth + 'px';
+                                views[view].el.style.top  = 0 + 'px';
+                                views[view].el.style.right = '';
+                                break;
+                        }
+
+                    } else {
+
+                        views[view].el.style.left = '0px';
+                        views[view].el.style.top  = '0px';
+
+                        views[view].el.style.webkitAnimation = '';
+                        views[view].el.style.MozAnimation = '';
+
+                        if (view === previusView) {
+                            views[view].el.style.zIndex = 2;
+                        } else {
+                            views[view].el.style.zIndex = 1;
+                        }
+
+                    }
+
+                }
+            }
+
+        };
+
+        this.slideView = function (viewName, direction) {
+
+            var views = window.Ro.viewsList;
+
+            if (typeof direction === 'undefined') {
+                direction = 'none';
+            }
+
+            switch (direction) {
+                case 'left':
+                    views[viewName].el.style.webkitAnimationDuration = '200ms';
+                    views[viewName].el.style.webkitAnimationName = 'slideScreen';
+
+                    views[viewName].el.style.MozAnimationDuration = '200ms';
+                    views[viewName].el.style.MozAnimationName    = 'slideScreen';
+                    break;
+                case 'right':
+                    views[viewName].el.style.webkitAnimationDuration = '200ms';
+                    views[viewName].el.style.webkitAnimationName = 'slideScreenRight';
+
+                    views[viewName].el.style.MozAnimationDuration = '200ms';
+                    views[viewName].el.style.MozAnimationName    = 'slideScreenRight';
+                    break;
+                case 'bottom':
+                    views[viewName].el.style.webkitAnimationDuration = '200ms';
+                    views[viewName].el.style.webkitAnimationName = 'slideScreenBottom';
+
+                    views[viewName].el.style.MozAnimationDuration = '200ms';
+                    views[viewName].el.style.MozAnimationName    = 'slideScreenBottom';
+                    break;
+                default:
+                    views[viewName].el.style.webkitAnimationDuration = '1ms';
+                    views[viewName].el.style.webkitAnimationName = 'slideScreen';
+
+                    views[viewName].el.style.MozAnimationDuration = '1ms';
+                    views[viewName].el.style.MozAnimationName    = 'slideScreen';
+                    break;
+            }
+
+
+
+        };
+
+        this.getCurrentActiveViewName = function() {
+
+            var views = window.Ro.viewsList;
+
+            for (var view in views) {
+                if (typeof views[view] !== 'function') {
+
+                    if (views[view].show) {
+
+                        return view;
+
+                    }
+
+                }
+            }
+
+        };
+
+        this.slideToView = function (viewName, direction) {
+
+            var views = window.Ro.viewsList;
+            var currentView = this.getCurrentActiveViewName();
+
+            this.toggleViewVisibility(viewName);
+            this.prepareToSlide(currentView, direction);
+            this.slideView(viewName, direction);
+
+        };
+
+        this.goToView = function (viewName) {
+
+            var views = window.Ro.viewsList;
+            var currentView = this.getCurrentActiveViewName();
+
+            this.toggleViewVisibility(viewName);
+            this.prepareToSlide(currentView);
+            this.slideView(viewName);
+
+        };
+
+
+
+    };
+
     Ro.View = function () {
 
 
@@ -628,6 +831,7 @@
 
     window.Ro.Store = new Ro.Store();
     window.Ro.routeList = {};
+    window.Ro.viewsList = {};
     window.Ro.Utils.AddRouterListeners();
 
 

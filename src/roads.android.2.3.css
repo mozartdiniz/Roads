@@ -3,121 +3,67 @@
 }
 
 html, body {
-    height:100%;
-    min-width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-
+    background-color: #3a3a3a;
 }
 
 body > div.screen {
 
-    position: fixed;
-    top: 0;
-    left: 0;
+    display: inline-block;
     width: 100%;
-    height: 100%;
-
-    overflow: hidden;
-
-    -webkit-animation-duration: 200ms;
-    -webkit-animation-timing-function: linear;
-    -webkit-animation-play-state: running;
-    -webkit-animation-fill-mode: forwards;
-
-    -moz-animation-duration: 200ms;
-    -moz-animation-timing-function: linear;
-    -moz-animation-play-state: running;
-    -moz-animation-fill-mode: forwards;
+    position: absolute;
+    top: 0;
 }
 
 .view {
 
-    display: -moz-box;
-    display: -webkit-box;
-    display: -ms-box;
-
-    -moz-flex-direction: column nowrap;
-    -ms-flex-direction: column nowrap;
-    -webkit-flex-direction: column nowrap;
-
-    -moz-box-align: stretch;
-    -webkit-box-align: stretch;
-    -ms-box-align: stretch;
-
-    -moz-box-orient: vertical;
-    -webkit-box-orient: vertical;
-    -ms-box-orient: vertical;
-
-    background-color: #999;
-
-    min-height: 100%;
-    min-width: 100%;
-
+    position: relative;
+    display: inline-block;
+    float: left;
+    height: 300px;
+    width: 100%;
 }
 
 /* header styles */
 
 .view header {
-    order: 1;
-    align-self: auto;
+
     height: 44px;
-
-    display: -moz-box;
-    display: -webkit-box;
-    display: -ms-box;
-
-    -moz-flex-direction: row nowrap;
-    -ms-flex-direction: row nowrap;
-    -webkit-flex-direction: row nowrap;
-
-    -moz-box-align: stretch;
-    -webkit-box-align: stretch;
-    -ms-box-align: stretch;
-
-    -moz-box-orient: horizontal;
-    -webkit-box-orient: horizontal;
-    -ms-box-orient: horizontal;
-
     background-color: #333333;
-
     width: 100%;
-
-    z-index: 5;
-    position: fixed;
-    top: 0;
+    position: relative;
+    float: left;
 }
 
 .view header hgroup.leftItem {
-    order: 1;
+    z-index: 3;
+    position: absolute;
+    display: none;
 }
 
 .view header hgroup.centerItem {
-    order: 1;
     font-size: 24px;
     color: rgb(255, 255, 255);
-    letter-spacing: 1px;
-    text-shadow: -1.5px -1.5px 1px #3a3a3a;
     text-align: center;
-
-    flex: 0 1 auto;
-    align-self: auto;
-    -moz-box-flex: 2;
-    -webkit-box-flex: 2;
-    -ms-box-flex: 2;
-
     margin-top: 8px;
-    padding: 0px;
+    padding: 0;
+    left: 0;
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    top: 0;
 }
 
 .view header hgroup.rightItem {
-    order: 3;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 /* Generic Header Button */
 
-.view header hgroup div.button {
+section.view header hgroup div.button {
 
     display: -moz-inline-stack;
     display: inline-block;
@@ -127,13 +73,12 @@ body > div.screen {
     -moz-appearance: none;
     appearance: none;
     position: relative;
-    margin: 8px 0 0 0;
+    margin: 5px 0 0 0;
     padding: 5px 5px 0 5px;
     border: 0;
-    height: 22px;
+    height: 28px;
     cursor: pointer;
     overflow: visible;
-    font-size: 12px;
 
     background-color: #C0C0C0;
 
@@ -168,6 +113,7 @@ body > div.screen {
 
     min-width: 30px;
     content: attr(data-title);
+    font-size: 12px;
 }
 
 .view header hgroup.leftItem div.button {
@@ -185,15 +131,16 @@ body > div.screen {
     display: inline-block;
     vertical-align: middle;
     zoom: 1;
+    *display: inline;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     background: none;
     position: relative;
-    margin: 0;
-    padding: 10px 0 0 0;
+    margin: 5px 0 0 0;
+    padding: 5px 5px 0 5px;
     border: 0;
-    height: 34px;
+    height: 28px;
     min-width: 20px;
     cursor: pointer;
     overflow: visible;
@@ -266,9 +213,7 @@ body > div.screen {
     display: -moz-inline-stack;
     display: inline-block;
     vertical-align: middle;
-    *vertical-align: auto;
     zoom: 1;
-    *display: inline;
     padding: 5px 10px 5px 5px;
     margin: 0;
     width: auto;
@@ -297,12 +242,12 @@ body > div.screen {
     appearance: none;
     background: none;
     position: relative;
-    margin: 10px 0 0 0;
-    padding: 0;
+    margin: 5px 0 0 0;
+    padding: 5px 5px 0 5px;
     border: 0;
-    min-width: 20px;
+    height: 28px;
     cursor: pointer;
-    overflow: visible;
+    overflow: hidden;
     left: 5px;
 }
 
@@ -313,19 +258,7 @@ body > div.screen {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 
-    background-color: #C0C0C0;
-
-    -webkit-transform: rotate(135deg) scale(0.86) skew(-9deg, -9deg);
-    -moz-transform: rotate(-45deg) scale(0.86) skew(-9deg, -9deg);
-    -ms-transform: rotate(-45deg) scale(0.86) skew(-9deg, -9deg);
-    -o-transform: rotate(-45deg) scale(0.86) skew(-9deg, -9deg);
-    transform: rotate(-45deg) scale(0.86) skew(-9deg, -9deg);
-
-    -webkit-transform-origin: 50% 50%;
-    -moz-transform-origin: 50% 50%;
-    -ms-transform-origin: 50% 50%;
-    -o-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
+    background-color: transparent;
 
     position: relative;
     display: -moz-inline-stack;
@@ -338,17 +271,7 @@ body > div.screen {
     height: 22px;
 
     content: "";
-    -webkit-border-radius: 0 6px 0 6px;
-    -moz-border-radius: 0 6px 0 6px;
-    -ms-border-radius: 0 6px 0 6px;
-    -o-border-radius: 0 6px 0 6px;
-    border-radius: 0 6px 0 6px;
-    -moz-border-radius-topright: 8px 5px;
-    -webkit-border-top-right-radius: 8px 5px;
-    border-top-right-radius: 8px 5px;
-    -moz-border-radius-bottomleft: 5px 8px;
-    -webkit-border-bottom-left-radius: 5px 8px;
-    border-bottom-left-radius: 5px 8px;
+
     z-index: 1;
 }
 
@@ -374,10 +297,10 @@ body > div.screen {
     vertical-align: middle;
     zoom: 1;
 
-    padding: 5px 10px 5px 5px;
-    margin: 0;
-    width: auto;
-    height: 26px;
+    margin: -4px 0 0 0;
+    padding: 8px 5px 0 8px;
+    border: 0;
+    height: 32px;
 
     border-width: 0 0 1px 0;
     content: attr(data-title);
@@ -393,19 +316,14 @@ body > div.screen {
 /* Footer toolbar stypes */
 
 .view footer {
-    order: 3;
-    flex: 0 1 auto;
-    align-self: auto;
-    -ms-flex-align: end;
-    -moz-flex-align: end;
-    -webkit-flex-align: end;
     height: 44px;
     background-color: #333333;
-
-    position: fixed;
-    bottom: 0;
+    position: relative;
+    bottom: 0px;
     width: 100%;
     z-index: 2;
+    float: left;
+    display: inline-block;
 
 }
 
@@ -459,10 +377,6 @@ body > div.screen {
     cursor: pointer;
 }
 
-.view footer .button_bar .button .btnIcon:active {
-    background-color: rgb(53, 54, 54);
-}
-
 /* section Styles */
 
 .view section {
@@ -485,14 +399,18 @@ body > div.screen {
 /* Scroll Panel */
 
 .view section.scroll {
-    order: 2;
-    flex: 0 1 auto;
-    align-self: auto;
-    -moz-box-flex: 2;
-    -webkit-box-flex: 2;
-    -ms-box-flex: 2;
-    background-color: #EDEDED;
-    -webkit-overflow-scrolling: touch;
+
+    z-index: 1;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    float: left;
+    min-width: 100px;
+    display: inline-block;
+    height: auto;
+    background-color: #2B2B2A;
 }
 
 
@@ -570,25 +488,37 @@ body > div.screen {
 /* ListView */
 
 div.table_list {
-
-    position: fixed;
-    top: 44px;
-    bottom: 44px;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
     width: 100%;
+
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    -o-text-size-adjust: none;
+    text-size-adjust: none;
 
 }
 
 div.table_list div.listViewItem {
-    float: left;
     width: 100%;
     padding: 10px 0 10px 0;
     text-indent: 15px;
     border-bottom: 1px solid #DDD;
     cursor: pointer;
     background-color: #fff;
+    position: relative;
+    float: left;
 }
 
 .toastNotification {
@@ -612,7 +542,7 @@ div.table_list div.listViewItem {
     -webkit-animation-delay: 800ms;
 }
 
-@-webkit-keyframes toastNotification{
+@-webkit-keyframes toastNotification {
     from {
         opacity: 1;
     }
@@ -621,21 +551,20 @@ div.table_list div.listViewItem {
     }
 }
 
-
 .roadMenu {
     position: absolute;
     background-color: rgba(0,0,0,0.8);
-    bottom: 44px;
     width: 50%;
     z-index: 10;
     right: 5px;
     border-radius: 5px 5px 0 0;
     padding: 10px 0 0 10px;
+    bottom: 44px;
 }
 
 .roadMenu ul {
     list-style: none;
-    margin: 0px;
+    margin: 0;
     padding: 0 0 10px 0;
 }
 
@@ -646,71 +575,35 @@ div.table_list div.listViewItem {
     cursor: pointer;
 }
 
+
 div.table_list .row .overflow .menu {
     background-color: rgb(24, 24, 24);
     position: absolute;
     z-index: 30;
-    right: 0;
-    overflow: hidden;
+    left: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
     height: 65px;
-    -webkit-transform: scaleX(0);
-    -webkit-transform-origin-x: 100%;
     width: 100%;
+
 }
 
 div.table_list .row .overflow .menuAnime {
     background-color: rgb(24, 24, 24);
     position: absolute;
     z-index: 30;
-    right: 0;
+    left: 0px;
     height: 65px;
-    -webkit-transform: scaleX(0);
-    -webkit-transform-origin-x: 100%;
-    overflow: hidden;
     width: 100%;
 
-    -webkit-animation: rowMenuShow 200ms;
-    -webkit-animation-play-state: running;
-    -webkit-animation-timing-function: linear;
-    -webkit-animation-fill-mode: forwards;
-}
-
-@-webkit-keyframes rowMenuShow{
-    from {
-        /*-webkit-transform: translate3d(100%, 0, 0);
-        width: 0%;                                   */
-        -webkit-transform: scaleX(0);
-    }
-    to {
-        /*-webkit-transform: translate3d(0%, 0, 0);
-        width: 100%;                               */
-        -webkit-transform: scaleX(1);
-    }
-}
-
-@-webkit-keyframes rowMenuHide{
-    from {
-        /*-webkit-transform: translate3d(0%, 0, 0);
-        width: 100%;                               */
-        -webkit-transform: scaleX(1);
-    }
-    to {
-        /*-webkit-transform: translate3d(100%, 0, 0);
-        width: 0%;                                    */
-        -webkit-transform: scaleX(0);
-    }
+    -webkit-transform: translate3d(0%, 0, 0);
 }
 
 
 .ScrenLayout-GroupedList {
-    position: fixed;
-    top: 44px;
-    bottom: 44px;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: scroll;
     -webkit-overflow-scrolling: touch;
     width: 95%;
-    margin: 2.5%;
+    padding: 2.5%;
 }
 
 .ScrenLayout-GroupedList-headerItemRender {
@@ -734,7 +627,7 @@ div.table_list .row .overflow .menuAnime {
     position: relative;
     margin: 0;
     padding: 10px 0 5px 0;
-    color: white;
+    font-size: 17px;
 }
 
 .ScrenLayout-GroupedList-lineItemRender {
@@ -751,8 +644,7 @@ div.table_list .row .overflow .menuAnime {
     float: left;
     width: 50%;
     font-weight: bolder;
-    font-size: 16px;
-
+    font-size: 14px;
 }
 
 .ScrenLayout-GroupedList-lineItemRender div.ScrenLayout-contentElement {
@@ -760,7 +652,7 @@ div.table_list .row .overflow .menuAnime {
     width: 50%;
     color: #fff;
     font-weight: normal;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .UIComponents-Icon {
@@ -773,11 +665,11 @@ div.table_list .row .overflow .menuAnime {
 }
 
 .UIComponents-SearchBar {
-    position: fixed;
+    position: relative;
+    float: left;
     background-color: rgb(255, 255, 255);
     width: 100%;
     height: 40px;
-    top: 44px;
 }
 
 .UIComponents-SearchBar input[type="text"] {
@@ -788,4 +680,5 @@ div.table_list .row .overflow .menuAnime {
     font-size: 14px;
     background: url("../images/backogrund_search_field.png") right center no-repeat #fff;
     background-size: 25px;
+
 }

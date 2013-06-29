@@ -92,6 +92,8 @@
 
         //callback for success
         this.success     = null;
+        this.timeout     = Ro.globals.defaultTimeout;
+        this.ontimeout   = null;
         this.roSuccess   = null;
 
         //callback for error
@@ -104,6 +106,7 @@
 
             request.open(this.method, this.url, this.async);
             request.setRequestHeader('Content-Type', this.contentType);
+			request.setRequestHeader('Cookie', window.cookie);
 
             //closure
             request.onreadystatechange = (function (scope) {
@@ -112,7 +115,19 @@
                 };
             })(this);
 
+            request.ontimeout = (function (scope) {
+                return function () {
+                    scope.ontimeout(this, scope);
+                };
+            })(this);
+
             request.send(this.data);
+
+            this.dropConnection = setTimeout((function(request){
+                return function () {
+                    request.abort();
+                }
+            })(request), Ro.globals.defaultTimeout);
 
         };
 
@@ -122,18 +137,20 @@
 
                 if (xhr.status === 200) {
 
+                    //clearInterval(scope.dropConnection);
+
                     if (scope.roSuccess) {
-                        scope.roSuccess(JSON.parse(xhr.responseText));
+                        scope.roSuccess(JSON.parse(xhr.responseText), xhr);
                     }
 
                     if (scope.success) {
-                        scope.success(JSON.parse(xhr.responseText));
+                        scope.success(JSON.parse(xhr.responseText), xhr);
                     }
 
                 } else {
 
                     if (scope.error) {
-                        scope.error(xhr.responseText);
+                        scope.error(xhr);
                     }
 
                 }
@@ -194,6 +211,12 @@
             data = this.fields[field].data;
 
             return data;
+
+        };
+
+        this.getFieldType = function (field) {
+
+            return this.fields[field].type
 
         };
 
@@ -319,7 +342,7 @@
         };
 
         // add id to url and sent delete request to server
-        this.delete = function (options) {
+        this.destroy = function (options) {
 
             var delRequest = new Ro.Ajax();
 
@@ -372,7 +395,7 @@
 
         };
 
-        this.deleteFromStore = function () {
+        this.destroyFromStore = function () {
 
             if(this.name) {
 
@@ -398,6 +421,12 @@
         this.data = {};
         this.models = {};
 
+        this.selectAll = function (modelName) {
+
+            return this.data[modelName];
+
+        };
+
         this.selectById = function (modelName, id) {
 
             var allData = this.data[modelName];
@@ -414,12 +443,6 @@
 
         };
 
-        this.selectAll = function (modelName) {
-
-            return this.data[modelName];
-
-        };
-
         this.set = function (modelName, data) {
 
             var storedData     = this.selectAll(modelName);
@@ -430,46 +453,24 @@
 
                 Ro.Store.data[modelName] = {};
 
-                if (data instanceof Array) {
+            }
 
-                    for(var i = 0; i < dataLength; i++) {
+            if (data instanceof Array) {
 
-                        id = data[i].id;
-                        Ro.Store.data[modelName][id] = new Ro.Store.models[modelName]();
-                        Ro.Store.data[modelName][id].set(data[i]);
+                for(var i = 0; i < dataLength; i++) {
 
-                    }
-
-                } else {
-
-                    id = data.id;
+                    id = data[i].id;
                     Ro.Store.data[modelName][id] = new Ro.Store.models[modelName]();
-                    Ro.Store.data[modelName][id].set(data);
+                    Ro.Store.data[modelName][id].set(data[i]);
 
                 }
 
             } else {
 
-                if (data instanceof Array) {
+                id = data.id;
+                Ro.Store.data[modelName][id] = new Ro.Store.models[modelName]();
+                Ro.Store.data[modelName][id].set(data);
 
-                    for(var j = 0; j < dataLength; j++) {
-
-                        id = data[j].id;
-                        storedData[id].set(data[j]);
-
-                    }
-
-                } else {
-
-                    id = data.id;
-
-                    if (typeof storedData[id] === 'undefined') {
-                        storedData[id] = new Ro.Store.models[modelName]();
-                    }
-
-                    storedData[id].set(data);
-
-                }
             }
 
         };
@@ -479,7 +480,7 @@
 
             var allData      = this.selectAll(modelName);
             var modelsFound  = [];
-            var currentModel;
+            var currentModel, machResult;
 
             for(var id in allData) {
 
@@ -491,9 +492,18 @@
 
                         for (var key in object) {
 
-                            if (typeof object[key] !== 'udnefined') {
+                            if (typeof object[key] !== 'undefined') {
 
-                                if (currentModel.fields[key].data === object[key]) {
+                                switch (currentModel.getFieldType(key)) {
+                                    case "string":
+                                        machResult = currentModel.select(key).match(object[key]);
+                                        break;
+                                    default:
+                                        machResult = currentModel.select(key) === object[key];
+                                        break;
+                                }
+
+                                if (machResult !== null && machResult !== false) {
                                     modelsFound.push(currentModel);
                                 }
 
@@ -817,7 +827,24 @@
 
         };
 
+        this.toggleView = function (viewName, createMethod, updateMethod) {
 
+            var x  = document.querySelector("div[screenname='" + viewName + "']");
+            var xs = document.querySelectorAll(".screen");
+
+            for (var i = 0; i < xs.length; i++) {
+                xs[i].style.display = 'none';
+                xs[i].style.zIndex = 1;
+            }
+
+            if(x !== null) {
+                x.style.display = 'block';
+                x.style.zIndex = 3;
+            } else {
+                createMethod();
+            }
+
+        };
 
     };
 
@@ -831,7 +858,8 @@
 
         var roViewManager = new Ro.ViewsManager();
 
-        this.el = null;
+        this.el    = null;
+        this.stage = null;
 
         if (typeof screenName === 'undefined') {
             this.name = 'view_' + parseInt(Math.random(9)*100, 10);
@@ -845,7 +873,10 @@
             var baseSection               = document.createElement('section');
             var baseSectionDefaultContent = document.createElement('section');
 
+            this.stage = baseSectionDefaultContent;
+
             baseDiv.className = 'screen';
+			baseDiv.id = screenName;
             baseDiv.setAttribute('screenName', screenName);
 
             baseSection.className = 'view';
@@ -853,6 +884,10 @@
 
             baseSection.appendChild(baseSectionDefaultContent);
             baseDiv.appendChild(baseSection);
+
+            if (Ro.environment.browser.isOldAndroid === false) {
+                baseSectionDefaultContent.style.top = '44px';
+            }
 
             this.el = baseDiv;
 
@@ -862,9 +897,6 @@
             };
 
             document.body.appendChild(baseDiv);
-
-            roViewManager.putViewsInPosition();
-
 
         };
 
@@ -908,7 +940,7 @@
 
         this.addHeaderButton = function(obj) {
 
-            var btn      = document.createElement('button');
+            var btn      = document.createElement('div');
             var btnPlace = this.getBtnPlace(obj.type);
             btn.className = this.getBtnClassName(obj.type);
 
@@ -921,7 +953,17 @@
             btn.setAttribute('data-title', obj.text);
 
             if (typeof obj.onClick !== 'undefined') {
-                btn.addEventListener('click', obj.onClick);
+
+                if(Ro.environment.isTouchDevice) {
+                    if(Ro.environment.isOldAndroid) {
+                        btn.addEventListener('mousedown', obj.onClick);
+                    } else {
+                        btn.addEventListener('touchstart', obj.onClick);
+                    }
+                } else {
+                    btn.addEventListener('click', obj.onClick);
+                }
+
             }
 
             btnPlace.appendChild(btn);
@@ -984,7 +1026,22 @@
     window.Ro.Store = new Ro.Store();
     window.Ro.routeList = {};
     window.Ro.viewsList = {};
+    window.Ro.globals   = {};
+
+    window.Ro.globals.defaultTimeout = 500;
+
     window.Ro.Utils.AddRouterListeners();
+
+    window.Ro.environment = {
+        isTouchDevice: !!('ontouchstart' in window),
+        browser: {
+            isOldAndroid: navigator.userAgent.match('Android 2.3') === null ? false : true,
+            isModernAndroid: navigator.userAgent.match('Android 4') === null ? false : true,
+            isIPhone: navigator.userAgent.match('iPhone OS') === null ? false : true
+        }
+    };
+
+
 
 
 })();

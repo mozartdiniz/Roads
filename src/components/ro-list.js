@@ -3,8 +3,23 @@
   xtag.register ('ro-list', {
     lifecycle: {
       created: function () {
+        this.xtag.item = this.querySelector ('ro-item');
+        this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
+        this.xtag.itemAction = this.xtag.item.getAttribute ('action');
       },
       inserted: function () {
+
+        var nextElement = this.parentElement.nextElementSibling;
+
+        if (nextElement && nextElement.tagName === "RO-FOOTER") {
+        
+          this.style.cssText = Ro.styleGenerator ({
+              'height': '-webkit-calc(100% - 100px)',
+              'height': '-moz-calc(100% - 100px)',
+              'height': 'calc(100% - 100px)'
+          });  
+        }
+        
       },
       removed: function () {
       }
@@ -23,17 +38,15 @@
       },
       parseList: function () {
 
-        var roItemBase = this.querySelector ('ro-item');
         var data = this.xtag.data;
-        var template = roItemBase.innerHTML;
 
         this.innerHTML = '';
 
         for (var i = 0; i < data.length; i++) {
 
           var roItem = document.createElement ('ro-item');
-          roItem.setAttribute ('onclick', roItemBase.getAttribute ('action'));
-          roItem.innerHTML = Ro.templateEngine (template, data[i]);
+          roItem.setAttribute ('onclick', Ro.templateEngine (this.xtag.itemAction, data[i]));
+          roItem.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
           this.appendChild (roItem);
 
         };

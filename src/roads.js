@@ -7,9 +7,10 @@ var Ro = (function () {
         var writeImports = function(e) {
 
             var imports = document.querySelectorAll ('link[rel="import"]');
+            var RoApp   = document.querySelector ('ro-app');
 
             for (var i = 0; i < imports.length; i++) {
-                App.innerHTML += imports[i].import.body.innerHTML;
+                RoApp.innerHTML += imports[i].import.body.innerHTML;
             };
 
             setTimeout (callback, 100);
@@ -37,7 +38,7 @@ var Ro = (function () {
         var re = /{{([^}}]+)?}}/g;
 
         while(match = re.exec(tpl)) {
-            tpl = tpl.replace(match[0], this.findByKey(data, match[1]));
+            tpl = tpl.replace(match[0], this.findByKey (data, match[1]));
         }
 
         return tpl;

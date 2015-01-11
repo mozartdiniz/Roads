@@ -7,9 +7,10 @@
         var writeImports = function(e) {
 
             var imports = document.querySelectorAll ('link[rel="import"]');
+            var RoApp   = document.querySelector ('ro-app');
 
             for (var i = 0; i < imports.length; i++) {
-                App.innerHTML += imports[i].import.body.innerHTML;
+                RoApp.innerHTML += imports[i].import.body.innerHTML;
             };
 
             setTimeout (callback, 100);
@@ -37,7 +38,7 @@
         var re = /{{([^}}]+)?}}/g;
 
         while(match = re.exec(tpl)) {
-            tpl = tpl.replace(match[0], this.findByKey(data, match[1]));
+            tpl = tpl.replace(match[0], this.findByKey (data, match[1]));
         }
 
         return tpl;
@@ -327,44 +328,26 @@
 })();
 (function (){
 
-  xtag.register ('ro-import', {
-    lifecycle: {
-      created: function () {
-        console.log (this);
-
-        var request = new Ro.Http();        
-        request.url = this.getAttribute('url'); 
-        this.contentType = 'text/xml';      
-        request.method = 'get';  
-        request.success = function (x) {
-          console.log (x);
-        }
-        request.send();        
-
-      },
-      inserted: function () {
-      },
-      removed: function () {
-      }
-    },
-    events: {
-      reveal: function () {
-      }
-    },
-    accessors: {     
-    },
-    methods: {    
-    }
-  });
-
-})();
-(function (){
-
   xtag.register ('ro-list', {
     lifecycle: {
       created: function () {
+        this.xtag.item = this.querySelector ('ro-item');
+        this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
+        this.xtag.itemAction = this.xtag.item.getAttribute ('action');
       },
       inserted: function () {
+
+        var nextElement = this.parentElement.nextElementSibling;
+
+        if (nextElement && nextElement.tagName === "RO-FOOTER") {
+        
+          this.style.cssText = Ro.styleGenerator ({
+              'height': '-webkit-calc(100% - 100px)',
+              'height': '-moz-calc(100% - 100px)',
+              'height': 'calc(100% - 100px)'
+          });  
+        }
+        
       },
       removed: function () {
       }
@@ -383,17 +366,15 @@
       },
       parseList: function () {
 
-        var roItemBase = this.querySelector ('ro-item');
         var data = this.xtag.data;
-        var template = roItemBase.innerHTML;
 
         this.innerHTML = '';
 
         for (var i = 0; i < data.length; i++) {
 
           var roItem = document.createElement ('ro-item');
-          roItem.setAttribute ('onclick', roItemBase.getAttribute ('action'));
-          roItem.innerHTML = Ro.templateEngine (template, data[i]);
+          roItem.setAttribute ('onclick', Ro.templateEngine (this.xtag.itemAction, data[i]));
+          roItem.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
           this.appendChild (roItem);
 
         };

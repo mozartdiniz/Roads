@@ -316,9 +316,9 @@ ro-list {
   overflow-x: hidden;
   overflow-y: scroll;
   width: 100%;
-  height: -webkit-calc(100% - 100px);  /* para Chrome */
-  height: -moz-calc(100% - 100px);     /* para Firefox */
-  height: calc(100% - 100px);          /* para suporte nativo */
+  height: -webkit-calc(100% - 50px);  /* para Chrome */
+  height: -moz-calc(100% - 50px);     /* para Firefox */
+  height: calc(100% - 50px);          /* para suporte nativo */
   display: block;
 }
 

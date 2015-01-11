@@ -13,7 +13,14 @@ module.exports = function(grunt) {
         src: ['src/*.js', 'src/components/*.js'],
         dest: 'dist/<%= pkg.name %>.js',
       },
-    },    
+    }, 
+    concat_css: {
+      options: {},
+      all: {
+        src: ["src/**/*.css"],
+        dest: "dist/roads.css"
+      },
+    },       
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -44,11 +51,12 @@ module.exports = function(grunt) {
   });
   
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-concat-css');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-karma');
 
-  grunt.registerTask('build', ['karma', 'concat', 'uglify']);
+  grunt.registerTask('build', ['concat', 'uglify', 'concat_css', 'karma']);
 
   grunt.registerTask('deploy', ['copy']);
 

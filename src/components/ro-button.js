@@ -18,7 +18,8 @@
     },
     methods: { 
       addListeners: function () {
-        this.setAttribute ('onclick', this.getAttribute('action'));
+        var action = new Function (this.getAttribute('action'));
+        this.addEventListener ('click', action);
       }    
     }
   });

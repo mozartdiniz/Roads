@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-01-11 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-01-12 */var Ro = (function () {
 
   var Roads = {
 
@@ -10,7 +10,10 @@
             var RoApp   = document.querySelector ('ro-app');
 
             for (var i = 0; i < imports.length; i++) {
-                RoApp.innerHTML += imports[i].import.body.innerHTML;
+                var view  = imports[i].import.body.querySelector ('ro-view');
+                var clone = view.cloneNode(true);
+
+                RoApp.appendChild (clone);
             };
 
             setTimeout (callback, 100);
@@ -320,7 +323,8 @@
     },
     methods: { 
       addListeners: function () {
-        this.setAttribute ('onclick', this.getAttribute('action'));
+        var action = new Function (this.getAttribute('action'));
+        this.addEventListener ('click', action);
       }    
     }
   });
@@ -373,7 +377,8 @@
         for (var i = 0; i < data.length; i++) {
 
           var roItem = document.createElement ('ro-item');
-          roItem.setAttribute ('onclick', Ro.templateEngine (this.xtag.itemAction, data[i]));
+          var action = new Function (Ro.templateEngine (this.xtag.itemAction, data[i]));
+          roItem.addEventListener ('click', action);
           roItem.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
           this.appendChild (roItem);
 

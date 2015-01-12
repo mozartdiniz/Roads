@@ -45,7 +45,8 @@
         for (var i = 0; i < data.length; i++) {
 
           var roItem = document.createElement ('ro-item');
-          roItem.setAttribute ('onclick', Ro.templateEngine (this.xtag.itemAction, data[i]));
+          var action = new Function (Ro.templateEngine (this.xtag.itemAction, data[i]));
+          roItem.addEventListener ('click', action);
           roItem.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
           this.appendChild (roItem);
 

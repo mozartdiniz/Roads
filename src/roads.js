@@ -10,7 +10,10 @@ var Ro = (function () {
             var RoApp   = document.querySelector ('ro-app');
 
             for (var i = 0; i < imports.length; i++) {
-                RoApp.innerHTML += imports[i].import.body.innerHTML;
+                var view  = imports[i].import.body.querySelector ('ro-view');
+                var clone = view.cloneNode(true);
+
+                RoApp.appendChild (clone);
             };
 
             setTimeout (callback, 100);

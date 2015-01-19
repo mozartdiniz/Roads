@@ -1,0 +1,31 @@
+<ro-view id="editUser" ro-controller="editUser">
+  <ro-header>
+    <ro-topbar>
+      <ro-button text="Volta" icon="coisa" action=""></ro-button>
+      <ro-title>Task</ro-title>
+      <ro-button text="Vai" icon="coisa"></ro-button>
+    </ro-topbar>
+  </ro-header>
+  <ro-stage scroll>
+    <ro-layout orientation="vertical">
+      <ro-item>
+        <ro-label>Title</ro-label>
+        <div>
+           {{title}}
+        </div>
+      </ro-item> 
+      <ro-item>
+        <ro-label>Due Date</ro-label>
+        <div>
+          {{duedate}}
+        </div>          
+      </ro-item>
+      <ro-item>
+        <ro-label>Description</ro-label>
+        <div>
+            {{description}}
+        </div>          
+      </ro-item>                             
+    </ro-layout>
+  </ro-stage>
+</ro-view>

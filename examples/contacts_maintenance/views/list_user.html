@@ -1,0 +1,24 @@
+<ro-view id="userList" mainPage ro-controller="userList">
+  <ro-header>
+    <ro-topbar>
+      <ro-button action=""></ro-button>
+      <ro-title><p>Tasks</p></ro-title>
+      <ro-button></ro-button>
+    </ro-topbar>
+  </ro-header>
+  <ro-stage>
+    <ro-list>
+      <ro-item action="">
+        {{description}}
+      </ro-item>
+    </ro-list>
+  </ro-stage>
+  <ro-float-menu icon="More" iconActive="Close" state="hideItems">
+    <ro-item icon="BulkArrival" text="Bulk arrival"></ro-item>
+    <ro-item icon="Configurelanguage" text="Stops"></ro-item>
+    <ro-item icon="Configuremainmenu" text="Take Picture"></ro-item>
+    <ro-item icon="ConfigureServerAddress" text="Configure Language"></ro-item>
+    <ro-item icon="Systemstatus" text="System Status"></ro-item>
+    <ro-item icon="Takepicture" text="Configure Server Address"></ro-item>
+  </ro-float-menu>
+</ro-view>

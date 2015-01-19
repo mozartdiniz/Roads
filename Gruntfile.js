@@ -33,9 +33,25 @@ module.exports = function(grunt) {
       main: {
         files: [
           {
-            src: 'dist/<%= pkg.name %>.min.js', 
-            dest: '/Users/mozartdiniz/Sites/roads2/lib/<%= pkg.name %>.js'
+            src: 'lib/x-tag.js', 
+            dest: 'examples/master_detail_navigation/lib/x-tag.js'
+          },{
+            src: 'dist/<%= pkg.name %>.js', 
+            dest: 'examples/master_detail_navigation/lib/<%= pkg.name %>.js'
+          },{
+            src: 'dist/<%= pkg.name %>.css', 
+            dest: 'examples/master_detail_navigation/css/<%= pkg.name %>.css'
           },
+          {
+            src: 'lib/x-tag.js', 
+            dest: 'examples/contacts_maintenance/lib/x-tag.js'
+          },{
+            src: 'dist/<%= pkg.name %>.js', 
+            dest: 'examples/contacts_maintenance/lib/<%= pkg.name %>.js'
+          },{
+            src: 'dist/<%= pkg.name %>.css', 
+            dest: 'examples/contacts_maintenance/css/<%= pkg.name %>.css'
+          }          
         ],
       }
     },

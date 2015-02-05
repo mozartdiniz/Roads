@@ -185,6 +185,23 @@ var Ro = (function () {
 
   }
 
+  Roads.Environment = {
+    isTouchDevice: !!('ontouchstart' in window),
+      platform: {        
+        androidVersion: (function (){
+            var isAndroid = navigator.userAgent.match(/Android([^;]*)/);
+            if (isAndroid && isAndroid.length > 1) {
+                return parseInt(isAndroid[1], 10);
+            }
+            return false;
+        }()),
+        isAndroid: navigator.userAgent.match('Android') === null ? false : true,
+        isIPhone: navigator.userAgent.match('iPhone') === null ? false : true,
+        isIPad: navigator.userAgent.match('iPad') === null ? false : true,
+        isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false
+      }
+  }
+
   return Roads;
 
 }());

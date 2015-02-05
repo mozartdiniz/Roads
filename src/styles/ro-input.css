@@ -1,0 +1,44 @@
+ro-input {
+
+  min-height: 40px;
+  padding: 0;
+
+  display: flex !important;
+  display: -webkit-flex !important;
+
+  flex-flow: row wrap;
+
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  -webkit-justify-content: flex-start;
+  -webkit-align-content: stretch; 
+
+  -moz-box-direction: normal;
+  -moz-box-orient: horizontal;
+  -moz-flex-direction: row;
+  -moz-justify-content: flex-start;
+  -moz-align-content: stretch; 
+
+}
+
+ro-input input[type="text"], ro-input input[type="password"] {
+  -webkit-box-flex: 0;
+  -webkit-flex: 1 0 auto;
+
+  box-flex: 0;
+  flex: 1 0 auto;
+
+  display: flex;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis; 
+}
+
+ro-layout ro-item ro-input ro-icon {
+  -webkit-flex: 0 0 50px;
+  flex: 0 0 50px;
+  height: 45px;
+  width: 40px;
+  display: flex;
+}

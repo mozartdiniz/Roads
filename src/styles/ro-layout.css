@@ -1,0 +1,107 @@
+ro-layout {
+  display: block;
+}
+
+ro-layout ro-item {
+  min-height: 40px;
+  padding: 0;
+
+  display: flex !important;
+  display: -webkit-flex;
+
+  flex-flow: row wrap;
+
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  -webkit-justify-content: flex-start;
+  -webkit-align-content: stretch; 
+
+  -moz-box-direction: normal;
+  -moz-box-orient: horizontal;
+  -moz-flex-direction: row;
+  -moz-justify-content: flex-start;
+  -moz-align-content: stretch;     
+}
+
+ro-layout ro-item > * {
+
+  -webkit-box-flex: 0;
+  -webkit-flex: 1 0 auto;
+
+  box-flex: 0;
+  flex: 1 0 auto;
+
+  display: inline-block;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;  
+}
+
+ro-layout ro-item ro-icon {
+  -webkit-flex: 0 0 32px;
+  flex: 0 0 32px;
+}
+
+ro-layout ro-item ro-button {
+  -webkit-flex: 0 0 50px;
+  flex: 0 0 50px;
+}
+
+ro-layout ro-item ro-button[type="delete"] {
+  background-color: red;
+  color: white;
+  text-align: center;
+  padding: 10px 10px 0px;
+}
+
+
+ro-layout ro-item ro-label {
+  -webkit-flex: 0 0 100px;
+  flex: 0 0 100px;
+}
+
+ro-layout ro-item[orientation="vertical"] {
+
+  padding: 0;
+
+  display: flex;
+  display: -webkit-flex;
+
+  flex-flow: column wrap;
+
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -webkit-justify-content: flex-start;
+  -webkit-align-content: stretch; 
+
+  -moz-box-direction: normal;
+  -moz-box-orient: vertical;
+  -moz-flex-direction: column;
+  -moz-justify-content: flex-start;
+  -moz-align-content: stretch; 
+
+}
+
+ro-layout ro-item[orientation="vertical"] ro-label{
+  -webkit-flex: 0 1 auto;
+  flex: 0 1 auto;
+  width: 100%;
+}
+
+ro-layout ro-item[orientation="vertical"] * {
+
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 1 auto;
+
+  box-flex: 0;
+  flex: 0 1 auto;
+
+  width: calc(100% - 10px);
+
+  display: inline-block;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;  
+}

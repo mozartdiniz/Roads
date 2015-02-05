@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-01-18 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-05 */var Ro = (function () {
 
   var Roads = {
 
@@ -185,6 +185,23 @@
 
   }
 
+  Roads.Environment = {
+    isTouchDevice: !!('ontouchstart' in window),
+      platform: {        
+        androidVersion: (function (){
+            var isAndroid = navigator.userAgent.match(/Android([^;]*)/);
+            if (isAndroid && isAndroid.length > 1) {
+                return parseInt(isAndroid[1], 10);
+            }
+            return false;
+        }()),
+        isAndroid: navigator.userAgent.match('Android') === null ? false : true,
+        isIPhone: navigator.userAgent.match('iPhone') === null ? false : true,
+        isIPad: navigator.userAgent.match('iPad') === null ? false : true,
+        isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false
+      }
+  }
+
   return Roads;
 
 }());
@@ -336,18 +353,29 @@
     lifecycle: {
       created: function () {
         this.xtag.itemsAreVisible = false;
+
+        this.xtag.overlay = document.createElement('ro-overlay');        
+        this.xtag.hitArea = document.createElement('ro-hitarea');
       },
       inserted: function () {
-        
+
+        this.appendChild(this.xtag.hitArea);
+        this.parentElement.appendChild (this.xtag.overlay);
+
+        var clickCallback = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleMenu ();                   
+        }
+
+        this.xtag.hitArea.onclick = clickCallback.bind(this);
+
       },
       removed: function () {
       }
     },
     events: {
       reveal: function () {
-      },
-      click: function () {
-        this.toggleMenu ();
       }
     },
     accessors: {   
@@ -366,14 +394,74 @@
       },
       hideItems: function () {
         this.setAttribute('state', 'hideItems');
+        this.xtag.overlay.setAttribute('state', 'hideItems');
+
         this.xtag.itemsAreVisible = false;
       },
       showItems: function (items) {
         this.setAttribute('state', 'showItems');
+        this.xtag.overlay.setAttribute('state', 'showItems');
         this.xtag.itemsAreVisible = true;
       },
       parseList: function () {
       }
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-header', {
+    lifecycle: {
+      created: function () {
+        if (Ro.Environment.platform.isIOS) {
+          this.style.paddingTop = '20px';
+        }
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+    },
+    accessors: {     
+    },
+    methods: {       
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-input', {
+    lifecycle: {
+      created: function () {             
+        if (!this.innerHTML.trim()) {
+
+          this.xtag.field = document.createElement('input');
+          this.xtag.field.type = this.getAttribute('type');
+          this.xtag.field.value = this.getAttribute('value');
+          this.xtag.field.placeholder = this.getAttribute('placeholder');
+          this.xtag.field.name = this.getAttribute('name');
+
+          this.xtag.icon = document.createElement('ro-icon');
+          this.xtag.icon.setAttribute ('iconName', this.getAttribute('icon'));
+
+          this.appendChild (this.xtag.icon);
+          this.appendChild (this.xtag.field);
+        }
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+    },
+    accessors: {     
+    },
+    methods: { 
     }
   });
 
@@ -466,6 +554,31 @@
         };
 
       }      
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-view', {
+    lifecycle: {
+      created: function () {        
+        if (Ro.Environment.platform.isIOS) {
+          this.className += "isIOS ";
+        }         
+      },
+      inserted: function () {               
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {       
+      }
+    },
+    accessors: {     
+    },
+    methods: {   
     }
   });
 

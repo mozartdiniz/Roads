@@ -3,6 +3,30 @@
   xtag.register ('ro-app', {
     lifecycle: {
       created: function () {
+
+        // Create style to calc correct ro-view heights
+        var updateStyle = function () {
+
+          var roadStyles = document.querySelector('style#roViewStyles');
+
+          if (!roadStyles) {
+            roadStyles = document.createElement('style');
+            roadStyles.id = 'roViewStyles';
+            document.head.appendChild (roadStyles);              
+          }
+
+
+          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
+        }
+
+        updateStyle ();
+
+        window.addEventListener('orientationchange', function () {
+
+          setTimeout(updateStyle, 500);          
+
+        }); 
+
       },
       inserted: function () {
 
@@ -41,7 +65,6 @@
               'transform': 'translateX(2000px)',
               '-webkit-transform': 'translateX(2000px)'
             });
-
           };          
         }
 

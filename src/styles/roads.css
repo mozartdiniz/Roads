@@ -34,11 +34,31 @@
 
 
 html {
-    -ms-touch-action: pan-x;
-    touch-action: pan-x;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;    
+    
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+    -ms-content-zooming: none;
 }
 
 body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;    
+    width: 100%;
+    height: 100vh;
+
     -ms-touch-action: pan-y;
     touch-action: pan-y;
     -ms-content-zooming: none;
@@ -88,7 +108,7 @@ ro-view {
   -webkit-align-items: stretch;
   -ms-flex-align: stretch;  
 
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   bottom: 0;

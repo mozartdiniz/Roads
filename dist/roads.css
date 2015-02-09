@@ -1,6 +1,6 @@
 ro-float-menu {
   font-family: 'Roads';
-  position: fixed;
+  position: absolute;
   background-color: white;
   border-radius: 100%;
   bottom: 18px;
@@ -82,12 +82,18 @@ ro-float-menu ro-item {
   bottom: 68px;
   height: 50px;
   border: none;  
+
   transform: translate3d(0,60px,0) scale3d(1,1,1);
   transform-origin: 95% 90%;
-  -webkit-transform: translate3d(0,60px,0) scale3d(0,0,0);
-  -webkit-transform-origin: 95% 90%;  
   transition-timing-function: ease-in;
+
+  -webkit-transform: translate3d(0,60px,0) scale3d(0,0,0);
+  -webkit-transform-origin: 95% 90%;    
   -webkit-transition-timing-function: ease-in;
+
+  -ms-transform: translate3d(0,60px,0) scale3d(0,0,0);
+  -ms-transform-origin: 95% 90%;    
+  -ms-transition-timing-function: ease-in;  
 
 }
 
@@ -99,6 +105,10 @@ ro-float-menu[state="hideItems"] ro-item {
     -webkit-animation-play-state: running;
     -webkit-animation-fill-mode: forwards !important;
     -webkit-animation: roadsHideMenuItem 300ms;    
+
+    -ms-animation-play-state: running;
+    -ms-animation-fill-mode: forwards !important;
+    -ms-animation: roadsHideMenuItem 300ms;        
 }
 
 ro-float-menu[state="showItems"] ro-item {
@@ -109,6 +119,10 @@ ro-float-menu[state="showItems"] ro-item {
     -webkit-animation-play-state: running;
     -webkit-animation-fill-mode: forwards !important;
     -webkit-animation: roadsShowMenuItem 300ms;    
+
+    -ms-animation-play-state: running;
+    -ms-animation-fill-mode: forwards !important;
+    -ms-animation: roadsShowMenuItem 300ms;        
 }
 
 
@@ -217,6 +231,35 @@ ro-float-menu ro-item:nth-of-type(-n+1) {
     }
 }
 
+@-ms-keyframes roadsShowMenuItem {
+    0% {      
+      transform: translate3d(0,60px,0) scale3d(0,0,0);
+    }
+    80% {
+     display: block; 
+     transform: translate3d(0,0,0) scale3d(0,0,0); 
+    }
+    100% {
+      transform: translate3d(0,-10px,0) scale3d(1,1,1);
+    }
+}
+
+@-ms-keyframes roadsHideMenuItem {
+    0% {
+      display: block;
+      transform: translate3d(0,-10px,0) scale3d(1,1,1);
+    }
+    20% {
+      transform: translate3d(0,0,0) scale3d(0,0,0);
+    }
+    99% {
+      transform: translate3d(0,60px,0) scale3d(0,0,0);
+    }
+    100% {
+      display: none;
+    }
+}
+
 ro-float-menu ro-item::after {
   content: attr(text);
   position: relative;
@@ -231,6 +274,14 @@ ro-float-menu ro-item::after {
   padding: 6px;
   transition: 500ms;
   -webkit-transition: 500ms;
+}
+
+@media screen and (max-width: 330px) {
+
+    ro-float-menu ro-item::after {
+        font-size: 18px;
+    }
+
 }
 
 ro-float-menu ro-item::before {
@@ -264,29 +315,27 @@ ro-float-menu ro-item::before {
 }
 
 ro-overlay {
-  position: fixed;
+  position: absolute;
   left: 0;
-  right: 0;
   top: 0;
   bottom: 0;
   background: rgba(0,0,0,0.7);
   z-index: 8;
-  transform: scale3d(0,0,0);
-  -webkit-transform: scale3d(0,0,0);
+  width: 0;
+  height: 0;
+
 }
 
 ro-overlay[state="hideItems"] {
 
-  transform: scale3d(0,0,0);
-  -webkit-transform: scale3d(0,0,0);
+  width: 0;
+  height: 0;
   
 }
 
 ro-overlay[state="showItems"] {
-
-  transform: scale3d(1,1,1);
-  -webkit-transform: scale3d(1,1,1);
-  
+  width: 100vh;
+  height: 100vh;    
 }
 
 /* Chrome, Safari, Opera */
@@ -375,7 +424,7 @@ ro-input input[type="text"], ro-input input[type="password"] {
 
 ro-layout ro-item ro-input ro-icon {
   -webkit-flex: 0 0 50px;
-  flex: 0 0 50px;
+  flex: 0 0 45px;
   height: 45px;
   width: 40px;
   display: flex;
@@ -523,11 +572,31 @@ ro-layout ro-item[orientation="vertical"] * {
 
 
 html {
-    -ms-touch-action: pan-x;
-    touch-action: pan-x;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;    
+    
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+    -ms-content-zooming: none;
 }
 
 body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;    
+    width: 100%;
+    height: 100vh;
+
     -ms-touch-action: pan-y;
     touch-action: pan-y;
     -ms-content-zooming: none;
@@ -577,7 +646,7 @@ ro-view {
   -webkit-align-items: stretch;
   -ms-flex-align: stretch;  
 
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   bottom: 0;

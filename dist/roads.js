@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-05 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-09 */var Ro = (function () {
 
   var Roads = {
 
@@ -210,6 +210,30 @@
   xtag.register ('ro-app', {
     lifecycle: {
       created: function () {
+
+        // Create style to calc correct ro-view heights
+        var updateStyle = function () {
+
+          var roadStyles = document.querySelector('style#roViewStyles');
+
+          if (!roadStyles) {
+            roadStyles = document.createElement('style');
+            roadStyles.id = 'roViewStyles';
+            document.head.appendChild (roadStyles);              
+          }
+
+
+          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
+        }
+
+        updateStyle ();
+
+        window.addEventListener('orientationchange', function () {
+
+          setTimeout(updateStyle, 500);          
+
+        }); 
+
       },
       inserted: function () {
 
@@ -248,7 +272,6 @@
               'transform': 'translateX(2000px)',
               '-webkit-transform': 'translateX(2000px)'
             });
-
           };          
         }
 
@@ -563,11 +586,13 @@
   xtag.register ('ro-view', {
     lifecycle: {
       created: function () {        
-        if (Ro.Environment.platform.isIOS) {
+
+        if (Ro.Environment.platform.isIOS && !this.className.match(/isIOS/)) {
           this.className += "isIOS ";
         }         
+
       },
-      inserted: function () {               
+      inserted: function () {
       },
       removed: function () {
       }

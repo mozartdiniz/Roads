@@ -37,7 +37,7 @@ ro-input input[type="text"], ro-input input[type="password"] {
 
 ro-layout ro-item ro-input ro-icon {
   -webkit-flex: 0 0 50px;
-  flex: 0 0 50px;
+  flex: 0 0 45px;
   height: 45px;
   width: 40px;
   display: flex;

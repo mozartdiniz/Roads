@@ -84,6 +84,8 @@ ro-float-menu ro-item {
   border: none;  
   transform: translate3d(0,60px,0) scale3d(1,1,1);
   transform-origin: 95% 90%;
+  -webkit-transform: translate3d(0,60px,0) scale3d(0,0,0);
+  -webkit-transform-origin: 95% 90%;  
   transition-timing-function: ease-in;
   -webkit-transition-timing-function: ease-in;
 
@@ -231,6 +233,14 @@ ro-float-menu ro-item::after {
   -webkit-transition: 500ms;
 }
 
+@media screen and (max-width: 330px) {
+
+    ro-float-menu ro-item::after {
+        font-size: 18px;
+    }
+
+}
+
 ro-float-menu ro-item::before {
   content: "";
   position: relative;
@@ -270,6 +280,7 @@ ro-overlay {
   background: rgba(0,0,0,0.7);
   z-index: 8;
   transform: scale3d(0,0,0);
+  -webkit-transform: scale3d(0,0,0);
 }
 
 ro-overlay[state="hideItems"] {
@@ -371,7 +382,7 @@ ro-input input[type="text"], ro-input input[type="password"] {
 }
 
 ro-layout ro-item ro-input ro-icon {
-  -webkit-flex: 0 0 50px;
+  -webkit-flex: 0 0 45px;
   flex: 0 0 50px;
   height: 45px;
   width: 40px;

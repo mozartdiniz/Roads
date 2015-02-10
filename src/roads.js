@@ -62,11 +62,11 @@ var Ro = (function () {
               key = match[1];  
             }
 
-            tpl = tpl.replace(match[0], this.findByKey (data, key));
-        }
-
-        if (hasFilter && Ro.Filter.filters[filter]) {
-          tpl = Ro.Filter.filters[filter](tpl || key, filterParameter);
+            if (hasFilter && Ro.Filter.filters[filter]) {
+              tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key) || key, filterParameter));
+            } else {
+              tpl = tpl.replace(match[0], this.findByKey (data, key));
+            }
         }
 
         return tpl;

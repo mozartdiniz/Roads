@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-09 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-10 */var Ro = (function () {
 
   var Roads = {
 
@@ -20,7 +20,13 @@
 
         }
 
-        window.addEventListener('HTMLImportsLoaded', writeImports.bind (this));         
+        window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
+
+        document.addEventListener("deviceready", function (){
+            document.addEventListener ("backbutton", function () {
+                Ro.Globals.backButtonFunction ();
+            }, false);            
+        }, false);
 
     },
 
@@ -39,9 +45,28 @@
     templateEngine : function (tpl, data) {
 
         var re = /{{([^}}]+)?}}/g;
+        var filter, key, filterParameter, hasFilter = 0;
 
         while(match = re.exec(tpl)) {
-            tpl = tpl.replace(match[0], this.findByKey (data, match[1]));
+
+            hasFilter = match[1].indexOf('|');
+
+            if (hasFilter > 0) {
+              filter = match[1].split('|')[1].trim(); 
+              if (filter.indexOf(':') > 0) {
+                filterParameter = filter.split(':')[1];
+                filter = filter.split(':')[0];
+              }
+              key = match[1].split('|')[0].trim(); 
+            } else {
+              key = match[1];  
+            }
+
+            tpl = tpl.replace(match[0], this.findByKey (data, key));
+        }
+
+        if (hasFilter && Ro.Filter.filters[filter]) {
+          tpl = Ro.Filter.filters[filter](tpl || key, filterParameter);
         }
 
         return tpl;
@@ -85,6 +110,7 @@
         return (sObj.length === 1) ? sObj.pop() : sObj;
 
       },
+
       Http: function () {
 
         // set defaults
@@ -173,6 +199,10 @@
 
         this.init ();
 
+        if (this.show) {
+            this.view.setShowFunction (this.show.bind (this));    
+        }        
+
     }
 
     if (methods) {
@@ -181,7 +211,7 @@
       }
     }
 
-    return Controller;   
+    return Controller;
 
   }
 
@@ -198,8 +228,96 @@
         isAndroid: navigator.userAgent.match('Android') === null ? false : true,
         isIPhone: navigator.userAgent.match('iPhone') === null ? false : true,
         isIPad: navigator.userAgent.match('iPad') === null ? false : true,
-        isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false
+        isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false,
+        isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false
       }
+  }
+
+  Roads.Globals = {
+    backButtonFunction: function () {        
+        alert('No back function defined');
+    }    
+  }
+
+  Roads.Events = {
+    click: function () {
+        return (Roads.Environment.isTouchDevice) ? 'touchstart' : 'click'
+    }
+  }
+
+  Roads.Filter = {
+    filters: {
+        date: function (dateValue, dateFormat) {
+
+            if (!dateValue) {
+              throw 'Roads.Filter.date: dateValue is mandatory';
+            }            
+
+            var format = dateFormat || Ro.i18n.defaults.date;
+            var date   = new Date (dateValue);
+            var year   = date.getFullYear()
+            var day    = date.getDate ();
+            var month  = date.getMonth()+1;
+
+            format = format.replace(/yyyy/g, year);
+            format = format.replace(/yy/g, String(year).substr(2,2));
+            format = format.replace(/MM/g, (month < 10) ? '0' + month : month);
+            format = format.replace(/M/g, month);
+            format = format.replace(/dd/g, (day < 10) ? '0' + day : day);
+            format = format.replace(/d/g, day);
+
+            return format;
+
+        },
+        time: function (timeValue, timeFormat) {
+
+            if (!timeValue) {
+              throw 'Roads.Filter.date: timeValue is mandatory';
+            }  
+
+            var format  = timeFormat || Ro.i18n.defaults.time;
+            var time    = new Date (timeValue);
+            var hours24 = time.getHours();
+            var hours12 = (hours24 + 11) % 12 + 1;
+            var minutes = time.getMinutes();
+            var seconds = time.getSeconds();
+            var a       = (hours24 >= 12) ? 'pm' : 'am'
+
+            format = format.replace(/HH/g, (hours24 < 10) ? "0" + hours24 : hours24);
+            format = format.replace(/H/g, hours24);
+            format = format.replace(/hh/g, (hours12 < 10) ? "0" + hours12 : hours12);
+            format = format.replace(/h/g, hours12);
+            format = format.replace(/mm/g, (minutes < 10) ? "0" + minutes : minutes);
+            format = format.replace(/ss/g, seconds);
+            format = format.replace(/a/g, a);
+
+            return format;
+        },
+        i18n: function (i18nKey) {
+            return Ro.i18n.translations[i18nKey] || i18nKey;
+        }
+    },
+    register: function (filterName, filterImplementation) {
+
+        if (!filterName) {
+          throw 'Roads.Filter.register: filterName is mandatory';
+        }         
+
+        this.filters[filterName] = filterImplementation;
+    }
+  }
+
+  Roads.i18n = {
+    defaults: {
+        currency: "US$",
+        date: "MM/dd/yyyy",
+        decimalSymbol: ",",
+        digitalGrouping: ".",
+        language: "en",
+        time: "HH:mm",
+        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL            
+    },
+    translations: {}  
   }
 
   return Roads;
@@ -222,11 +340,14 @@
             document.head.appendChild (roadStyles);              
           }
 
-
           roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
         }
 
-        updateStyle ();
+        document.addEventListener("deviceready", function () {
+
+          setTimeout(updateStyle, 500);          
+
+        });
 
         window.addEventListener('orientationchange', function () {
 
@@ -235,11 +356,13 @@
         }); 
 
       },
+
       inserted: function () {
 
         this.putViewsInFirstPosition ();
 
       },
+      
       removed: function () {
       }
     },
@@ -285,11 +408,11 @@
         to   = document.getElementById (toID);
 
         if (!from) {
-          throw 'ro-view: "From" view can not be found'
+          throw 'ro-view: "From" view can not be found';
         }
 
         if (!to) {
-          throw 'ro-view: "To" view can not be found' 
+          throw 'ro-view: "To" view can not be found';
         }
 
         to.style.cssText = Ro.styleGenerator ({
@@ -310,6 +433,8 @@
           'transform': 'translateX(2000px)',
           'z-index': '1'
         });
+
+        xtag.fireEvent(to, 'show');
 
       },
 
@@ -336,8 +461,45 @@
           '-webkit-transform': 'translateX(2000px)',
           'transform': 'translateX(2000px)',
           'z-index': '2'
-        });         
+        }); 
 
+        xtag.fireEvent (to, 'show');        
+
+      }
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-back-button', {
+    lifecycle: {
+      created: function () {
+        this.addListeners ();
+      },
+      inserted: function () {
+        if (!Ro.Environment.platform.isIOS && !Ro.Environment.platform.isFxOS) {
+          this.style.display = 'none';
+        }
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+      addListeners: function () {
+        this.addEventListener (Ro.Events.click (), function () {
+          Ro.Globals.backButtonFunction ();
+        }, true);
+      },
+      registerBackAction: function (callback) {
+        Ro.Globals = Ro.Globals || {};
+        Ro.Globals.backButtonFunction = callback;
       }
     }
   });
@@ -598,12 +760,18 @@
       }
     },
     events: {
-      reveal: function () {       
-      }
+      show: function () {
+        if (this.xtag.showFunction) {
+          this.xtag.showFunction ();
+        }  
+      },
     },
     accessors: {     
     },
-    methods: {   
+    methods: {  
+      setShowFunction: function (callback) {
+        this.xtag.showFunction = callback;
+      } 
     }
   });
 

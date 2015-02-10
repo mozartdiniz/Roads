@@ -15,11 +15,14 @@
             document.head.appendChild (roadStyles);              
           }
 
-
           roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
         }
 
-        updateStyle ();
+        document.addEventListener("deviceready", function () {
+
+          setTimeout(updateStyle, 500);          
+
+        });
 
         window.addEventListener('orientationchange', function () {
 
@@ -28,11 +31,13 @@
         }); 
 
       },
+
       inserted: function () {
 
         this.putViewsInFirstPosition ();
 
       },
+      
       removed: function () {
       }
     },
@@ -78,11 +83,11 @@
         to   = document.getElementById (toID);
 
         if (!from) {
-          throw 'ro-view: "From" view can not be found'
+          throw 'ro-view: "From" view can not be found';
         }
 
         if (!to) {
-          throw 'ro-view: "To" view can not be found' 
+          throw 'ro-view: "To" view can not be found';
         }
 
         to.style.cssText = Ro.styleGenerator ({
@@ -103,6 +108,8 @@
           'transform': 'translateX(2000px)',
           'z-index': '1'
         });
+
+        xtag.fireEvent(to, 'show');
 
       },
 
@@ -129,7 +136,9 @@
           '-webkit-transform': 'translateX(2000px)',
           'transform': 'translateX(2000px)',
           'z-index': '2'
-        });         
+        }); 
+
+        xtag.fireEvent (to, 'show');        
 
       }
     }

@@ -68,18 +68,22 @@
 
           firstView.style.cssText = Ro.styleGenerator ({
               'transform': 'translateX(0)',
-              '-webkit-transform': 'translateX(0)'
+              '-webkit-transform': 'translateX(0)',
+              'z-index': '1'
           });
         }
 
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
+
             views[i].style.cssText = Ro.styleGenerator ({
               'transform': 'translateX(2000px)',
               '-webkit-transform': 'translateX(2000px)',
               'transition': '10ms',
-              '-webkit-transition': '10ms' 
+              '-webkit-transition': '10ms',
+              'z-index': '2'
             });
+
           };          
         }
 

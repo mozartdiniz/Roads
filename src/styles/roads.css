@@ -115,6 +115,9 @@ ro-view {
   top: 0;
   transition: 500ms;
   background-color: white;
+  /* IMPORTANT: Don't ask me why, but if you remove this border
+  ro-view transitions will not work in windows phone 8 */
+  border: 1px solid black;
 }
 
 ro-header {

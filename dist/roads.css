@@ -1,7 +1,8 @@
 ro-back-button {
   max-width: 30%;
   height: 100%;
-  width: 100%;
+  width: 50%;
+  display: inline-block;
 }
 
 ro-back-button::after {
@@ -562,6 +563,75 @@ ro-layout ro-item[orientation="vertical"] * {
   overflow: hidden;
   overflow-wrap: break-word;
   text-overflow: ellipsis;  
+}
+ro-loader {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 12;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+ro-loader::after {
+  content: '';
+  width: 50px;
+  height: 50px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  margin-left: -25px;
+  top: 50%;
+  margin-top: -25px;
+  border-radius: 100%;
+  border: 3px dashed white;
+
+  animation: roLoaderSpinner 2s;
+  animation-play-state: running;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards !important;  
+  animation-iteration-count: infinite;
+
+  -webkit-animation: roLoaderSpinner 2s;
+  -webkit-animation-play-state: running;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-fill-mode: forwards !important;    
+  -webkit-animation-iteration-count: infinite;
+
+  -ms-animation: roLoaderSpinner 2s;
+  -ms-animation-play-state: running;
+  -ms-animation-timing-function: linear;
+  -ms-animation-fill-mode: forwards !important;  
+  -ms-animation-iteration-count: infinite;
+}
+
+@keyframes roLoaderSpinner {
+    0% {
+      transform: rotateZ(0deg);
+    }
+    100% {
+      transform: rotateZ(360deg);
+    }
+}
+
+@-webkit-keyframes roLoaderSpinner {
+    0% {
+      -webkit-transform: rotateZ(0deg);
+    }
+    100% {
+      -webkit-transform: rotateZ(360deg);
+    }
+}
+
+@-ms-keyframes roLoaderSpinner {
+    0% {      
+      transform: rotateZ(0deg);
+    }
+    100% {
+      transform: rotateZ(360deg);
+    }
 }
 @font-face {
   font-family: 'roads';

@@ -6,8 +6,14 @@ var Ro = (function () {
 
         var writeImports = function(e) {
 
+            var loader = document.querySelector ('ro-loader');
+            if (loader) {
+                loader.show();    
+            }               
+
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app');
+
 
             for (var i = 0; i < imports.length; i++) {
                 var view  = imports[i].import.body.querySelector ('ro-view');
@@ -190,7 +196,7 @@ var Ro = (function () {
 
       },
 
-      dateToIE: function (date) {
+      dateToIEandSafari: function (date) {
 
         return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');;
 
@@ -254,14 +260,15 @@ var Ro = (function () {
 
   Roads.Filter = {
     filters: {
+
         date: function (dateValue, dateFormat) {
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
             } 
 
-            if (Ro.Environment.platform.isWPhone) {
-                dateValue = Roads.dateToIE (dateValue);
+            if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
+                dateValue = Roads.dateToIEandSafari (dateValue);
             }
 
             var format = dateFormat || Ro.i18n.defaults.date;
@@ -280,14 +287,15 @@ var Ro = (function () {
             return format;
 
         },
+
         time: function (timeValue, timeFormat) {
 
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
             }  
 
-            if (Ro.Environment.platform.isWPhone) {
-                timeValue = Roads.dateToIE (timeValue);
+            if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
+                timeValue = Roads.dateToIEandSafari (timeValue);
             }            
 
             var format  = timeFormat || Ro.i18n.defaults.time;
@@ -308,6 +316,7 @@ var Ro = (function () {
 
             return format;
         },
+        
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;
         }

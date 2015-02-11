@@ -36,6 +36,11 @@
 
         this.putViewsInFirstPosition ();
 
+        setTimeout(function (){
+          var loader  = document.querySelector ('ro-loader');
+          loader.hide();
+        }, 500);
+
       },
       
       removed: function () {
@@ -62,7 +67,9 @@
           Ro.i18n.translateView (firstView);
 
           firstView.style.cssText = Ro.styleGenerator ({
-              'transform': 'translateX(0)',
+              '-webkit-transition': '1ms',
+              'transition': '1ms',                
+              'transform': 'translateX(0)',          
               '-webkit-transform': 'translateX(0)'
           });
         }
@@ -70,6 +77,8 @@
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
             views[i].style.cssText = Ro.styleGenerator ({
+              '-webkit-transition': '1ms',
+              'transition': '1ms',                  
               'transform': 'translateX(2000px)',
               '-webkit-transform': 'translateX(2000px)'
             });

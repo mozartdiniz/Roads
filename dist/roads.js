@@ -6,8 +6,14 @@
 
         var writeImports = function(e) {
 
+            var loader = document.querySelector ('ro-loader');
+            if (loader) {
+                loader.show();    
+            }               
+
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app');
+
 
             for (var i = 0; i < imports.length; i++) {
                 var view  = imports[i].import.body.querySelector ('ro-view');
@@ -190,7 +196,7 @@
 
       },
 
-      dateToIE: function (date) {
+      dateToIEandSafari: function (date) {
 
         return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');;
 
@@ -254,14 +260,15 @@
 
   Roads.Filter = {
     filters: {
+
         date: function (dateValue, dateFormat) {
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
             } 
 
-            if (Ro.Environment.platform.isWPhone) {
-                dateValue = Roads.dateToIE (dateValue);
+            if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
+                dateValue = Roads.dateToIEandSafari (dateValue);
             }
 
             var format = dateFormat || Ro.i18n.defaults.date;
@@ -280,14 +287,15 @@
             return format;
 
         },
+
         time: function (timeValue, timeFormat) {
 
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
             }  
 
-            if (Ro.Environment.platform.isWPhone) {
-                timeValue = Roads.dateToIE (timeValue);
+            if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
+                timeValue = Roads.dateToIEandSafari (timeValue);
             }            
 
             var format  = timeFormat || Ro.i18n.defaults.time;
@@ -308,6 +316,7 @@
 
             return format;
         },
+        
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;
         }
@@ -396,6 +405,11 @@
 
         this.putViewsInFirstPosition ();
 
+        setTimeout(function (){
+          var loader  = document.querySelector ('ro-loader');
+          loader.hide();
+        }, 500);
+
       },
       
       removed: function () {
@@ -422,7 +436,9 @@
           Ro.i18n.translateView (firstView);
 
           firstView.style.cssText = Ro.styleGenerator ({
-              'transform': 'translateX(0)',
+              '-webkit-transition': '1ms',
+              'transition': '1ms',                
+              'transform': 'translateX(0)',          
               '-webkit-transform': 'translateX(0)'
           });
         }
@@ -430,6 +446,8 @@
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
             views[i].style.cssText = Ro.styleGenerator ({
+              '-webkit-transition': '1ms',
+              'transition': '1ms',                  
               'transform': 'translateX(2000px)',
               '-webkit-transform': 'translateX(2000px)'
             });
@@ -784,6 +802,46 @@
         };
 
       }      
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-loader', {
+    lifecycle: {
+      created: function () {
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+      show: function () {
+
+        this.style.cssText = Ro.styleGenerator ({
+          'display': 'block',
+          'width': '100vw',
+          'height': '100vh'
+        });
+
+      },
+      hide: function () {
+
+        this.style.cssText = Ro.styleGenerator ({
+          'display': 'none',
+          'width': '0',
+          'height': '0'
+        });
+        
+      } 
     }
   });
 

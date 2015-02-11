@@ -436,9 +436,7 @@
           Ro.i18n.translateView (firstView);
 
           firstView.style.cssText = Ro.styleGenerator ({
-              '-webkit-transition': '1ms',
-              'transition': '1ms',                
-              'transform': 'translateX(0)',          
+              'transform': 'translateX(0)',
               '-webkit-transform': 'translateX(0)'
           });
         }
@@ -446,10 +444,10 @@
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
             views[i].style.cssText = Ro.styleGenerator ({
-              '-webkit-transition': '1ms',
-              'transition': '1ms',                  
               'transform': 'translateX(2000px)',
-              '-webkit-transform': 'translateX(2000px)'
+              '-webkit-transform': 'translateX(2000px)',
+              'transition': '10ms',
+              '-webkit-transition': '10ms' 
             });
           };          
         }

@@ -8,6 +8,7 @@
           this.xtag.field = document.createElement('input');
           this.xtag.field.type = this.getAttribute('type');
           this.xtag.field.value = this.getAttribute('value');
+          this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
           this.xtag.field.placeholder = this.getAttribute('placeholder');
           this.xtag.field.name = this.getAttribute('name');
 
@@ -16,6 +17,8 @@
 
           this.appendChild (this.xtag.icon);
           this.appendChild (this.xtag.field);
+
+          this.removeAttribute('i18n');
         }
       },
       inserted: function () {

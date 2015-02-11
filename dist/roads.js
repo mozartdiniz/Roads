@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-10 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-11 */var Ro = (function () {
 
   var Roads = {
 
@@ -107,7 +107,7 @@
             findKey(obj, key);
         }
 
-        return (sObj.length === 1) ? sObj.pop() : sObj;
+        return (sObj.length === 1) ? sObj.pop() : (sObj.length === 0) ? false : sObj;
 
       },
 
@@ -188,6 +188,12 @@
 
         };
 
+      },
+
+      dateToIE: function (date) {
+
+        return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');;
+
       }
   }
 
@@ -228,6 +234,7 @@
         isAndroid: navigator.userAgent.match('Android') === null ? false : true,
         isIPhone: navigator.userAgent.match('iPhone') === null ? false : true,
         isIPad: navigator.userAgent.match('iPad') === null ? false : true,
+        isWPhone: navigator.userAgent.match(/Trident/) ? true : false,
         isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false,
         isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false
       }
@@ -251,11 +258,15 @@
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
-            }            
+            } 
+
+            if (Ro.Environment.platform.isWPhone) {
+                dateValue = Roads.dateToIE (dateValue);
+            }
 
             var format = dateFormat || Ro.i18n.defaults.date;
             var date   = new Date (dateValue);
-            var year   = date.getFullYear()
+            var year   = date.getFullYear();
             var day    = date.getDate ();
             var month  = date.getMonth()+1;
 
@@ -274,6 +285,10 @@
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
             }  
+
+            if (Ro.Environment.platform.isWPhone) {
+                timeValue = Roads.dateToIE (timeValue);
+            }            
 
             var format  = timeFormat || Ro.i18n.defaults.time;
             var time    = new Date (timeValue);
@@ -317,7 +332,27 @@
         time: "HH:mm",
         systemOfMeasurement: "METRIC" // METRIC | IMPERIAL            
     },
-    translations: {}  
+    translations: {},
+    translateView: function (view) {
+        
+        var elements = view.querySelectorAll('[i18n]');
+        for (var i = elements.length - 1; i >= 0; i--) {
+            this.translateElement (elements[i]);    
+        };
+    },
+    translateElement: function (el) {
+        var i18n = el.getAttribute('i18n');
+
+        switch (i18n) {
+            case '':
+                el.innerHTML = Ro.templateEngine(el.innerHTML);
+                break;
+            default:
+                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute(i18n)));
+                break;
+        }
+
+    }
   }
 
   return Roads;
@@ -383,6 +418,9 @@
         var firstView = document.querySelector ('ro-view[mainPage]');
 
         if (firstView) {
+
+          Ro.i18n.translateView (firstView);
+
           firstView.style.cssText = Ro.styleGenerator ({
               'transform': 'translateX(0)',
               '-webkit-transform': 'translateX(0)'
@@ -434,6 +472,8 @@
           'z-index': '1'
         });
 
+        Ro.i18n.translateView (to);
+
         xtag.fireEvent(to, 'show');
 
       },
@@ -462,6 +502,8 @@
           'transform': 'translateX(2000px)',
           'z-index': '2'
         }); 
+
+        Ro.i18n.translateView (to);
 
         xtag.fireEvent (to, 'show');        
 
@@ -627,6 +669,7 @@
           this.xtag.field = document.createElement('input');
           this.xtag.field.type = this.getAttribute('type');
           this.xtag.field.value = this.getAttribute('value');
+          this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
           this.xtag.field.placeholder = this.getAttribute('placeholder');
           this.xtag.field.name = this.getAttribute('name');
 
@@ -635,6 +678,8 @@
 
           this.appendChild (this.xtag.icon);
           this.appendChild (this.xtag.field);
+
+          this.removeAttribute('i18n');
         }
       },
       inserted: function () {
@@ -739,6 +784,26 @@
         };
 
       }      
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-title', {
+    lifecycle: {
+      created: function () {        
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+    },
+    accessors: {     
+    },
+    methods: {       
     }
   });
 

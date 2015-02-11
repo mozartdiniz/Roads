@@ -58,6 +58,9 @@
         var firstView = document.querySelector ('ro-view[mainPage]');
 
         if (firstView) {
+
+          Ro.i18n.translateView (firstView);
+
           firstView.style.cssText = Ro.styleGenerator ({
               'transform': 'translateX(0)',
               '-webkit-transform': 'translateX(0)'
@@ -109,6 +112,8 @@
           'z-index': '1'
         });
 
+        Ro.i18n.translateView (to);
+
         xtag.fireEvent(to, 'show');
 
       },
@@ -137,6 +142,8 @@
           'transform': 'translateX(2000px)',
           'z-index': '2'
         }); 
+
+        Ro.i18n.translateView (to);
 
         xtag.fireEvent (to, 'show');        
 

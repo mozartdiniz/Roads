@@ -107,7 +107,7 @@ var Ro = (function () {
             findKey(obj, key);
         }
 
-        return (sObj.length === 1) ? sObj.pop() : sObj;
+        return (sObj.length === 1) ? sObj.pop() : (sObj.length === 0) ? false : sObj;
 
       },
 
@@ -188,6 +188,12 @@ var Ro = (function () {
 
         };
 
+      },
+
+      dateToIE: function (date) {
+
+        return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');;
+
       }
   }
 
@@ -228,6 +234,7 @@ var Ro = (function () {
         isAndroid: navigator.userAgent.match('Android') === null ? false : true,
         isIPhone: navigator.userAgent.match('iPhone') === null ? false : true,
         isIPad: navigator.userAgent.match('iPad') === null ? false : true,
+        isWPhone: navigator.userAgent.match(/Trident/) ? true : false,
         isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false,
         isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false
       }
@@ -251,11 +258,15 @@ var Ro = (function () {
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
-            }            
+            } 
+
+            if (Ro.Environment.platform.isWPhone) {
+                dateValue = Roads.dateToIE (dateValue);
+            }
 
             var format = dateFormat || Ro.i18n.defaults.date;
             var date   = new Date (dateValue);
-            var year   = date.getFullYear()
+            var year   = date.getFullYear();
             var day    = date.getDate ();
             var month  = date.getMonth()+1;
 
@@ -274,6 +285,10 @@ var Ro = (function () {
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
             }  
+
+            if (Ro.Environment.platform.isWPhone) {
+                timeValue = Roads.dateToIE (timeValue);
+            }            
 
             var format  = timeFormat || Ro.i18n.defaults.time;
             var time    = new Date (timeValue);
@@ -317,7 +332,27 @@ var Ro = (function () {
         time: "HH:mm",
         systemOfMeasurement: "METRIC" // METRIC | IMPERIAL            
     },
-    translations: {}  
+    translations: {},
+    translateView: function (view) {
+        
+        var elements = view.querySelectorAll('[i18n]');
+        for (var i = elements.length - 1; i >= 0; i--) {
+            this.translateElement (elements[i]);    
+        };
+    },
+    translateElement: function (el) {
+        var i18n = el.getAttribute('i18n');
+
+        switch (i18n) {
+            case '':
+                el.innerHTML = Ro.templateEngine(el.innerHTML);
+                break;
+            default:
+                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute(i18n)));
+                break;
+        }
+
+    }
   }
 
   return Roads;

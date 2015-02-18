@@ -12,7 +12,7 @@ var Ro = (function () {
             }               
 
             var imports = document.querySelectorAll ('link[rel="import"]');
-            var RoApp   = document.querySelector ('ro-app');
+            var RoApp   = document.querySelector ('ro-app ro-scroll');
 
 
             for (var i = 0; i < imports.length; i++) {
@@ -20,7 +20,25 @@ var Ro = (function () {
                 var clone = view.cloneNode(true);
 
                 RoApp.appendChild (clone);
-            };
+            };            
+
+            var x = document.querySelector('ro-stage[scroll]');
+
+            Ro.Globals.roAppScroll = new IScroll(x, {
+                probeType:  3,
+                mouseWheel: true,
+                bounce: true,
+                keyBindings: true,
+                invertWheelDirection: false,
+                momentum: true,
+                fadeScrollbars: false,
+                scrollbars: false,
+                interactiveScrollbars: false,
+                resizeScrollbars: false,
+                shrinkScrollbars: false,
+                click: false,
+                preventDefaultException: { tagName:/.*/ }
+            });              
 
             setTimeout (callback, 100);
 
@@ -29,9 +47,39 @@ var Ro = (function () {
         window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
 
         document.addEventListener("deviceready", function (){
+
+            RoApp.style.webkitTransition = '10ms';
+            RoApp.style.height = window.innerHeight + 'px';
+
+            document.addEventListener ("showkeyboard", function () {
+
+              setTimeout (function (){
+
+                var activeElementTop = document.activeElement.getBoundingClientRect().top + 50;
+                var innerHeight = window.innerHeight;
+
+                if (activeElementTop > innerHeight) {
+                    var x = document.querySelector('#registeringDevice');
+                    x.style.webkitTransition = '1s';
+                    x.style.webkitTransform = 'translateY(-200px)';
+                }
+
+              },  100);  
+
+            }, false); 
+
+            document.addEventListener ("hidekeyboard", function () {
+
+                var x = document.querySelector('#registeringDevice');
+                x.style.webkitTransition = '10ms';
+                x.style.webkitTransform = 'translateY(0)';                                  
+
+            }, false);                                  
+
             document.addEventListener ("backbutton", function () {
                 Ro.Globals.backButtonFunction ();
             }, false);            
+            
         }, false);
 
     },

@@ -4,6 +4,8 @@
     lifecycle: {
       created: function () {
 
+        this.innerHTML = '<ro-scroll></ro-scroll>'
+
         // Create style to calc correct ro-view heights
         var updateStyle = function () {
 
@@ -66,23 +68,22 @@
 
           Ro.i18n.translateView (firstView);
 
-          firstView.style.cssText = Ro.styleGenerator ({
-              'transform': 'translateX(0)',
-              '-webkit-transform': 'translateX(0)',
-              'z-index': '1'
-          });
+          firstView.style.zIndex = 1;
+          firstView.style.webkitTransition = '10ms';
+          firstView.style.transition = '10ms';
+          firstView.style.webkitTransform = 'translateX(0)';
+          firstView.style.transform = 'translateX(0)';                    
+
         }
 
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
 
-            views[i].style.cssText = Ro.styleGenerator ({
-              'transform': 'translateX(2000px)',
-              '-webkit-transform': 'translateX(2000px)',
-              'transition': '10ms',
-              '-webkit-transition': '10ms',
-              'z-index': '2'
-            });
+            views[i].style.zIndex = 2;            
+            views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';                         
+            views[i].style.webkitTransition = '10ms';
+            views[i].style.transition = '10ms';
 
           };          
         }
@@ -104,25 +105,21 @@
           throw 'ro-view: "To" view can not be found';
         }
 
-        to.style.cssText = Ro.styleGenerator ({
-          '-webkit-transition': '500ms',
-          'transition': '500ms',
-          '-webkit-transform': 'translateX(0px)',          
-          'transform': 'translateX(0px)',
-          'z-index': '2',
-          '-webkit-transition-timing-function': 'ease',
-          'transition-timing-function': 'ease'
-        });
+        to.style.transition = '10ms';
 
-        from.style.cssText = Ro.styleGenerator ({
-          '-webkit-transition': '500ms',
-          'transition': '500ms',
-          'transition-delay': '500ms',          
-          '-webkit-transform': 'translateX(2000px)',
-          'transform': 'translateX(2000px)',
-          'z-index': '1'
-        });
+        to.style.zIndex = 2;
+        to.style.transition = '300ms';
+        to.style.transitionTimingFunction = 'linear';        
+        to.style.webkitTransform = 'translateX(0)';
+        to.style.transform = 'translateX(0)';         
 
+        from.style.transition = '10ms';
+        from.style.zIndex = 3;
+        from.style.transition = '300ms';
+        from.style.transitionTimingFunction = 'linear';        
+        from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
+        from.style.transform = 'translateX(-' + window.innerWidth + 'px)'; 
+               
         Ro.i18n.translateView (to);
 
         xtag.fireEvent(to, 'show');
@@ -136,23 +133,28 @@
         from = document.getElementById (fromID);
         to   = document.getElementById (toID);
 
-        to.style.cssText = Ro.styleGenerator ({
-          '-webkit-transition': '2ms',
-          'transition': '2ms',
-          '-webkit-transform': 'translateX(0px)',          
-          'transform': 'translateX(0px)',
-          'z-index': '1',
-          '-webkit-transition-timing-function': 'ease',
-          'transition-timing-function': 'ease'
-        });
+        if (!from) {
+          throw 'ro-view: "From" view can not be found';
+        }
 
-        from.style.cssText = Ro.styleGenerator ({
-          '-webkit-transition': '500ms',
-          'transition': '500ms',         
-          '-webkit-transform': 'translateX(2000px)',
-          'transform': 'translateX(2000px)',
-          'z-index': '2'
-        }); 
+        if (!to) {
+          throw 'ro-view: "To" view can not be found';
+        }        
+
+        to.transition = '10ms';
+        to.style.zIndex = 3;
+        to.transition = '300ms';
+        to.style.transitionTimingFunction = 'linear';        
+        to.style.webkitTransform = 'translateX(0)';
+        to.style.transform = 'translateX(0)'; 
+               
+
+        from.transition = '10ms';
+        from.style.zIndex = 2;
+        from.transition = '300ms';
+        from.style.transitionTimingFunction = 'linear';        
+        from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+        from.style.transform = 'translateX(' + window.innerWidth + 'px)'; 
 
         Ro.i18n.translateView (to);
 

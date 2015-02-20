@@ -1,4 +1,4 @@
-var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-19 */var Ro = (function () {
 
   var Roads = {
 
@@ -46,7 +46,9 @@ var Ro = (function () {
 
         window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
 
-        document.addEventListener("deviceready", function (){
+        document.addEventListener ("deviceready", function (){
+
+            var RoApp = document.querySelector ('ro-app');
 
             RoApp.style.webkitTransition = '10ms';
             RoApp.style.height = window.innerHeight + 'px';
@@ -59,7 +61,7 @@ var Ro = (function () {
                 var innerHeight = window.innerHeight;
 
                 if (activeElementTop > innerHeight) {
-                    var x = document.querySelector('#registeringDevice');
+                    var x = document.querySelector ('ro-view#' + RoApp.activeView);
                     x.style.webkitTransition = '1s';
                     x.style.webkitTransform = 'translateY(-200px)';
                 }
@@ -70,7 +72,7 @@ var Ro = (function () {
 
             document.addEventListener ("hidekeyboard", function () {
 
-                var x = document.querySelector('#registeringDevice');
+                var x = document.querySelector ('ro-view#' + RoApp.activeView);
                 x.style.webkitTransition = '10ms';
                 x.style.webkitTransform = 'translateY(0)';                                  
 
@@ -232,7 +234,7 @@ var Ro = (function () {
                     this.success (parsedResponse, xhr);
                 }
 
-            } else {
+            } else if (xhr.readyState === 4) {
 
                 if (this.error) {
                     this.error (xhr);
@@ -402,14 +404,37 @@ var Ro = (function () {
 
         switch (i18n) {
             case '':
-                el.innerHTML = Ro.templateEngine(el.innerHTML);
+                el.innerHTML = Ro.templateEngine(el.getAttribute('i18nKey'));
                 break;
             default:
-                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute(i18n)));
+                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute('i18nKey')));
                 break;
         }
 
-    }
+    },
+
+    getTranslationByKey : function(key){
+        
+        var value = Ro.i18n.translations[key];
+        
+        if (value){
+            return value;
+        }
+        
+        return key;
+    },
+
+    getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
+
+        var message = Ro.i18n.getTranslationByKey (resourceId);
+        
+        if (message === resourceId) {
+            return alternativeValue;
+        }
+        
+        return message;
+    }    
+
   }
 
   return Roads;

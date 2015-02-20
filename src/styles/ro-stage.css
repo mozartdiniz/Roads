@@ -1,0 +1,68 @@
+ro-stage[loading="true"]::before {
+    content: '';
+    display: block;
+    left: 0;
+    width: 100%;
+    top: 45px;
+    height: calc(100% - 45px);
+    position: absolute;
+    background: rgba(0,0,0,0.7);
+    z-index: 9;
+}
+
+ro-stage[loading="true"]::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: 50%;
+    margin-left: -25px;
+    top: 50%;
+    margin-top: -25px;
+    border: 3px dashed white;
+    border-radius: 100%;
+    z-index: 10;
+
+    animation: rotateRoStageLoader 1s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+
+    -webkit-animation: rotateRoStageLoader 1s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: infinite;
+
+    -ms-animation: rotateRoStageLoader 1s;
+    -ms-animation-timing-function: linear;
+    -ms-animation-fill-mode: forwards;
+    -ms-animation-iteration-count: infinite;    
+
+}
+
+@keyframes rotateRoStageLoader {
+    0% {      
+      transform: rotateZ(0deg);
+    }    
+    100% {
+      transform: rotateZ(360deg);
+    }
+}
+
+@-webkit-keyframes rotateRoStageLoader {
+    0% {      
+      -webkit-transform: rotateZ(0deg);
+    }    
+    100% {
+      -webkit-transform: rotateZ(360deg);
+    }
+}
+
+@-ms-keyframes rotateRoStageLoader {
+    0% {      
+      transform: rotateZ(0deg);
+    }    
+    100% {
+      transform: rotateZ(360deg);
+    }
+}

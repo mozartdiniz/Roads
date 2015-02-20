@@ -122,6 +122,8 @@
                
         Ro.i18n.translateView (to);
 
+        this.activeView = toID;        
+
         xtag.fireEvent(to, 'show');
 
       },
@@ -157,6 +159,8 @@
         from.style.transform = 'translateX(' + window.innerWidth + 'px)'; 
 
         Ro.i18n.translateView (to);
+
+        this.activeView = toID;
 
         xtag.fireEvent (to, 'show');        
 

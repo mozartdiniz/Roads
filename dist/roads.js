@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-18 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-19 */var Ro = (function () {
 
   var Roads = {
 
@@ -46,7 +46,9 @@
 
         window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
 
-        document.addEventListener("deviceready", function (){
+        document.addEventListener ("deviceready", function (){
+
+            var RoApp = document.querySelector ('ro-app');
 
             RoApp.style.webkitTransition = '10ms';
             RoApp.style.height = window.innerHeight + 'px';
@@ -232,7 +234,7 @@
                     this.success (parsedResponse, xhr);
                 }
 
-            } else {
+            } else if (xhr.readyState === 4) {
 
                 if (this.error) {
                     this.error (xhr);
@@ -409,7 +411,30 @@
                 break;
         }
 
-    }
+    },
+
+    getTranslationByKey : function(key){
+        
+        var value = Ro.i18n.translations[key];
+        
+        if (value){
+            return value;
+        }
+        
+        return key;
+    },
+
+    getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
+
+        var message = Ro.i18n.getTranslationByKey (resourceId);
+        
+        if (message === resourceId) {
+            return alternativeValue;
+        }
+        
+        return message;
+    }    
+
   }
 
   return Roads;
@@ -539,6 +564,8 @@
                
         Ro.i18n.translateView (to);
 
+        this.activeView = toID;        
+
         xtag.fireEvent(to, 'show');
 
       },
@@ -574,6 +601,8 @@
         from.style.transform = 'translateX(' + window.innerWidth + 'px)'; 
 
         Ro.i18n.translateView (to);
+
+        this.activeView = toID;
 
         xtag.fireEvent (to, 'show');        
 
@@ -648,12 +677,16 @@
 
   xtag.register ('ro-float-menu', {
     lifecycle: {
+      
       created: function () {
         this.xtag.itemsAreVisible = false;
 
         this.xtag.overlay = document.createElement('ro-overlay');        
         this.xtag.hitArea = document.createElement('ro-hitarea');
+
+        this.parseList ();
       },
+
       inserted: function () {
 
         this.appendChild(this.xtag.hitArea);
@@ -682,6 +715,7 @@
       },
       removeItem: function (item) {
       },
+
       toggleMenu: function () {
         if (this.xtag.itemsAreVisible) {
            this.hideItems ();
@@ -689,18 +723,34 @@
           this.showItems ();
         }
       },
+
       hideItems: function () {
         this.setAttribute('state', 'hideItems');
         this.xtag.overlay.setAttribute('state', 'hideItems');
 
         this.xtag.itemsAreVisible = false;
       },
+
       showItems: function (items) {
         this.setAttribute('state', 'showItems');
         this.xtag.overlay.setAttribute('state', 'showItems');
         this.xtag.itemsAreVisible = true;
       },
+
       parseList: function () {
+        var items = this.querySelectorAll('ro-item');
+        for (var i = 0; i < items.length; i++) {
+
+          var itemActionFunction = new Function (items[i].getAttribute ('action'));
+          var action = (function (scope, func){
+            return function () {
+              func ();
+              scope.hideItems ();
+            };
+          }(this, itemActionFunction));
+
+          items[i].addEventListener ('click', action);
+        };
       }
     }
   });
@@ -894,6 +944,35 @@
         });
         
       } 
+    }
+  });
+
+})();
+(function (){
+
+  xtag.register ('ro-stage', {
+    lifecycle: {
+      created: function () {
+        
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+      showLoader: function () {
+        this.setAttribute('loading', true);
+      },
+      hideLoader: function () {
+        this.setAttribute('loading', false);
+      }    
     }
   });
 

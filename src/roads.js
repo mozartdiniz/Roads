@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-19 */var Ro = (function () {
+var Ro = (function () {
 
   var Roads = {
 
@@ -22,23 +22,25 @@
                 RoApp.appendChild (clone);
             };            
 
-            var x = document.querySelector('ro-stage[scroll]');
+            var stageToScroll = document.querySelector('ro-stage[scroll]');
 
-            Ro.Globals.roAppScroll = new IScroll(x, {
-                probeType:  3,
-                mouseWheel: true,
-                bounce: true,
-                keyBindings: true,
-                invertWheelDirection: false,
-                momentum: true,
-                fadeScrollbars: false,
-                scrollbars: false,
-                interactiveScrollbars: false,
-                resizeScrollbars: false,
-                shrinkScrollbars: false,
-                click: false,
-                preventDefaultException: { tagName:/.*/ }
-            });              
+            if (stageToScroll) {
+                Ro.Globals.roAppScroll = new IScroll(stageToScroll, {
+                    probeType:  3,
+                    mouseWheel: true,
+                    bounce: true,
+                    keyBindings: true,
+                    invertWheelDirection: false,
+                    momentum: true,
+                    fadeScrollbars: false,
+                    scrollbars: false,
+                    interactiveScrollbars: false,
+                    resizeScrollbars: false,
+                    shrinkScrollbars: false,
+                    click: false,
+                    preventDefaultException: { tagName:/.*/ }
+                });
+            }            
 
             setTimeout (callback, 100);
 

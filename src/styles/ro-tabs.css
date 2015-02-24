@@ -1,0 +1,45 @@
+/* Tabs */ 
+
+ro-tabs {
+  display: block;
+  position: relative;
+}
+
+ro-tabs-labels {
+  width: 100%;
+  background: gray;
+  /* new flexbox syntax */
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: stretch;
+
+  /* old flexbox syntax */
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+
+  -webkit-align-content: stretch;
+  -ms-flex-line-pack: stretch;
+
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+
+  min-width: 0px;
+  min-height: auto;  
+  height: 45px;
+}

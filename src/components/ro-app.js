@@ -72,7 +72,9 @@
           firstView.style.webkitTransition = '10ms';
           firstView.style.transition = '10ms';
           firstView.style.webkitTransform = 'translateX(0)';
-          firstView.style.transform = 'translateX(0)';                    
+          firstView.style.transform = 'translateX(0)';  
+
+          RoApp.activeView = firstView.id;
 
         }
 

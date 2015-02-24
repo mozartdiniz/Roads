@@ -1,0 +1,52 @@
+/* Tab */
+ro-tab {
+  position: relative;
+  left: 0;
+  width: 100%;
+  background: red;
+}
+
+ro-tab-label {
+  padding: 10px;
+  display: inline-block;
+  background: green;
+  color: white;
+}
+
+ro-tab-label {
+  padding: 10px;
+  /* new flexbox syntax */
+  order: 2;
+  flex: 1 1 auto;
+  align-self: auto;  
+
+  /* old flexbox syntax */
+  -webkit-box-ordinal-group: 2;
+  -webkit-order: 2;
+  -ms-flex-order: 2;
+
+  -webkit-box-flex: 0;
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+
+  -webkit-align-self: auto;
+  -ms-flex-item-align: auto;
+
+  min-width: 0px;
+  min-height: auto;  
+  text-align: center;
+  padding-top: 14px;
+  display: block;
+
+  color: rgba(255,255,255,0.63);
+
+}
+
+ro-tab-label[selected="true"] {
+  border-bottom: 3px solid black;
+  color: rgba(255,255,255,1);
+}
+
+ro-tab > ro-list {
+  position: relative;
+}

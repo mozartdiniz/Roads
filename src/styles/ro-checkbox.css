@@ -1,0 +1,20 @@
+/* Checkbox */
+ro-checkbox {
+  display: inline-block;
+  float: left;
+  border: 1px solid gray;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+ro-checkbox[checked="true"] {
+  background: gray;
+}
+
+ro-checkbox[checked="false"] {
+  background: #fff;
+}
+
+ro-checkbox input[type="checkbox"] {
+  display: none;
+}

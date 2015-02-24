@@ -1,0 +1,51 @@
+ro-map {
+  height: 300px;
+  text-align: center;
+  width: 100%;
+  background: none repeat scroll 0% 0% #C9AA75;
+  display: block;
+  background: white;
+}
+
+ro-map ro-map-canvas {
+  width: inherit;
+  height: inherit;
+  display: block;
+  position: absolute;
+  top: 0;
+}
+
+ro-map ro-map-layer-group {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE4LjEuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMjMuMzAzIDIzLjMwMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMuMzAzIDIzLjMwMzsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPGc+DQoJCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiMwMTAwMDI7IiBwb2ludHM9IjIzLjMwMyw3LjI1NCAxMS42NTIsMC45MjEgMCw3LjI1NCAxMS42NTIsMTMuNTg4IAkJIi8+DQoJCTxwb2x5Z29uIHN0eWxlPSJmaWxsOiMwMTAwMDI7IiBwb2ludHM9IjExLjY1MiwxNS42MyAyLjE2NiwxMC40NzYgMCwxMS42NTMgMTEuNjUyLDE3Ljk4NCAyMy4zMDMsMTEuNjUzIDIxLjEzNywxMC40NzYgCQkiLz4NCgkJPHBvbHlnb24gc3R5bGU9ImZpbGw6IzAxMDAwMjsiIHBvaW50cz0iMTEuNjUyLDIwLjAyOCAyLjE2NiwxNC44NzMgMCwxNi4wNDggMTEuNjUyLDIyLjM4MiAyMy4zMDMsMTYuMDQ4IDIxLjEzNywxNC44NzMgCQkiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8L3N2Zz4NCg==') center center no-repeat rgba(255,255,255,0.8);
+  background-size: 20px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border-radius: 4px;
+}
+
+ro-map-layer-group ro-item {
+  position: relative;
+  width: 200px;
+  right: 43px;
+  font-size: 12px;
+  text-align: right;
+  border: none;
+  background: rgba(255,255,255,0.8);
+  float: right;
+}
+
+ro-map-layer-group ro-item:nth-of-type(1) {
+  border-radius: 4px 4px 0 0;
+}
+
+ro-map-layer-group :last-child {
+  border-radius: 0 0 4px 4px;
+}
+
+ro-map-layer-group[visible="false"] ro-item {
+  display: none;
+}

@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-19 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-24 */var Ro = (function () {
 
   var Roads = {
 
@@ -22,23 +22,25 @@
                 RoApp.appendChild (clone);
             };            
 
-            var x = document.querySelector('ro-stage[scroll]');
+            var stageToScroll = document.querySelector('ro-stage[scroll]');
 
-            Ro.Globals.roAppScroll = new IScroll(x, {
-                probeType:  3,
-                mouseWheel: true,
-                bounce: true,
-                keyBindings: true,
-                invertWheelDirection: false,
-                momentum: true,
-                fadeScrollbars: false,
-                scrollbars: false,
-                interactiveScrollbars: false,
-                resizeScrollbars: false,
-                shrinkScrollbars: false,
-                click: false,
-                preventDefaultException: { tagName:/.*/ }
-            });              
+            if (stageToScroll) {
+                Ro.Globals.roAppScroll = new IScroll(stageToScroll, {
+                    probeType:  3,
+                    mouseWheel: true,
+                    bounce: true,
+                    keyBindings: true,
+                    invertWheelDirection: false,
+                    momentum: true,
+                    fadeScrollbars: false,
+                    scrollbars: false,
+                    interactiveScrollbars: false,
+                    resizeScrollbars: false,
+                    shrinkScrollbars: false,
+                    click: false,
+                    preventDefaultException: { tagName:/.*/ }
+                });
+            }            
 
             setTimeout (callback, 100);
 
@@ -61,7 +63,7 @@
                 var innerHeight = window.innerHeight;
 
                 if (activeElementTop > innerHeight) {
-                    var x = document.querySelector('#registeringDevice');
+                    var x = document.querySelector ('ro-view#' + RoApp.activeView);
                     x.style.webkitTransition = '1s';
                     x.style.webkitTransform = 'translateY(-200px)';
                 }
@@ -72,7 +74,7 @@
 
             document.addEventListener ("hidekeyboard", function () {
 
-                var x = document.querySelector('#registeringDevice');
+                var x = document.querySelector ('ro-view#' + RoApp.activeView);
                 x.style.webkitTransition = '10ms';
                 x.style.webkitTransform = 'translateY(0)';                                  
 
@@ -404,10 +406,10 @@
 
         switch (i18n) {
             case '':
-                el.innerHTML = Ro.templateEngine(el.innerHTML);
+                el.innerHTML = Ro.templateEngine(el.getAttribute('i18nKey'));
                 break;
             default:
-                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute(i18n)));
+                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute('i18nKey')));
                 break;
         }
 
@@ -514,7 +516,9 @@
           firstView.style.webkitTransition = '10ms';
           firstView.style.transition = '10ms';
           firstView.style.webkitTransform = 'translateX(0)';
-          firstView.style.transform = 'translateX(0)';                    
+          firstView.style.transform = 'translateX(0)';  
+
+          RoApp.activeView = firstView.id;
 
         }
 
@@ -675,6 +679,71 @@
 })();
 (function (){
 
+  xtag.register ('ro-checkbox', {
+    lifecycle: {
+      created: function () {
+
+        if (!this.firstElementChild) {
+          this.checkInput = document.createElement ('input');
+          this.checkInput.addEventListener ('click', function (e) {
+            e.preventDefault ();
+          });
+          this.setAttribute ('checked', false);
+          this.addEventListener ('click', this.toggleCheck);
+          this.checkInput.type = 'checkbox';
+          this.appendChild (this.checkInput);          
+        }
+
+      },
+      inserted: function () {
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+      addListeners: function () {
+        var action = new Function (this.getAttribute('action'));
+        this.addEventListener ('click', action);
+      },
+
+      toggleCheck: function () {
+
+        if (this.checkInput.checked) {
+          this.uncheck ();
+        } else {
+          this.check ();
+        }
+
+      },
+
+      check: function () {
+        this.checkInput.checked = true;
+        this.setAttribute ('checked', true);
+      },
+
+      uncheck: function () {
+        this.checkInput.checked = false;
+        this.setAttribute ('checked', false);
+      },
+
+      value: function () {
+        if (this.checkInput.checked) {
+          return true;
+        }
+        return false;
+      }
+    }
+  });
+
+})();
+(function (){
+
   xtag.register ('ro-float-menu', {
     lifecycle: {
       
@@ -790,6 +859,7 @@
           this.xtag.field.type = this.getAttribute('type');
           this.xtag.field.value = this.getAttribute('value');
           this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
+          this.xtag.field.setAttribute('i18nKey', this.getAttribute('i18nKey'));
           this.xtag.field.placeholder = this.getAttribute('placeholder');
           this.xtag.field.name = this.getAttribute('name');
 
@@ -857,8 +927,32 @@
         this.xtag.item = this.querySelector ('ro-item');
         this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
         this.xtag.itemAction = this.xtag.item.getAttribute ('action');
+
+        this.buttons = {};
+
+        //Add default buttons
+        this.addButton ({
+          name: 'delete',
+          action: function () {
+            var button = document.createElement ('ro-button');
+            button.innerHTML = 'DELETE';
+            return button;
+          }
+        });
+
+        this.addButton ({
+          name: 'share',
+          action: function () {
+            var button = document.createElement ('ro-button');
+            button.innerHTML = 'SHARE';
+            return button;
+          }
+        });        
+
       },
       inserted: function () {
+
+        this.activeButtons = this.getButtonsInfo ();
 
         var nextElement = this.parentElement.nextElementSibling;
 
@@ -875,13 +969,6 @@
       removed: function () {
       }
     },
-    events: {
-      reveal: function () {
-      }
-    },
-    accessors: {   
-      data: []   
-    },
     methods: {
       setData: function (data) {
         this.xtag.data = data;
@@ -896,14 +983,141 @@
         for (var i = 0; i < data.length; i++) {
 
           var roItem = document.createElement ('ro-item');
+          var roContent = document.createElement ('ro-item-content');
           var action = new Function (Ro.templateEngine (this.xtag.itemAction, data[i]));
-          roItem.addEventListener ('click', action);
-          roItem.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
+
+          roItem.setAttribute ('itemIndex', i);
+
+          roContent.addEventListener ('click', action);
+          roContent.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
+          
+          if (this.getAttribute ('swipeable')) {
+            roItem.appendChild (this.renderSwipeMenu ());
+            this.addSwipeMenuActions (roItem, this);
+          }
+
+          for (var j = 0; j < this.activeButtons.length; j++) {
+            roItem.appendChild (this.activeButtons[j]());            
+          };
+          
+          if (this.getAttribute ('selectable')) {
+            roItem.appendChild (this.renderSelectableButton ());
+          }
+
+          roItem.appendChild (roContent);
+
           this.appendChild (roItem);
 
         };
 
-      }      
+      },
+
+      getButtonsInfo: function () {
+
+        var attribute = this.getAttribute ('actionButtons');
+        var buttons = false;
+
+        if (attribute) {
+          var buttons = attribute.split(',').map(function (item){
+             return this.buttons [item.trim()];
+          }.bind (this));          
+        }
+
+        return buttons;
+
+      },
+
+      addButton: function (button) {
+        this.buttons[button.name] = button.action;
+      },
+
+      renderSelectableButton: function () {
+
+        var cbox = document.createElement ('ro-checkbox');
+        cbox.appendChild (this.renderes.selectableButton ());
+        cbox.addEventListener ('click', function (e) {
+          if (cbox.querySelector ('input[type="checkbox"]').checked) {
+            this.callbacks.didSelectedItem (e);
+          } else {
+            this.callbacks.didUnSelectedItem (e);
+          }
+        }.bind (this));        
+
+        return cbox;
+      },
+
+      selectedItems: function () {
+        return this.querySelectorAll('ro-checkbox[checked="true"]');
+      },
+
+      callbacks: {
+        didSelectedItem: function (e) {},
+        didUnSelectedItem: function (e) {},
+        didSwipeItem: function (e) {}
+      },
+
+      renderes: {
+        selectableButton: function () {
+          return document.createTextNode ('');  
+        }
+      },
+
+      setCallback: function (callback) {
+        this.callbacks[callback.name] = callback.action;
+      },
+
+      setRenderer: function (renderer) {
+        this.renderes[renderer.name] = renderer.action;
+      },
+
+      renderSwipeMenu: function () {
+
+        var roItemSwipemenu = document.createElement ('ro-item-swipemenu');
+        roItemSwipemenu.innerHTML = this.getAttribute ('swipeMenuLabel');
+
+        return roItemSwipemenu;
+      },
+
+      addSwipeMenuActions: function (item, scope) {
+
+        var items = this.querySelectorAll('ro-item ro-item-swipemenu');
+        var hammertime = new Hammer(item);
+
+        hammertime.on ('panright', function(e) {    
+
+          var menu = item.firstElementChild;
+
+          if (menu && e.deltaX > (window.innerWidth / 2)) {
+
+            menu.className = 'goMenu';
+
+          } else if (menu && e.deltaX > 100) {
+
+            menu.className = '';
+            menu.style.webkitTransform = 'translateX(' + e.deltaX + 'px)';
+            menu.style.transform = 'translateX(' + e.deltaX + 'px)';      
+          }
+
+        });
+
+        hammertime.on ('panend', function (e) {
+
+          var menu = item.firstElementChild;
+
+          if (e.deltaX < (window.innerWidth / 2) && menu) {
+            menu.className = 'backMenu';
+          } else {
+            scope.callbacks.didSwipeItem (item);
+
+            setTimeout ((function (item) {
+              item.firstElementChild.className = 'backMenu';
+            }(item)), 1000);
+          }
+
+        });
+
+      }
+
     }
   });
 
@@ -950,6 +1164,160 @@
 })();
 (function (){
 
+  xtag.register ('ro-map', {
+    lifecycle: {
+      created: function () {               
+      },
+      inserted: function () {
+
+        if (!this.querySelector ('ro-map-canvas')) {
+
+          this.map = document.createElement ('ro-map-canvas');
+          this.appendChild (this.map);
+
+          this.parseLayers ();
+
+          if (this.getAttribute ('layerGroup')) {
+            this.createLayerGroup ();  
+          }
+
+          var initialLatitude = this.getAttribute ('latitude') || "0";
+          var initialLongitude = this.getAttribute ('longitude') || "0";
+          var initialZoom = this.getAttribute ('zoom') || "1";
+          var maxZoom = this.getAttribute ('maxZoom') || "22";
+          var minZoom = this.getAttribute ('minZoom') || "1";
+          var center = ol.proj.transform ([parseFloat(initialLongitude), parseFloat(initialLatitude)], 'EPSG:4326', 'EPSG:3857')
+
+          this.olMap = new ol.Map({
+            layers: this.olLayers,
+            target: this.map,
+            renderer: 'canvas',
+            view: new ol.View({
+              center: center,
+              zoom: parseInt(initialZoom),
+              maxZoom: parseInt(maxZoom),
+              minZoom: parseInt(minZoom)
+            })
+          });
+        }
+
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+
+      parseLayers: function () {
+
+        this.olLayers = [];        
+        this.roLayers = this.querySelectorAll ('ro-layer');
+
+        for (var i = 0; i < this.roLayers.length; i++) {
+          this.olLayers.push (this.layerBuilder (this.roLayers[i]));
+        };
+
+      },
+
+      layerBuilder: function (layer) {
+
+        var type       = layer.getAttribute ('source') || 'OSM';
+        var imagerySet = layer.getAttribute ('imagerySet') || '';
+        var visible    = (layer.getAttribute ('visible')) ? true : false;
+
+        switch (type) {
+          case 'OSM':
+            return new ol.layer.Tile({
+                  source: new ol.source.OSM(),
+                  visible: visible
+                });
+            break;
+          case 'Bing':
+            return new ol.layer.Tile({
+                  source: new ol.source.BingMaps({
+                    key: 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3',
+                    imagerySet: imagerySet,
+                    visible: visible
+                  })
+                });
+            break;
+          default:
+            return new ol.layer.Tile({
+                  source: new ol.source.OSM(),
+                  visible: visible
+                });                        
+        }
+      },
+
+      showLayer: function (index) {
+
+        for (var i = 0; i < this.olLayers.length; i++) {
+          this.olLayers[i].setVisible (false);
+        };
+
+        this.olLayers[index].setVisible (true);
+      },
+
+      createLayerGroup: function () {
+
+        this.layerGroup = document.createElement ('ro-map-layer-group');
+        this.layerGroup.setAttribute ('visible', 'false');
+
+        for (var i = 0; i < this.olLayers.length; i++) {
+          var layerItem = document.createElement ('ro-item');
+          layerItem.innerHTML = this.roLayers[i].getAttribute ('label');
+          layerItem.addEventListener ('click', this.showLayer.bind (this, i));
+          this.layerGroup.appendChild (layerItem);
+        };
+
+        this.layerGroup.addEventListener ('click', this.toggleLayerGroup.bind (this));
+
+        this.appendChild (this.layerGroup);
+
+      },
+
+      toggleLayerGroup: function () {
+        if (this.layerGroup.getAttribute ('visible') === 'true') {
+          this.hideLayerGroup ();
+        } else {
+          this.showLayerGroup ();
+        }
+      },
+
+      showLayerGroup: function () {
+        this.layerGroup.setAttribute ('visible', true);  
+      },
+
+      hideLayerGroup: function () {
+        this.layerGroup.setAttribute ('visible', false);
+      },
+
+      setCenter: function () {
+
+      },
+
+      addMarker: function () {
+
+      },
+
+      addMarkers: function () {
+
+      },
+
+      markerFocus: function () {
+        
+      }
+    }
+  });
+
+})();
+(function (){
+
   xtag.register ('ro-stage', {
     lifecycle: {
       created: function () {
@@ -972,6 +1340,93 @@
       },
       hideLoader: function () {
         this.setAttribute('loading', false);
+      }    
+    }
+  });
+
+})();
+
+(function (){
+
+  xtag.register ('ro-tabs', {
+    lifecycle: {
+      created: function () {
+        
+        var tabsLabels = this.querySelector ('ro-tabs-labels');
+        var tabs = this.querySelectorAll ('ro-tab');
+
+        if (!tabsLabels) {
+
+          this.tabsLabelGroup = document.createElement ('ro-tabs-labels');
+
+          for (var i = 0; i < tabs.length; i++) {
+
+            var tabLabel = document.createElement ('ro-tab-label');
+            tabLabel.innerHTML = tabs[i].getAttribute ('label');
+
+            tabLabel.setAttribute ('tabIndex', i);
+            tabs[i].setAttribute ('tabIndex', i);
+
+            if (tabs[i].getAttribute ('selected')) {
+              tabs[i].style.display = 'block';              
+              tabLabel.setAttribute ('selected', true);
+            } else {
+              tabs[i].style.display = 'none';
+            }
+
+            this.tabsLabelGroup.appendChild (tabLabel);
+          };
+
+          this.insertBefore (this.tabsLabelGroup, tabs[0]);
+        }
+
+      },
+      inserted: function () {
+
+        var tabLabels = this.querySelectorAll ('ro-tabs-labels ro-tab-label');
+        var tabs = this.querySelectorAll ('ro-tab');
+
+        for (var i = 0; i < tabLabels.length; i++) {
+          
+            tabLabels[i].addEventListener ('click', (function (scope, label, tab){
+              return function () {
+
+                scope.setActive (label, tab);
+
+              };
+            }(this, tabLabels[i], tabs[i])));
+
+        };
+      },
+      removed: function () {
+      }
+    },
+    events: {
+      reveal: function () {
+      }
+    },
+    accessors: {     
+    },
+    methods: { 
+      setActive: function (tabLabel, tab) {
+
+        this.hideOtherTabs ();
+
+        tabLabel.setAttribute ('selected', true);
+
+        tab.style.display = 'block';
+
+      },
+      hideOtherTabs: function () {
+
+        var tabsLabels = this.querySelectorAll ('ro-tab-label');
+        var tabs = this.querySelectorAll ('ro-tab');
+
+        for (var i = 0; i < tabsLabels.length; i++) {
+            tabsLabels[i].removeAttribute ('selected');
+            tabs[i].style.display = 'none';
+        };
+
       }    
     }
   });

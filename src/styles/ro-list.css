@@ -98,8 +98,10 @@ ro-list ro-item ro-item-content {
   min-height: auto;  
   text-align: left;
   padding-top: 14px;
+  padding: 10px;
   display: block;
-  padding-left: 10px;  
+  
+  width: calc(100% - 80px);
 }
 
 ro-item-swipemenu {

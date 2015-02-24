@@ -103,28 +103,34 @@ var Ro = (function () {
     templateEngine : function (tpl, data) {
 
         var re = /{{([^}}]+)?}}/g;
-        var filter, key, filterParameter, hasFilter = 0;
+        var filter, key, filterParameter, hasFilter = 0, keyToFind = '';
 
-        while(match = re.exec(tpl)) {
+        if (tpl) {
+            while(match = tpl.match(re)) {
 
-            hasFilter = match[1].indexOf('|');
+                hasFilter = match[0].indexOf('|');
 
-            if (hasFilter > 0) {
-              filter = match[1].split('|')[1].trim(); 
-              if (filter.indexOf(':') > 0) {
-                filterParameter = filter.split(':')[1];
-                filter = filter.split(':')[0];
-              }
-              key = match[1].split('|')[0].trim(); 
-            } else {
-              key = match[1];  
-            }
+                if (hasFilter > 0) {
+                  filter = match[0].split('|')[1].replace('}}','').trim();
+                  if (filter.indexOf(':') > 0) {
+                    filterParameter = filter.split(':')[1];
+                    filter = filter.split(':')[0];
+                  }
+                  key = match[0].split('|')[0].replace('{{','').trim(); 
+                } else {
+                  key = match[0].replace('{{', '').replace('}}','').trim();
+                }
 
-            if (hasFilter && Ro.Filter.filters[filter]) {
-              tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key) || key, filterParameter));
-            } else {
-              tpl = tpl.replace(match[0], this.findByKey (data, key));
-            }
+                if (hasFilter && Ro.Filter.filters[filter]) {
+                  if (data) {
+                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key)));
+                  } else {
+                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](key, filterParameter));
+                  }
+                } else {
+                  tpl = tpl.replace(match[0], this.findByKey (data, key));
+                }
+            }            
         }
 
         return tpl;
@@ -368,6 +374,14 @@ var Ro = (function () {
 
             return format;
         },
+
+        float: function (value) {
+            if (value) {
+                return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
+            }
+            
+            return '0';
+        },        
         
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;

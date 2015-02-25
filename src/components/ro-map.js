@@ -118,11 +118,13 @@
       },
 
       toggleLayerGroup: function () {
+
         if (this.layerGroup.getAttribute ('visible') === 'true') {
           this.hideLayerGroup ();
         } else {
           this.showLayerGroup ();
         }
+
       },
 
       showLayerGroup: function () {
@@ -133,11 +135,53 @@
         this.layerGroup.setAttribute ('visible', false);
       },
 
-      setCenter: function () {
+      setCenter: function (position) {
+
+        var view = this.olMap.getView ();
+        var latlng = ol.proj.transform (
+          [position.longitude, position.latitude], 'EPSG:4326', 'EPSG:3857'
+        );
+        view.setCenter (latlng);
 
       },
 
-      addMarker: function () {
+      setZoom: function (zoom) {
+
+        var view = this.olMap.getView ();
+        view.setZoom (zoom);
+
+      },
+
+      addMarker: function (position, markerContent) {
+
+        if (position.longitude && position.latitude) {
+
+          var markerEl = document.createElement('div');
+          var ll = ol.proj.transform(
+                      [position.longitude, position.latitude],
+                      'EPSG:4326',
+                      'EPSG:3857'
+                    );
+
+          markerEl.className = 'roMarker';
+
+          if (markerContent) {
+            markerEl.appendChild (markerContent);  
+          }
+
+          var marker = new ol.Overlay({
+              element: markerEl,
+              positioning: 'buttom-left',
+              stopEvent: false
+          });
+
+          marker.setPosition(ll);
+
+          this.olMap.addOverlay(marker);
+
+        } else {
+          console.log ('latitude and longitude are mandatory');
+        }
 
       },
 
@@ -145,8 +189,82 @@
 
       },
 
-      markerFocus: function () {
+      markerFocus: function (position) {
         
+        var focusEl = document.createElement ('div');
+        focusEl.className = 'focusMaker';
+
+        var ll = ol.proj.transform(
+                    [position.longitude, position.latitude],
+                    'EPSG:4326',
+                    'EPSG:3857'
+                  );        
+
+        var marker = new ol.Overlay({
+            element: focusEl,
+            positioning: 'buttom-left',
+            stopEvent: false
+        });        
+
+        marker.setPosition(ll);
+
+        this.olMap.addOverlay(marker);
+
+        setTimeout ((function (scope, marker) {
+          return function () {
+            scope.olMap.removeOverlay (marker);
+          };
+        }(this, marker)), 1000);
+
+      },
+
+      /* Get map features and focuses them */
+
+      fitToBound: function () {
+
+        var o = this.olMap.getOverlays();
+        var v = this.olMap.getView();
+        var a = o.getArray();
+        var p = [];
+
+        for (var i = 0, l = a.length; i < l; i++) {
+            if (a[i].getPosition() && !a[i].currentPosition) {
+                p.push(a[i].getPosition())
+            }
+        }
+
+        var l = p[0][1],
+            r = p[0][1],
+            t = p[0][0],
+            b = p[0][0];
+
+        for (var i = 0, pl = p.length; i < pl; i++) {
+
+            if (l < p[i][1]) {
+                l = p[i][1];
+            }
+            if (r > p[i][1]) {
+                r = p[i][1];
+            }
+            if (t < p[i][0]) {
+                t = p[i][0]
+            }
+            if (b > p[i][0]) {
+                b = p[i][0];
+            }
+        }
+
+        featureMultiLine = new ol.Feature();
+
+        var ml = new ol.geom.LineString([
+            [b, l],
+            [t, l],
+            [t, r],
+            [b, r]
+        ]);
+
+        v.fitExtent(ml.getExtent(), this.olMap.getSize());
+
       }
     }
   });

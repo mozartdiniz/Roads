@@ -80,7 +80,7 @@
           };
           
           if (this.getAttribute ('selectable')) {
-            roItem.appendChild (this.renderSelectableButton ());
+            roItem.appendChild (this.renderSelectableButton (data[i]));
           }
 
           roItem.appendChild (roContent);
@@ -110,10 +110,10 @@
         this.buttons[button.name] = button.action;
       },
 
-      renderSelectableButton: function () {
+      renderSelectableButton: function (data) {
 
         var cbox = document.createElement ('ro-checkbox');
-        cbox.appendChild (this.renderes.selectableButton ());
+        cbox.appendChild (this.renderes.selectableButton (data));
         cbox.addEventListener ('click', function (e) {
           if (cbox.querySelector ('input[type="checkbox"]').checked) {
             this.callbacks.didSelectedItem (e);
@@ -136,7 +136,7 @@
       },
 
       renderes: {
-        selectableButton: function () {
+        selectableButton: function (data) {
           return document.createTextNode ('');  
         }
       },

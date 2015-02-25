@@ -171,7 +171,7 @@ var Ro = (function () {
             findKey(obj, key);
         }
 
-        return (sObj.length === 1) ? sObj.pop() : (sObj.length === 0) ? false : sObj;
+        return sObj[0] || '';
 
       },
 

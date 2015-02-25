@@ -49,3 +49,65 @@ ro-map-layer-group :last-child {
 ro-map-layer-group[visible="false"] ro-item {
   display: none;
 }
+
+ro-map-canvas .roMarker {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border: 1px solid gray;
+  border-radius: 3px;
+}
+
+ro-map-canvas .focusMaker {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  border: 2px dashed black;
+
+  animation-play-state: running;
+  animation-fill-mode: forwards !important;
+  animation: rotateFocusMaker 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  -webkit-animation-play-state: running;
+  -webkit-animation-fill-mode: forwards !important;
+  -webkit-animation: rotateFocusMaker 2s;    
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;  
+
+  -ms-animation-play-state: running;
+  -ms-animation-fill-mode: forwards !important;
+  -ms-animation: rotateFocusMaker 2s;   
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function: linear;    
+}
+
+/* Standard syntax */
+@keyframes rotateFocusMaker {
+    0% {
+      transform: rotateZ(0deg);
+    }
+    100% {
+      transform: rotateZ(360deg);
+    }
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes rotateFocusMaker {
+    0% {      
+      -webkit-transform: rotateZ(0deg);
+    }
+    100% {
+      -webkit-transform: rotateZ(360deg);
+    } 
+}
+
+@-ms-keyframes roadsHideMenuItem {
+    0% {
+      transform: rotateZ(0deg);
+    }
+    100% {
+      transform: rotateZ(360deg);
+    }
+}

@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-24 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-02-25 */var Ro = (function () {
 
   var Roads = {
 
@@ -103,28 +103,34 @@
     templateEngine : function (tpl, data) {
 
         var re = /{{([^}}]+)?}}/g;
-        var filter, key, filterParameter, hasFilter = 0;
+        var filter, key, filterParameter, hasFilter = 0, keyToFind = '';
 
-        while(match = re.exec(tpl)) {
+        if (tpl) {
+            while(match = tpl.match(re)) {
 
-            hasFilter = match[1].indexOf('|');
+                hasFilter = match[0].indexOf('|');
 
-            if (hasFilter > 0) {
-              filter = match[1].split('|')[1].trim(); 
-              if (filter.indexOf(':') > 0) {
-                filterParameter = filter.split(':')[1];
-                filter = filter.split(':')[0];
-              }
-              key = match[1].split('|')[0].trim(); 
-            } else {
-              key = match[1];  
-            }
+                if (hasFilter > 0) {
+                  filter = match[0].split('|')[1].replace('}}','').trim();
+                  if (filter.indexOf(':') > 0) {
+                    filterParameter = filter.split(':')[1];
+                    filter = filter.split(':')[0];
+                  }
+                  key = match[0].split('|')[0].replace('{{','').trim(); 
+                } else {
+                  key = match[0].replace('{{', '').replace('}}','').trim();
+                }
 
-            if (hasFilter && Ro.Filter.filters[filter]) {
-              tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key) || key, filterParameter));
-            } else {
-              tpl = tpl.replace(match[0], this.findByKey (data, key));
-            }
+                if (hasFilter && Ro.Filter.filters[filter]) {
+                  if (data) {
+                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key)));
+                  } else {
+                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](key, filterParameter));
+                  }
+                } else {
+                  tpl = tpl.replace(match[0], this.findByKey (data, key));
+                }
+            }            
         }
 
         return tpl;
@@ -165,7 +171,7 @@
             findKey(obj, key);
         }
 
-        return (sObj.length === 1) ? sObj.pop() : (sObj.length === 0) ? false : sObj;
+        return sObj[0] || '';
 
       },
 
@@ -368,6 +374,14 @@
 
             return format;
         },
+
+        float: function (value) {
+            if (value) {
+                return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
+            }
+            
+            return '0';
+        },        
         
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;
@@ -1001,7 +1015,7 @@
           };
           
           if (this.getAttribute ('selectable')) {
-            roItem.appendChild (this.renderSelectableButton ());
+            roItem.appendChild (this.renderSelectableButton (data[i]));
           }
 
           roItem.appendChild (roContent);
@@ -1031,10 +1045,10 @@
         this.buttons[button.name] = button.action;
       },
 
-      renderSelectableButton: function () {
+      renderSelectableButton: function (data) {
 
         var cbox = document.createElement ('ro-checkbox');
-        cbox.appendChild (this.renderes.selectableButton ());
+        cbox.appendChild (this.renderes.selectableButton (data));
         cbox.addEventListener ('click', function (e) {
           if (cbox.querySelector ('input[type="checkbox"]').checked) {
             this.callbacks.didSelectedItem (e);
@@ -1057,7 +1071,7 @@
       },
 
       renderes: {
-        selectableButton: function () {
+        selectableButton: function (data) {
           return document.createTextNode ('');  
         }
       },
@@ -1282,11 +1296,13 @@
       },
 
       toggleLayerGroup: function () {
+
         if (this.layerGroup.getAttribute ('visible') === 'true') {
           this.hideLayerGroup ();
         } else {
           this.showLayerGroup ();
         }
+
       },
 
       showLayerGroup: function () {
@@ -1297,11 +1313,53 @@
         this.layerGroup.setAttribute ('visible', false);
       },
 
-      setCenter: function () {
+      setCenter: function (position) {
+
+        var view = this.olMap.getView ();
+        var latlng = ol.proj.transform (
+          [position.longitude, position.latitude], 'EPSG:4326', 'EPSG:3857'
+        );
+        view.setCenter (latlng);
 
       },
 
-      addMarker: function () {
+      setZoom: function (zoom) {
+
+        var view = this.olMap.getView ();
+        view.setZoom (zoom);
+
+      },
+
+      addMarker: function (position, markerContent) {
+
+        if (position.longitude && position.latitude) {
+
+          var markerEl = document.createElement('div');
+          var ll = ol.proj.transform(
+                      [position.longitude, position.latitude],
+                      'EPSG:4326',
+                      'EPSG:3857'
+                    );
+
+          markerEl.className = 'roMarker';
+
+          if (markerContent) {
+            markerEl.appendChild (markerContent);  
+          }
+
+          var marker = new ol.Overlay({
+              element: markerEl,
+              positioning: 'buttom-left',
+              stopEvent: false
+          });
+
+          marker.setPosition(ll);
+
+          this.olMap.addOverlay(marker);
+
+        } else {
+          console.log ('latitude and longitude are mandatory');
+        }
 
       },
 
@@ -1309,8 +1367,82 @@
 
       },
 
-      markerFocus: function () {
+      markerFocus: function (position) {
         
+        var focusEl = document.createElement ('div');
+        focusEl.className = 'focusMaker';
+
+        var ll = ol.proj.transform(
+                    [position.longitude, position.latitude],
+                    'EPSG:4326',
+                    'EPSG:3857'
+                  );        
+
+        var marker = new ol.Overlay({
+            element: focusEl,
+            positioning: 'buttom-left',
+            stopEvent: false
+        });        
+
+        marker.setPosition(ll);
+
+        this.olMap.addOverlay(marker);
+
+        setTimeout ((function (scope, marker) {
+          return function () {
+            scope.olMap.removeOverlay (marker);
+          };
+        }(this, marker)), 1000);
+
+      },
+
+      /* Get map features and focuses them */
+
+      fitToBound: function () {
+
+        var o = this.olMap.getOverlays();
+        var v = this.olMap.getView();
+        var a = o.getArray();
+        var p = [];
+
+        for (var i = 0, l = a.length; i < l; i++) {
+            if (a[i].getPosition() && !a[i].currentPosition) {
+                p.push(a[i].getPosition())
+            }
+        }
+
+        var l = p[0][1],
+            r = p[0][1],
+            t = p[0][0],
+            b = p[0][0];
+
+        for (var i = 0, pl = p.length; i < pl; i++) {
+
+            if (l < p[i][1]) {
+                l = p[i][1];
+            }
+            if (r > p[i][1]) {
+                r = p[i][1];
+            }
+            if (t < p[i][0]) {
+                t = p[i][0]
+            }
+            if (b > p[i][0]) {
+                b = p[i][0];
+            }
+        }
+
+        featureMultiLine = new ol.Feature();
+
+        var ml = new ol.geom.LineString([
+            [b, l],
+            [t, l],
+            [t, r],
+            [b, r]
+        ]);
+
+        v.fitExtent(ml.getExtent(), this.olMap.getSize());
+
       }
     }
   });

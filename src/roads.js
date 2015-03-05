@@ -8,8 +8,8 @@ var Ro = (function () {
 
             var loader = document.querySelector ('ro-loader');
             if (loader) {
-                loader.show();    
-            }               
+                loader.show();
+            }
 
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
@@ -20,7 +20,7 @@ var Ro = (function () {
                 var clone = view.cloneNode(true);
 
                 RoApp.appendChild (clone);
-            };            
+            };
 
             var stageToScroll = document.querySelector('ro-stage[scroll]');
 
@@ -40,13 +40,13 @@ var Ro = (function () {
                     click: false,
                     preventDefaultException: { tagName:/.*/ }
                 });
-            }            
+            }
 
             setTimeout (callback, 100);
 
         }
 
-        window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
+        window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this));
 
         document.addEventListener ("deviceready", function (){
 
@@ -68,22 +68,22 @@ var Ro = (function () {
                     x.style.webkitTransform = 'translateY(-200px)';
                 }
 
-              },  100);  
+              },  100);
 
-            }, false); 
+            }, false);
 
             document.addEventListener ("hidekeyboard", function () {
 
                 var x = document.querySelector ('ro-view#' + RoApp.activeView);
                 x.style.webkitTransition = '10ms';
-                x.style.webkitTransform = 'translateY(0)';                                  
+                x.style.webkitTransform = 'translateY(0)';
 
-            }, false);                                  
+            }, false);
 
             document.addEventListener ("backbutton", function () {
                 Ro.Globals.backButtonFunction ();
-            }, false);            
-            
+            }, false);
+
         }, false);
 
     },
@@ -116,13 +116,13 @@ var Ro = (function () {
                     filterParameter = filter.split(':')[1];
                     filter = filter.split(':')[0];
                   }
-                  key = match[0].split('|')[0].replace('{{','').trim(); 
+                  key = match[0].split('|')[0].replace('{{','').trim();
                 } else {
                   key = match[0].replace('{{', '').replace('}}','').trim();
                 }
 
-                if (hasFilter && Ro.Filter.filters[filter]) {
-                  if (data) {
+                if (hasFilter > 0 && Ro.Filter.filters[filter]) {
+                  if (data && filter !== 'i18n') {
                     tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key)));
                   } else {
                     tpl = tpl.replace(match[0], Ro.Filter.filters[filter](key, filterParameter));
@@ -130,50 +130,25 @@ var Ro = (function () {
                 } else {
                   tpl = tpl.replace(match[0], this.findByKey (data, key));
                 }
-            }            
+            }
         }
 
         return tpl;
 
     },
 
-    findByKey : function (obj, key) {
+    findByKey : function (data, key) {
 
-        var j, key = key || '', obj = obj || {}, keys = key.split("."), 
-            sObj = [], ssObj = [], isSelector = !!(keys.length > 0);
+        var value  = data;
+        var keys   = key.split('.');
 
-        var findKey = function (obj, key) {
-            var k;
-            for (k in obj) {
-                if (k === key) {
-                    sObj.push(obj[k]);
-                } else if (typeof obj[k] == 'object') {
-                    findKey(obj[k], key);
-                }
-            }
-        };
-
-        if (isSelector) {
-            var nKey = keys.shift();
-            findKey(obj, nKey);
-
-            while (keys.length > 0) {
-                nKey = keys.shift();
-
-                if (sObj.length > 0) {
-                    ssObj = sObj.slice(0), sObj = [];
-                    for (j in ssObj) {
-                        findKey(ssObj[j], nKey);
-                    }
-                }
-            }
-        } else {
-            findKey(obj, key);
+        for(var x = 0, size = keys.length; x < size; x++){
+            value = value[keys[x]];
         }
 
-        return sObj[0] || '';
+        return value || "";
 
-      },
+    },
 
       Http: function () {
 
@@ -200,6 +175,9 @@ var Ro = (function () {
 
             request.open(this.method, this.url, this.async);
             request.setRequestHeader('Content-Type', this.contentType);
+            request.setRequestHeader("Cache-Control", "no-cache");
+
+            request.withCredentials = true;
 
             //closure
             request.onreadystatechange = this.sendCallback.bind(this);
@@ -207,8 +185,8 @@ var Ro = (function () {
             request.ontimeout = (function (scope) {
                 return function () {
                     if (scope.ontimeout) {
-                        scope.ontimeout (this, scope);    
-                    }                
+                        scope.ontimeout (this, scope);
+                    }
                 };
             })(this);
 
@@ -265,13 +243,13 @@ var Ro = (function () {
 
     var Controller = function () {
 
-        this.view = document.querySelector ('[ro-controller="' + viewID + '"]');    
+        this.view = document.querySelector ('[ro-controller="' + viewID + '"]');
 
         this.init ();
 
         if (this.show) {
-            this.view.setShowFunction (this.show.bind (this));    
-        }        
+            this.view.setShowFunction (this.show.bind (this));
+        }
 
     }
 
@@ -287,7 +265,7 @@ var Ro = (function () {
 
   Roads.Environment = {
     isTouchDevice: !!('ontouchstart' in window),
-      platform: {        
+      platform: {
         androidVersion: (function (){
             var isAndroid = navigator.userAgent.match(/Android([^;]*)/);
             if (isAndroid && isAndroid.length > 1) {
@@ -305,9 +283,9 @@ var Ro = (function () {
   }
 
   Roads.Globals = {
-    backButtonFunction: function () {        
+    backButtonFunction: function () {
         alert('No back function defined');
-    }    
+    }
   }
 
   Roads.Events = {
@@ -323,7 +301,7 @@ var Ro = (function () {
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
-            } 
+            }
 
             if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
                 dateValue = Roads.dateToIEandSafari (dateValue);
@@ -350,11 +328,11 @@ var Ro = (function () {
 
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
-            }  
+            }
 
             if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
                 timeValue = Roads.dateToIEandSafari (timeValue);
-            }            
+            }
 
             var format  = timeFormat || Ro.i18n.defaults.time;
             var time    = new Date (timeValue);
@@ -379,10 +357,10 @@ var Ro = (function () {
             if (value) {
                 return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
             }
-            
+
             return '0';
-        },        
-        
+        },
+
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;
         }
@@ -391,7 +369,7 @@ var Ro = (function () {
 
         if (!filterName) {
           throw 'Roads.Filter.register: filterName is mandatory';
-        }         
+        }
 
         this.filters[filterName] = filterImplementation;
     }
@@ -405,14 +383,14 @@ var Ro = (function () {
         digitalGrouping: ".",
         language: "en",
         time: "HH:mm",
-        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL            
+        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL
     },
     translations: {},
     translateView: function (view) {
-        
+
         var elements = view.querySelectorAll('[i18n]');
         for (var i = elements.length - 1; i >= 0; i--) {
-            this.translateElement (elements[i]);    
+            this.translateElement (elements[i]);
         };
     },
     translateElement: function (el) {
@@ -430,26 +408,26 @@ var Ro = (function () {
     },
 
     getTranslationByKey : function(key){
-        
+
         var value = Ro.i18n.translations[key];
-        
+
         if (value){
             return value;
         }
-        
+
         return key;
     },
 
     getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
 
         var message = Ro.i18n.getTranslationByKey (resourceId);
-        
-        if (message === resourceId) {
+
+        if (alternativeValue && message === resourceId) {
             return alternativeValue;
         }
-        
+
         return message;
-    }    
+    }
 
   }
 

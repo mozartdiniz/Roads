@@ -3,6 +3,7 @@
   xtag.register ('ro-layout', {
     lifecycle: {
       created: function () {
+        this.template = this.innerHTML;
       },
       inserted: function () {        
       },
@@ -24,7 +25,7 @@
 
         var data = this.xtag.data;
 
-        this.innerHTML = Ro.templateEngine (this.innerHTML, data);
+        this.innerHTML = Ro.templateEngine (this.template, data);
 
       }      
     }

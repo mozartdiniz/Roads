@@ -14,23 +14,23 @@
           if (!roadStyles) {
             roadStyles = document.createElement('style');
             roadStyles.id = 'roViewStyles';
-            document.head.appendChild (roadStyles);              
+            document.head.appendChild (roadStyles);
           }
 
-          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
+          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';
         }
 
         document.addEventListener("deviceready", function () {
 
-          setTimeout(updateStyle, 500);          
+          setTimeout(updateStyle, 500);
 
         });
 
         window.addEventListener('orientationchange', function () {
 
-          setTimeout(updateStyle, 500);          
+          setTimeout(updateStyle, 500);
 
-        }); 
+        });
 
       },
 
@@ -44,18 +44,18 @@
         }, 500);
 
       },
-      
+
       removed: function () {
       }
     },
     events: {
       reveal: function () {
-        
+
 
 
       }
     },
-    accessors: {      
+    accessors: {
     },
     methods: {
 
@@ -72,7 +72,7 @@
           firstView.style.webkitTransition = '10ms';
           firstView.style.transition = '10ms';
           firstView.style.webkitTransform = 'translateX(0)';
-          firstView.style.transform = 'translateX(0)';  
+          firstView.style.transform = 'translateX(0)';
 
           RoApp.activeView = firstView.id;
 
@@ -81,13 +81,13 @@
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
 
-            views[i].style.zIndex = 2;            
+            views[i].style.zIndex = 2;
             views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';                         
+            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
             views[i].style.webkitTransition = '10ms';
             views[i].style.transition = '10ms';
 
-          };          
+          };
         }
 
       },
@@ -107,26 +107,30 @@
           throw 'ro-view: "To" view can not be found';
         }
 
+        if (to === from) {
+          throw 'ro-view: "To" and "From" can not be the same';
+        }
+
+        xtag.fireEvent(to, 'show');
+
         to.style.transition = '10ms';
 
         to.style.zIndex = 2;
         to.style.transition = '300ms';
-        to.style.transitionTimingFunction = 'linear';        
+        to.style.transitionTimingFunction = 'linear';
         to.style.webkitTransform = 'translateX(0)';
-        to.style.transform = 'translateX(0)';         
+        to.style.transform = 'translateX(0)';
 
         from.style.transition = '10ms';
         from.style.zIndex = 3;
         from.style.transition = '300ms';
-        from.style.transitionTimingFunction = 'linear';        
+        from.style.transitionTimingFunction = 'linear';
         from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
-        from.style.transform = 'translateX(-' + window.innerWidth + 'px)'; 
-               
+        from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+
         Ro.i18n.translateView (to);
 
-        this.activeView = toID;        
-
-        xtag.fireEvent(to, 'show');
+        this.activeView = toID;
 
       },
 
@@ -143,28 +147,32 @@
 
         if (!to) {
           throw 'ro-view: "To" view can not be found';
-        }        
+        }
+
+        if (to === from) {
+          throw 'ro-view: "To" and "From" can not be the same';
+        }
 
         to.transition = '10ms';
         to.style.zIndex = 3;
         to.transition = '300ms';
-        to.style.transitionTimingFunction = 'linear';        
+        to.style.transitionTimingFunction = 'linear';
         to.style.webkitTransform = 'translateX(0)';
-        to.style.transform = 'translateX(0)'; 
-               
+        to.style.transform = 'translateX(0)';
+
 
         from.transition = '10ms';
         from.style.zIndex = 2;
         from.transition = '300ms';
-        from.style.transitionTimingFunction = 'linear';        
+        from.style.transitionTimingFunction = 'linear';
         from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-        from.style.transform = 'translateX(' + window.innerWidth + 'px)'; 
+        from.style.transform = 'translateX(' + window.innerWidth + 'px)';
 
         Ro.i18n.translateView (to);
 
         this.activeView = toID;
 
-        xtag.fireEvent (to, 'show');        
+        xtag.fireEvent (to, 'show');
 
       }
     }

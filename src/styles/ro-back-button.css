@@ -7,7 +7,7 @@ ro-back-button {
 }
 
 ro-back-button::after {
-  font-size: 20px;
+  font-size: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   content: attr(label);

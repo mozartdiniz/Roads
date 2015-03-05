@@ -136,3 +136,10 @@ ro-item-swipemenu.backMenu {
   -webkit-transform: translateX(0) !important;
   transform: translateX(0) !important;
 }
+
+ro-item-swipemenu:before {
+  content: attr(swipemenulabel);
+  display: block;
+  position: absolute;
+  right: 0;
+}

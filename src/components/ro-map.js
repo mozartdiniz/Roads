@@ -82,6 +82,13 @@
                   })
                 });
             break;
+          case 'Google':
+            return new ol.layer.Tile({
+                  source: new ol.source.OSM({
+                        url: this.googleURLSwich (imagerySet)
+                    })
+                });
+            break;            
           default:
             return new ol.layer.Tile({
                   source: new ol.source.OSM(),
@@ -89,6 +96,25 @@
                 });                        
         }
       },
+
+      googleURLSwich: function (imagerySet) {
+        switch (imagerySet) {
+          case 'streets':
+            return 'http://mt1.google.com/vt/lyrs=m@146&hl=en&x={x}&y={y}&z={z}';
+          case 'traffic':
+            return 'http://mt1.googleapis.com/vt?lyrs=m@226070730,traffic&src=apiv3&hl=en-US&x={x}&y={y}&z={z}&apistyle=s.t:49|s.e:g|p.h:#ff0022|p.s:60|p.l:-20,s.t:50|p.h:#2200ff|p.l:-40|p.v:simplified|p.s:30,s.t:51|p.h:#f6ff00|p.s:50|p.g:0.7|p.v:simplified,s.t:6|s.e:g|p.s:40|p.l:40,s.t:49|s.e:l|p.v:on|p.s:98,s.t:19|s.e:l|p.h:#0022ff|p.s:50|p.l:-10|p.g:0.9,s.t:65|s.e:g|p.h:#ff0000|p.v:on|p.l:-70&style=59,37|smartmaps';  
+          case 'bicycling':
+            return 'http://mt1.google.com/vt/lyrs=m@121,bike&hl=en&x={x}&y={y}&z={z}';
+          case 'transit':
+            return 'http://mt1.google.com/vt/lyrs=m@121,transit|vm:1&hl=en&opts=r&x={x}&y={y}&z={z}';
+          case 'aerialLand':
+            return 'https://khms0.googleapis.com/kh?v=142&hl=en-US&x={x}&y={y}&z={z}';  
+          case 'aerielStreets':
+            return 'https://mts1.google.com/vt/lyrs=h@245180971&hl=pt-BR&src=app&x={x}&y={y}&z={z}&s=Galileo';  
+          default:
+            return 'http://mt1.google.com/vt/lyrs=m@146&hl=en&x={x}&y={y}&z={z}';  
+        }
+      },      
 
       showLayer: function (index) {
 
@@ -265,6 +291,20 @@
 
         v.fitExtent(ml.getExtent(), this.olMap.getSize());
 
+      },
+
+      clear: function () {
+
+        var overlays = this.olMap.getOverlays().getArray();
+        var map = this.olMap;
+
+        for (var l = overlays.length; l > 0; l--) {
+
+            if (overlays[l-1] && !overlays[l-1].currentPosition) {
+                map.removeOverlay (overlays[l-1]);
+            }
+        }
+        
       }
     }
   });

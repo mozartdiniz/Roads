@@ -20,6 +20,7 @@
           this.appendChild (this.xtag.field);
 
           this.removeAttribute('i18n');
+          
         }
       },
       inserted: function () {
@@ -31,7 +32,7 @@
     },
     accessors: {     
     },
-    methods: { 
+    methods: {
     }
   });
 

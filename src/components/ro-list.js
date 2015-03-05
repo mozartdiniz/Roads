@@ -5,7 +5,6 @@
       created: function () {
         this.xtag.item = this.querySelector ('ro-item');
         this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
-        this.xtag.itemAction = this.xtag.item.getAttribute ('action');
 
         this.buttons = {};
 
@@ -26,7 +25,7 @@
             button.innerHTML = 'SHARE';
             return button;
           }
-        });        
+        });
 
       },
       inserted: function () {
@@ -36,14 +35,14 @@
         var nextElement = this.parentElement.nextElementSibling;
 
         if (nextElement && nextElement.tagName === "RO-FOOTER") {
-        
+
           this.style.cssText = Ro.styleGenerator ({
               'height': '-webkit-calc(100% - 100px)',
               'height': '-moz-calc(100% - 100px)',
               'height': 'calc(100% - 100px)'
-          });  
+          });
         }
-        
+
       },
       removed: function () {
       }
@@ -53,11 +52,19 @@
         this.xtag.data = data;
         this.parseList ();
       },
+      getData: function () {
+        return this.xtag.data;
+      },
+      setAction: function (action) {
+        this.action = action;
+      },
       parseList: function () {
 
         var data = this.xtag.data;
 
         this.innerHTML = '';
+
+        this.xtag.itemAction = this.action || this.xtag.item.getAttribute ('action');
 
         for (var i = 0; i < data.length; i++) {
 
@@ -69,16 +76,16 @@
 
           roContent.addEventListener ('click', action);
           roContent.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
-          
+
           if (this.getAttribute ('swipeable')) {
             roItem.appendChild (this.renderSwipeMenu ());
             this.addSwipeMenuActions (roItem, this);
           }
 
           for (var j = 0; j < this.activeButtons.length; j++) {
-            roItem.appendChild (this.activeButtons[j]());            
+            roItem.appendChild (this.activeButtons[j]());
           };
-          
+
           if (this.getAttribute ('selectable')) {
             roItem.appendChild (this.renderSelectableButton (data[i]));
           }
@@ -99,7 +106,7 @@
         if (attribute) {
           var buttons = attribute.split(',').map(function (item){
              return this.buttons [item.trim()];
-          }.bind (this));          
+          }.bind (this));
         }
 
         return buttons;
@@ -116,17 +123,19 @@
         cbox.appendChild (this.renderes.selectableButton (data));
         cbox.addEventListener ('click', function (e) {
           if (cbox.querySelector ('input[type="checkbox"]').checked) {
+            e.target.parentElement.parentElement.setAttribute ('checked', true);
             this.callbacks.didSelectedItem (e);
           } else {
+            e.target.parentElement.parentElement.removeAttribute ('checked');
             this.callbacks.didUnSelectedItem (e);
           }
-        }.bind (this));        
+        }.bind (this));
 
         return cbox;
       },
 
       selectedItems: function () {
-        return this.querySelectorAll('ro-checkbox[checked="true"]');
+        return this.querySelectorAll('ro-item[checked="true"]');
       },
 
       callbacks: {
@@ -137,7 +146,7 @@
 
       renderes: {
         selectableButton: function (data) {
-          return document.createTextNode ('');  
+          return document.createTextNode ('');
         }
       },
 
@@ -152,7 +161,7 @@
       renderSwipeMenu: function () {
 
         var roItemSwipemenu = document.createElement ('ro-item-swipemenu');
-        roItemSwipemenu.innerHTML = this.getAttribute ('swipeMenuLabel');
+        roItemSwipemenu.setAttribute ('swipeMenuLabel', this.getAttribute ('swipeMenuLabel'));
 
         return roItemSwipemenu;
       },
@@ -162,7 +171,7 @@
         var items = this.querySelectorAll('ro-item ro-item-swipemenu');
         var hammertime = new Hammer(item);
 
-        hammertime.on ('panright', function(e) {    
+        hammertime.on ('panright', function(e) {
 
           var menu = item.firstElementChild;
 
@@ -170,11 +179,11 @@
 
             menu.className = 'goMenu';
 
-          } else if (menu && e.deltaX > 100) {
+          } else if (menu && e.deltaX > 50) {
 
             menu.className = '';
             menu.style.webkitTransform = 'translateX(' + e.deltaX + 'px)';
-            menu.style.transform = 'translateX(' + e.deltaX + 'px)';      
+            menu.style.transform = 'translateX(' + e.deltaX + 'px)';
           }
 
         });

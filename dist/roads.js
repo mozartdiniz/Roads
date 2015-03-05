@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-02-25 */var Ro = (function () {
+/*! roads - v0.0.1 - 2015-03-04 */var Ro = (function () {
 
   var Roads = {
 
@@ -8,8 +8,8 @@
 
             var loader = document.querySelector ('ro-loader');
             if (loader) {
-                loader.show();    
-            }               
+                loader.show();
+            }
 
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
@@ -20,7 +20,7 @@
                 var clone = view.cloneNode(true);
 
                 RoApp.appendChild (clone);
-            };            
+            };
 
             var stageToScroll = document.querySelector('ro-stage[scroll]');
 
@@ -40,13 +40,13 @@
                     click: false,
                     preventDefaultException: { tagName:/.*/ }
                 });
-            }            
+            }
 
             setTimeout (callback, 100);
 
         }
 
-        window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this)); 
+        window.addEventListener ('HTMLImportsLoaded', writeImports.bind (this));
 
         document.addEventListener ("deviceready", function (){
 
@@ -68,22 +68,22 @@
                     x.style.webkitTransform = 'translateY(-200px)';
                 }
 
-              },  100);  
+              },  100);
 
-            }, false); 
+            }, false);
 
             document.addEventListener ("hidekeyboard", function () {
 
                 var x = document.querySelector ('ro-view#' + RoApp.activeView);
                 x.style.webkitTransition = '10ms';
-                x.style.webkitTransform = 'translateY(0)';                                  
+                x.style.webkitTransform = 'translateY(0)';
 
-            }, false);                                  
+            }, false);
 
             document.addEventListener ("backbutton", function () {
                 Ro.Globals.backButtonFunction ();
-            }, false);            
-            
+            }, false);
+
         }, false);
 
     },
@@ -116,13 +116,13 @@
                     filterParameter = filter.split(':')[1];
                     filter = filter.split(':')[0];
                   }
-                  key = match[0].split('|')[0].replace('{{','').trim(); 
+                  key = match[0].split('|')[0].replace('{{','').trim();
                 } else {
                   key = match[0].replace('{{', '').replace('}}','').trim();
                 }
 
-                if (hasFilter && Ro.Filter.filters[filter]) {
-                  if (data) {
+                if (hasFilter > 0 && Ro.Filter.filters[filter]) {
+                  if (data && filter !== 'i18n') {
                     tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key)));
                   } else {
                     tpl = tpl.replace(match[0], Ro.Filter.filters[filter](key, filterParameter));
@@ -130,50 +130,25 @@
                 } else {
                   tpl = tpl.replace(match[0], this.findByKey (data, key));
                 }
-            }            
+            }
         }
 
         return tpl;
 
     },
 
-    findByKey : function (obj, key) {
+    findByKey : function (data, key) {
 
-        var j, key = key || '', obj = obj || {}, keys = key.split("."), 
-            sObj = [], ssObj = [], isSelector = !!(keys.length > 0);
+        var value  = data;
+        var keys   = key.split('.');
 
-        var findKey = function (obj, key) {
-            var k;
-            for (k in obj) {
-                if (k === key) {
-                    sObj.push(obj[k]);
-                } else if (typeof obj[k] == 'object') {
-                    findKey(obj[k], key);
-                }
-            }
-        };
-
-        if (isSelector) {
-            var nKey = keys.shift();
-            findKey(obj, nKey);
-
-            while (keys.length > 0) {
-                nKey = keys.shift();
-
-                if (sObj.length > 0) {
-                    ssObj = sObj.slice(0), sObj = [];
-                    for (j in ssObj) {
-                        findKey(ssObj[j], nKey);
-                    }
-                }
-            }
-        } else {
-            findKey(obj, key);
+        for(var x = 0, size = keys.length; x < size; x++){
+            value = value[keys[x]];
         }
 
-        return sObj[0] || '';
+        return value || "";
 
-      },
+    },
 
       Http: function () {
 
@@ -200,6 +175,9 @@
 
             request.open(this.method, this.url, this.async);
             request.setRequestHeader('Content-Type', this.contentType);
+            request.setRequestHeader("Cache-Control", "no-cache");
+
+            request.withCredentials = true;
 
             //closure
             request.onreadystatechange = this.sendCallback.bind(this);
@@ -207,8 +185,8 @@
             request.ontimeout = (function (scope) {
                 return function () {
                     if (scope.ontimeout) {
-                        scope.ontimeout (this, scope);    
-                    }                
+                        scope.ontimeout (this, scope);
+                    }
                 };
             })(this);
 
@@ -265,13 +243,13 @@
 
     var Controller = function () {
 
-        this.view = document.querySelector ('[ro-controller="' + viewID + '"]');    
+        this.view = document.querySelector ('[ro-controller="' + viewID + '"]');
 
         this.init ();
 
         if (this.show) {
-            this.view.setShowFunction (this.show.bind (this));    
-        }        
+            this.view.setShowFunction (this.show.bind (this));
+        }
 
     }
 
@@ -287,7 +265,7 @@
 
   Roads.Environment = {
     isTouchDevice: !!('ontouchstart' in window),
-      platform: {        
+      platform: {
         androidVersion: (function (){
             var isAndroid = navigator.userAgent.match(/Android([^;]*)/);
             if (isAndroid && isAndroid.length > 1) {
@@ -305,9 +283,9 @@
   }
 
   Roads.Globals = {
-    backButtonFunction: function () {        
+    backButtonFunction: function () {
         alert('No back function defined');
-    }    
+    }
   }
 
   Roads.Events = {
@@ -323,7 +301,7 @@
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
-            } 
+            }
 
             if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
                 dateValue = Roads.dateToIEandSafari (dateValue);
@@ -350,11 +328,11 @@
 
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';
-            }  
+            }
 
             if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
                 timeValue = Roads.dateToIEandSafari (timeValue);
-            }            
+            }
 
             var format  = timeFormat || Ro.i18n.defaults.time;
             var time    = new Date (timeValue);
@@ -379,10 +357,10 @@
             if (value) {
                 return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
             }
-            
+
             return '0';
-        },        
-        
+        },
+
         i18n: function (i18nKey) {
             return Ro.i18n.translations[i18nKey] || i18nKey;
         }
@@ -391,7 +369,7 @@
 
         if (!filterName) {
           throw 'Roads.Filter.register: filterName is mandatory';
-        }         
+        }
 
         this.filters[filterName] = filterImplementation;
     }
@@ -405,14 +383,14 @@
         digitalGrouping: ".",
         language: "en",
         time: "HH:mm",
-        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL            
+        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL
     },
     translations: {},
     translateView: function (view) {
-        
+
         var elements = view.querySelectorAll('[i18n]');
         for (var i = elements.length - 1; i >= 0; i--) {
-            this.translateElement (elements[i]);    
+            this.translateElement (elements[i]);
         };
     },
     translateElement: function (el) {
@@ -430,26 +408,26 @@
     },
 
     getTranslationByKey : function(key){
-        
+
         var value = Ro.i18n.translations[key];
-        
+
         if (value){
             return value;
         }
-        
+
         return key;
     },
 
     getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
 
         var message = Ro.i18n.getTranslationByKey (resourceId);
-        
-        if (message === resourceId) {
+
+        if (alternativeValue && message === resourceId) {
             return alternativeValue;
         }
-        
+
         return message;
-    }    
+    }
 
   }
 
@@ -472,23 +450,23 @@
           if (!roadStyles) {
             roadStyles = document.createElement('style');
             roadStyles.id = 'roViewStyles';
-            document.head.appendChild (roadStyles);              
+            document.head.appendChild (roadStyles);
           }
 
-          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';            
+          roadStyles.innerHTML = 'ro-view { height: ' + window.innerHeight + 'px}';
         }
 
         document.addEventListener("deviceready", function () {
 
-          setTimeout(updateStyle, 500);          
+          setTimeout(updateStyle, 500);
 
         });
 
         window.addEventListener('orientationchange', function () {
 
-          setTimeout(updateStyle, 500);          
+          setTimeout(updateStyle, 500);
 
-        }); 
+        });
 
       },
 
@@ -502,18 +480,18 @@
         }, 500);
 
       },
-      
+
       removed: function () {
       }
     },
     events: {
       reveal: function () {
-        
+
 
 
       }
     },
-    accessors: {      
+    accessors: {
     },
     methods: {
 
@@ -530,7 +508,7 @@
           firstView.style.webkitTransition = '10ms';
           firstView.style.transition = '10ms';
           firstView.style.webkitTransform = 'translateX(0)';
-          firstView.style.transform = 'translateX(0)';  
+          firstView.style.transform = 'translateX(0)';
 
           RoApp.activeView = firstView.id;
 
@@ -539,13 +517,13 @@
         if (views) {
           for (var i = 0, l = views.length; i < l; i++) {
 
-            views[i].style.zIndex = 2;            
+            views[i].style.zIndex = 2;
             views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';                         
+            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
             views[i].style.webkitTransition = '10ms';
             views[i].style.transition = '10ms';
 
-          };          
+          };
         }
 
       },
@@ -565,26 +543,30 @@
           throw 'ro-view: "To" view can not be found';
         }
 
+        if (to === from) {
+          throw 'ro-view: "To" and "From" can not be the same';
+        }
+
+        xtag.fireEvent(to, 'show');
+
         to.style.transition = '10ms';
 
         to.style.zIndex = 2;
         to.style.transition = '300ms';
-        to.style.transitionTimingFunction = 'linear';        
+        to.style.transitionTimingFunction = 'linear';
         to.style.webkitTransform = 'translateX(0)';
-        to.style.transform = 'translateX(0)';         
+        to.style.transform = 'translateX(0)';
 
         from.style.transition = '10ms';
         from.style.zIndex = 3;
         from.style.transition = '300ms';
-        from.style.transitionTimingFunction = 'linear';        
+        from.style.transitionTimingFunction = 'linear';
         from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
-        from.style.transform = 'translateX(-' + window.innerWidth + 'px)'; 
-               
+        from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+
         Ro.i18n.translateView (to);
 
-        this.activeView = toID;        
-
-        xtag.fireEvent(to, 'show');
+        this.activeView = toID;
 
       },
 
@@ -601,28 +583,32 @@
 
         if (!to) {
           throw 'ro-view: "To" view can not be found';
-        }        
+        }
+
+        if (to === from) {
+          throw 'ro-view: "To" and "From" can not be the same';
+        }
 
         to.transition = '10ms';
         to.style.zIndex = 3;
         to.transition = '300ms';
-        to.style.transitionTimingFunction = 'linear';        
+        to.style.transitionTimingFunction = 'linear';
         to.style.webkitTransform = 'translateX(0)';
-        to.style.transform = 'translateX(0)'; 
-               
+        to.style.transform = 'translateX(0)';
+
 
         from.transition = '10ms';
         from.style.zIndex = 2;
         from.transition = '300ms';
-        from.style.transitionTimingFunction = 'linear';        
+        from.style.transitionTimingFunction = 'linear';
         from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-        from.style.transform = 'translateX(' + window.innerWidth + 'px)'; 
+        from.style.transform = 'translateX(' + window.innerWidth + 'px)';
 
         Ro.i18n.translateView (to);
 
         this.activeView = toID;
 
-        xtag.fireEvent (to, 'show');        
+        xtag.fireEvent (to, 'show');
 
       }
     }
@@ -884,6 +870,7 @@
           this.appendChild (this.xtag.field);
 
           this.removeAttribute('i18n');
+          
         }
       },
       inserted: function () {
@@ -895,7 +882,7 @@
     },
     accessors: {     
     },
-    methods: { 
+    methods: {
     }
   });
 
@@ -905,6 +892,7 @@
   xtag.register ('ro-layout', {
     lifecycle: {
       created: function () {
+        this.template = this.innerHTML;
       },
       inserted: function () {        
       },
@@ -926,7 +914,7 @@
 
         var data = this.xtag.data;
 
-        this.innerHTML = Ro.templateEngine (this.innerHTML, data);
+        this.innerHTML = Ro.templateEngine (this.template, data);
 
       }      
     }
@@ -940,7 +928,6 @@
       created: function () {
         this.xtag.item = this.querySelector ('ro-item');
         this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
-        this.xtag.itemAction = this.xtag.item.getAttribute ('action');
 
         this.buttons = {};
 
@@ -961,7 +948,7 @@
             button.innerHTML = 'SHARE';
             return button;
           }
-        });        
+        });
 
       },
       inserted: function () {
@@ -971,14 +958,14 @@
         var nextElement = this.parentElement.nextElementSibling;
 
         if (nextElement && nextElement.tagName === "RO-FOOTER") {
-        
+
           this.style.cssText = Ro.styleGenerator ({
               'height': '-webkit-calc(100% - 100px)',
               'height': '-moz-calc(100% - 100px)',
               'height': 'calc(100% - 100px)'
-          });  
+          });
         }
-        
+
       },
       removed: function () {
       }
@@ -988,11 +975,19 @@
         this.xtag.data = data;
         this.parseList ();
       },
+      getData: function () {
+        return this.xtag.data;
+      },
+      setAction: function (action) {
+        this.action = action;
+      },
       parseList: function () {
 
         var data = this.xtag.data;
 
         this.innerHTML = '';
+
+        this.xtag.itemAction = this.action || this.xtag.item.getAttribute ('action');
 
         for (var i = 0; i < data.length; i++) {
 
@@ -1004,16 +999,16 @@
 
           roContent.addEventListener ('click', action);
           roContent.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
-          
+
           if (this.getAttribute ('swipeable')) {
             roItem.appendChild (this.renderSwipeMenu ());
             this.addSwipeMenuActions (roItem, this);
           }
 
           for (var j = 0; j < this.activeButtons.length; j++) {
-            roItem.appendChild (this.activeButtons[j]());            
+            roItem.appendChild (this.activeButtons[j]());
           };
-          
+
           if (this.getAttribute ('selectable')) {
             roItem.appendChild (this.renderSelectableButton (data[i]));
           }
@@ -1034,7 +1029,7 @@
         if (attribute) {
           var buttons = attribute.split(',').map(function (item){
              return this.buttons [item.trim()];
-          }.bind (this));          
+          }.bind (this));
         }
 
         return buttons;
@@ -1051,17 +1046,19 @@
         cbox.appendChild (this.renderes.selectableButton (data));
         cbox.addEventListener ('click', function (e) {
           if (cbox.querySelector ('input[type="checkbox"]').checked) {
+            e.target.parentElement.parentElement.setAttribute ('checked', true);
             this.callbacks.didSelectedItem (e);
           } else {
+            e.target.parentElement.parentElement.removeAttribute ('checked');
             this.callbacks.didUnSelectedItem (e);
           }
-        }.bind (this));        
+        }.bind (this));
 
         return cbox;
       },
 
       selectedItems: function () {
-        return this.querySelectorAll('ro-checkbox[checked="true"]');
+        return this.querySelectorAll('ro-item[checked="true"]');
       },
 
       callbacks: {
@@ -1072,7 +1069,7 @@
 
       renderes: {
         selectableButton: function (data) {
-          return document.createTextNode ('');  
+          return document.createTextNode ('');
         }
       },
 
@@ -1087,7 +1084,7 @@
       renderSwipeMenu: function () {
 
         var roItemSwipemenu = document.createElement ('ro-item-swipemenu');
-        roItemSwipemenu.innerHTML = this.getAttribute ('swipeMenuLabel');
+        roItemSwipemenu.setAttribute ('swipeMenuLabel', this.getAttribute ('swipeMenuLabel'));
 
         return roItemSwipemenu;
       },
@@ -1097,7 +1094,7 @@
         var items = this.querySelectorAll('ro-item ro-item-swipemenu');
         var hammertime = new Hammer(item);
 
-        hammertime.on ('panright', function(e) {    
+        hammertime.on ('panright', function(e) {
 
           var menu = item.firstElementChild;
 
@@ -1105,11 +1102,11 @@
 
             menu.className = 'goMenu';
 
-          } else if (menu && e.deltaX > 100) {
+          } else if (menu && e.deltaX > 50) {
 
             menu.className = '';
             menu.style.webkitTransform = 'translateX(' + e.deltaX + 'px)';
-            menu.style.transform = 'translateX(' + e.deltaX + 'px)';      
+            menu.style.transform = 'translateX(' + e.deltaX + 'px)';
           }
 
         });
@@ -1260,6 +1257,13 @@
                   })
                 });
             break;
+          case 'Google':
+            return new ol.layer.Tile({
+                  source: new ol.source.OSM({
+                        url: this.googleURLSwich (imagerySet)
+                    })
+                });
+            break;            
           default:
             return new ol.layer.Tile({
                   source: new ol.source.OSM(),
@@ -1267,6 +1271,25 @@
                 });                        
         }
       },
+
+      googleURLSwich: function (imagerySet) {
+        switch (imagerySet) {
+          case 'streets':
+            return 'http://mt1.google.com/vt/lyrs=m@146&hl=en&x={x}&y={y}&z={z}';
+          case 'traffic':
+            return 'http://mt1.googleapis.com/vt?lyrs=m@226070730,traffic&src=apiv3&hl=en-US&x={x}&y={y}&z={z}&apistyle=s.t:49|s.e:g|p.h:#ff0022|p.s:60|p.l:-20,s.t:50|p.h:#2200ff|p.l:-40|p.v:simplified|p.s:30,s.t:51|p.h:#f6ff00|p.s:50|p.g:0.7|p.v:simplified,s.t:6|s.e:g|p.s:40|p.l:40,s.t:49|s.e:l|p.v:on|p.s:98,s.t:19|s.e:l|p.h:#0022ff|p.s:50|p.l:-10|p.g:0.9,s.t:65|s.e:g|p.h:#ff0000|p.v:on|p.l:-70&style=59,37|smartmaps';  
+          case 'bicycling':
+            return 'http://mt1.google.com/vt/lyrs=m@121,bike&hl=en&x={x}&y={y}&z={z}';
+          case 'transit':
+            return 'http://mt1.google.com/vt/lyrs=m@121,transit|vm:1&hl=en&opts=r&x={x}&y={y}&z={z}';
+          case 'aerialLand':
+            return 'https://khms0.googleapis.com/kh?v=142&hl=en-US&x={x}&y={y}&z={z}';  
+          case 'aerielStreets':
+            return 'https://mts1.google.com/vt/lyrs=h@245180971&hl=pt-BR&src=app&x={x}&y={y}&z={z}&s=Galileo';  
+          default:
+            return 'http://mt1.google.com/vt/lyrs=m@146&hl=en&x={x}&y={y}&z={z}';  
+        }
+      },      
 
       showLayer: function (index) {
 
@@ -1443,6 +1466,20 @@
 
         v.fitExtent(ml.getExtent(), this.olMap.getSize());
 
+      },
+
+      clear: function () {
+
+        var overlays = this.olMap.getOverlays().getArray();
+        var map = this.olMap;
+
+        for (var l = overlays.length; l > 0; l--) {
+
+            if (overlays[l-1] && !overlays[l-1].currentPosition) {
+                map.removeOverlay (overlays[l-1]);
+            }
+        }
+        
       }
     }
   });

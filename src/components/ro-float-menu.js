@@ -2,28 +2,16 @@
 
   xtag.register ('ro-float-menu', {
     lifecycle: {
-      
+
       created: function () {
-        this.xtag.itemsAreVisible = false;
 
-        this.xtag.overlay = document.createElement('ro-overlay');        
-        this.xtag.hitArea = document.createElement('ro-hitarea');
+        this.create ();
 
-        this.parseList ();
       },
 
       inserted: function () {
 
-        this.appendChild(this.xtag.hitArea);
-        this.parentElement.appendChild (this.xtag.overlay);
-
-        var clickCallback = function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.toggleMenu ();                   
-        }
-
-        this.xtag.hitArea.onclick = clickCallback.bind(this);
+        this.insert ();
 
       },
       removed: function () {
@@ -33,9 +21,41 @@
       reveal: function () {
       }
     },
-    accessors: {   
+    accessors: {
     },
     methods: {
+
+      create: function () {
+
+        this.xtag.itemsAreVisible = false;
+
+        this.xtag.overlay = document.createElement('ro-overlay');
+        this.xtag.hitArea = document.createElement('ro-hitarea');
+
+        this.parseList ();
+
+      },
+
+      insert: function () {
+
+        this.appendChild(this.xtag.hitArea);
+        this.parentElement.appendChild (this.xtag.overlay);
+
+        var clickCallback = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleMenu ();
+        }
+
+        this.xtag.hitArea.onclick = clickCallback.bind(this);
+
+      },
+
+      recreate: function () {
+        this.create ();
+        this.insert ();
+      },
+
       addItem: function (item) {
       },
       removeItem: function (item) {

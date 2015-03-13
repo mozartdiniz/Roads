@@ -27,6 +27,12 @@
           }
         });
 
+        this.xtag.callbacks = {
+          didSelectedItem: function (e) {},
+          didUnSelectedItem: function (e) {},
+          didSwipeItem: function (e) {}
+        }
+
       },
       inserted: function () {
 
@@ -124,10 +130,10 @@
         cbox.addEventListener ('click', function (e) {
           if (cbox.querySelector ('input[type="checkbox"]').checked) {
             e.target.parentElement.parentElement.setAttribute ('checked', true);
-            this.callbacks.didSelectedItem (e);
+            this.xtag.callbacks.didSelectedItem (e);
           } else {
             e.target.parentElement.parentElement.removeAttribute ('checked');
-            this.callbacks.didUnSelectedItem (e);
+            this.xtag.callbacks.didUnSelectedItem (e);
           }
         }.bind (this));
 
@@ -138,12 +144,6 @@
         return this.querySelectorAll('ro-item[checked="true"]');
       },
 
-      callbacks: {
-        didSelectedItem: function (e) {},
-        didUnSelectedItem: function (e) {},
-        didSwipeItem: function (e) {}
-      },
-
       renderes: {
         selectableButton: function (data) {
           return document.createTextNode ('');
@@ -151,7 +151,7 @@
       },
 
       setCallback: function (callback) {
-        this.callbacks[callback.name] = callback.action;
+        this.xtag.callbacks[callback.name] = callback.action;
       },
 
       setRenderer: function (renderer) {
@@ -195,7 +195,7 @@
           if (e.deltaX < (window.innerWidth / 2) && menu) {
             menu.className = 'backMenu';
           } else {
-            scope.callbacks.didSwipeItem (item);
+            scope.xtag.callbacks.didSwipeItem (item);
 
             setTimeout ((function (item) {
               item.firstElementChild.className = 'backMenu';

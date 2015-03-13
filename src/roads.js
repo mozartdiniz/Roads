@@ -123,7 +123,10 @@ var Ro = (function () {
 
                 if (hasFilter > 0 && Ro.Filter.filters[filter]) {
                   if (data && filter !== 'i18n') {
-                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key)));
+
+                    // (data, key, filterParameter)
+                    tpl = tpl.replace(match[0], Ro.Filter.filters[filter](this.findByKey (data, key), key, filterParameter));
+
                   } else {
                     tpl = tpl.replace(match[0], Ro.Filter.filters[filter](key, filterParameter));
                   }
@@ -143,7 +146,9 @@ var Ro = (function () {
         var keys   = key.split('.');
 
         for(var x = 0, size = keys.length; x < size; x++){
-            value = value[keys[x]];
+            if (value) {
+                value = value[keys[x]];
+            }
         }
 
         return value || "";

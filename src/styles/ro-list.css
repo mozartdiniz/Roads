@@ -15,7 +15,7 @@ ro-list ro-item * {
   -ms-user-select: none;
 }
 
-ro-list ro-item {
+ro-list ro-item,  ro-list ro-item{
 
   /* new flexbox syntax */
   display: flex;

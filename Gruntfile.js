@@ -57,7 +57,7 @@ module.exports = function(grunt) {
             src: 'dist/<%= pkg.name %>.css',
             dest: 'examples/contacts_maintenance/css/<%= pkg.name %>.css'
           }
-        ],
+        ]
       }
     },
     karma: {

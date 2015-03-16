@@ -111,7 +111,7 @@
           throw 'ro-view: "To" and "From" can not be the same';
         }
 
-        xtag.fireEvent(to, 'show');
+          to.show(fromID);
 
         to.style.transition = '10ms';
 
@@ -172,7 +172,7 @@
 
         this.activeView = toID;
 
-        xtag.fireEvent (to, 'show');
+          to.show(fromID);
 
       }
     }

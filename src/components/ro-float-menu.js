@@ -82,21 +82,22 @@
         this.xtag.itemsAreVisible = true;
       },
 
-      parseList: function () {
-        var items = this.querySelectorAll('ro-item');
-        for (var i = 0; i < items.length; i++) {
+        parseList: function () {
+            var items = this.querySelectorAll('ro-item');
+            for (var i = 0; i < items.length; i++) {
 
-          var itemActionFunction = new Function (items[i].getAttribute ('action'));
-          var action = (function (scope, func){
-            return function () {
-              func ();
-              scope.hideItems ();
-            };
-          }(this, itemActionFunction));
+                var itemActionFunction = new Function (items[i].getAttribute ('action'));
+                var action = (function (scope, func){
+                    return function () {
+                        func ();
+                        scope.hideItems ();
+                    };
+                }(this, itemActionFunction));
 
-          items[i].addEventListener ('click', action);
-        };
-      }
+                items[i].addEventListener ('click', action);
+                items[i].setAttribute ('text', Ro.templateEngine(items[i].getAttribute ('i18nKey')));
+            }
+        }
     }
   });
 

@@ -302,14 +302,10 @@ var Ro = (function () {
   Roads.Filter = {
     filters: {
 
-        date: function (dateValue, dateFormat) {
+        date: function (dateValue, key, dateFormat) {
 
             if (!dateValue) {
               throw 'Roads.Filter.date: dateValue is mandatory';
-            }
-
-            if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
-                dateValue = Roads.dateToIEandSafari (dateValue);
             }
 
             var format = dateFormat || Ro.i18n.defaults.date;
@@ -329,7 +325,7 @@ var Ro = (function () {
 
         },
 
-        time: function (timeValue, timeFormat) {
+        time: function (timeValue, key, timeFormat) {
 
             if (!timeValue) {
               throw 'Roads.Filter.date: timeValue is mandatory';

@@ -23,7 +23,7 @@ ro-hitarea {
 }
 
 ro-float-menu::before {
-  content: "\e604";
+  content: "\e61e";
   position: absolute;
   margin-left: 18px;
   margin-top: 18px;
@@ -34,10 +34,10 @@ ro-float-menu::before {
 }
 
 ro-float-menu::after {
-  content: "\e607";
+  content: "\e61a";
   position: absolute;
   margin-left: 19px;
-  margin-top: 18px;  
+  margin-top: 18px;
   font-size: 30px;
   z-index: 2;
   color: #308B2A;
@@ -82,34 +82,34 @@ ro-float-menu ro-item {
   overflow: hidden;
   bottom: 68px;
   height: 50px;
-  border: none;  
+  border: none;
 
   transform: translate3d(0,60px,0) scale3d(1,1,1);
   transform-origin: 95% 90%;
   transition-timing-function: ease-in;
 
   -webkit-transform: translate3d(0,60px,0) scale3d(0,0,0);
-  -webkit-transform-origin: 95% 90%;    
+  -webkit-transform-origin: 95% 90%;
   -webkit-transition-timing-function: ease-in;
 
   -ms-transform: translate3d(0,60px,0) scale3d(0,0,0);
-  -ms-transform-origin: 95% 90%;    
-  -ms-transition-timing-function: ease-in;  
+  -ms-transform-origin: 95% 90%;
+  -ms-transition-timing-function: ease-in;
 
 }
 
-ro-float-menu[state="hideItems"] ro-item {  
+ro-float-menu[state="hideItems"] ro-item {
     animation-play-state: running;
     animation-fill-mode: forwards !important;
     animation: roadsHideMenuItem 300ms;
 
     -webkit-animation-play-state: running;
     -webkit-animation-fill-mode: forwards !important;
-    -webkit-animation: roadsHideMenuItem 300ms;    
+    -webkit-animation: roadsHideMenuItem 300ms;
 
     -ms-animation-play-state: running;
     -ms-animation-fill-mode: forwards !important;
-    -ms-animation: roadsHideMenuItem 300ms;        
+    -ms-animation: roadsHideMenuItem 300ms;
 }
 
 ro-float-menu[state="showItems"] ro-item {
@@ -119,11 +119,11 @@ ro-float-menu[state="showItems"] ro-item {
 
     -webkit-animation-play-state: running;
     -webkit-animation-fill-mode: forwards !important;
-    -webkit-animation: roadsShowMenuItem 300ms;    
+    -webkit-animation: roadsShowMenuItem 300ms;
 
     -ms-animation-play-state: running;
     -ms-animation-fill-mode: forwards !important;
-    -ms-animation: roadsShowMenuItem 300ms;        
+    -ms-animation: roadsShowMenuItem 300ms;
 }
 
 
@@ -175,12 +175,12 @@ ro-float-menu ro-item:nth-of-type(-n+1) {
 }
 
 @keyframes roadsShowMenuItem {
-    0% {      
+    0% {
       transform: translate3d(0,60px,0) scale3d(0,0,0);
     }
     80% {
-     display: block; 
-     transform: translate3d(0,0,0) scale3d(0,0,0); 
+     display: block;
+     transform: translate3d(0,0,0) scale3d(0,0,0);
     }
     100% {
       transform: translate3d(0,-10px,0) scale3d(1,1,1);
@@ -204,12 +204,12 @@ ro-float-menu ro-item:nth-of-type(-n+1) {
 }
 
 @-webkit-keyframes roadsShowMenuItem {
-    0% {      
+    0% {
       -webkit-transform: translate3d(0,60px,0) scale3d(0,0,0);
     }
     80% {
-     display: block; 
-     -webkit-transform: translate3d(0,0,0) scale3d(0,0,0); 
+     display: block;
+     -webkit-transform: translate3d(0,0,0) scale3d(0,0,0);
     }
     100% {
       -webkit-transform: translate3d(0,-10px,0) scale3d(1,1,1);
@@ -233,12 +233,12 @@ ro-float-menu ro-item:nth-of-type(-n+1) {
 }
 
 @-ms-keyframes roadsShowMenuItem {
-    0% {      
+    0% {
       transform: translate3d(0,60px,0) scale3d(0,0,0);
     }
     80% {
-     display: block; 
-     transform: translate3d(0,0,0) scale3d(0,0,0); 
+     display: block;
+     transform: translate3d(0,0,0) scale3d(0,0,0);
     }
     100% {
       transform: translate3d(0,-10px,0) scale3d(1,1,1);
@@ -312,7 +312,7 @@ ro-float-menu ro-item::before {
   -webkit-transition: 500ms;
 
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;  
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ro-overlay {
@@ -331,12 +331,12 @@ ro-overlay[state="hideItems"] {
 
   width: 0;
   height: 0;
-  
+
 }
 
 ro-overlay[state="showItems"] {
   width: 100vh;
-  height: 100vh;    
+  height: 100vh;
 }
 
 /* Chrome, Safari, Opera */
@@ -348,7 +348,7 @@ ro-overlay[state="showItems"] {
     100% {
       -webkit-transform: scale3d(1,1,1);
       background: rgba(0,0,0,0.7);
-    }    
+    }
 }
 
 /* Standard syntax */
@@ -365,24 +365,24 @@ ro-overlay[state="showItems"] {
 
 /* Chrome, Safari, Opera */
 @-webkit-keyframes roadsHideMenu {
-    0% {      
+    0% {
       background: rgba(0,0,0,0.7);
-      -webkit-transform: scale3d(1,1,1);      
+      -webkit-transform: scale3d(1,1,1);
     }
     100% {
       -webkit-transform: scale3d(1,1,1);
       background: rgba(0,0,0,0);
-    } 
+    }
 }
 
 /* Standard syntax */
 @keyframes roadsHideMenu {
-    0% {      
+    0% {
       background: rgba(0,0,0,0.7);
-      transform: scale3d(1,1,1);      
+      transform: scale3d(1,1,1);
     }
-    100% {      
+    100% {
       background: rgba(0,0,0,0);
       transform: scale3d(1,1,1);
-    } 
+    }
 }

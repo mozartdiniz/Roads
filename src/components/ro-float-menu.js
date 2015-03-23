@@ -62,48 +62,42 @@
       },
 
       toggleMenu: function () {
-
         if (this.xtag.itemsAreVisible) {
            this.hideItems ();
         } else {
           this.showItems ();
         }
-
       },
 
       hideItems: function () {
-
         this.setAttribute('state', 'hideItems');
         this.xtag.overlay.setAttribute('state', 'hideItems');
-        this.xtag.itemsAreVisible = false;
 
+        this.xtag.itemsAreVisible = false;
       },
 
       showItems: function (items) {
-
         this.setAttribute('state', 'showItems');
         this.xtag.overlay.setAttribute('state', 'showItems');
         this.xtag.itemsAreVisible = true;
-
       },
 
-      parseList: function () {
+        parseList: function () {
+            var items = this.querySelectorAll('ro-item');
+            for (var i = 0; i < items.length; i++) {
 
-        var items = this.querySelectorAll('ro-item');
+                var itemActionFunction = new Function (items[i].getAttribute ('action'));
+                var action = (function (scope, func){
+                    return function () {
+                        func ();
+                        scope.hideItems ();
+                    };
+                }(this, itemActionFunction));
 
-        for (var i = 0; i < items.length; i++) {
-
-          var itemActionFunction = new Function (items[i].getAttribute ('action'));
-          var action = (function (scope, func){
-            return function () {
-              func ();
-              scope.hideItems ();
-            };
-          }(this, itemActionFunction));
-
-          items[i].addEventListener ('click', action);
-        };
-      }
+                items[i].addEventListener ('click', action);
+                items[i].setAttribute ('text', Ro.templateEngine(items[i].getAttribute ('i18nKey')));
+            }
+        }
     }
   });
 

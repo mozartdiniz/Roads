@@ -160,10 +160,10 @@
 
       renderSwipeMenu: function () {
 
-        var roItemSwipemenu = document.createElement ('ro-item-swipemenu');
-        roItemSwipemenu.setAttribute ('swipeMenuLabel', this.getAttribute ('swipeMenuLabel'));
+          var roItemSwipemenu = document.createElement ('ro-item-swipemenu');
+          roItemSwipemenu.setAttribute ('swipeMenuLabel', Ro.templateEngine(this.getAttribute ('i18nKey')));
 
-        return roItemSwipemenu;
+          return roItemSwipemenu;
       },
 
       addSwipeMenuActions: function (item, scope) {

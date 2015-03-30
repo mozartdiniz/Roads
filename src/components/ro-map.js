@@ -3,6 +3,7 @@
   xtag.register ('ro-map', {
     lifecycle: {
       created: function () {
+          Ro.Session.Map = Ro.Session.Map = {};
       },
       inserted: function () {
 
@@ -217,30 +218,35 @@
 
       markerFocus: function (position) {
 
-        var focusEl = document.createElement ('div');
-        focusEl.className = 'focusMaker';
+          var focusEl = document.createElement ('div');
+          var ll = ol.proj.transform(
+              [position.longitude, position.latitude],
+              'EPSG:4326',
+              'EPSG:3857'
+          );
+          var marker = new ol.Overlay({
+              element: focusEl,
+              positioning: 'buttom-left',
+              stopEvent: false
+          });
+          var callbackToTimeout = (function (scope, marker) {
+              return function () {
+                  scope.olMap.removeOverlay (marker);
+              };
+          }(this, marker));
 
-        var ll = ol.proj.transform(
-                    [position.longitude, position.latitude],
-                    'EPSG:4326',
-                    'EPSG:3857'
-                  );
+          if (Ro.Session.Map.timeOutMarkerFocus) {
+              this.olMap.removeOverlay(Ro.Session.Map.previousMarkerFocused);
+              clearTimeout(Ro.Session.Map.timeOutMarkerFocus);
+              Ro.Session.Map.timeOutMarkerFocus = null;
+              Ro.Session.Map.previousMarkerFocused = null;
+          }
 
-        var marker = new ol.Overlay({
-            element: focusEl,
-            positioning: 'buttom-left',
-            stopEvent: false
-        });
-
-        marker.setPosition(ll);
-
-        this.olMap.addOverlay(marker);
-
-        setTimeout ((function (scope, marker) {
-          return function () {
-            scope.olMap.removeOverlay (marker);
-          };
-        }(this, marker)), 1000);
+          focusEl.className = 'focusMaker';
+          marker.setPosition(ll);
+          this.olMap.addOverlay(marker);
+          Ro.Session.Map.previousMarkerFocused= marker;
+          Ro.Session.Map.timeOutMarkerFocus = setTimeout (callbackToTimeout, 1000);
 
       },
 

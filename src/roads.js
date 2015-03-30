@@ -4,6 +4,7 @@ var Ro = (function () {
 
     init: function (callback) {
 
+        Ro.Session = Ro.Session = {};
         var writeImports = function(e) {
 
             var loader = document.querySelector ('ro-loader');

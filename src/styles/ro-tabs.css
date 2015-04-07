@@ -1,8 +1,14 @@
-/* Tabs */ 
+/* Tabs */
 
 ro-tabs {
   display: block;
-  position: relative;
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 ro-tabs-labels {
@@ -40,6 +46,6 @@ ro-tabs-labels {
   -ms-flex-align: stretch;
 
   min-width: 0px;
-  min-height: auto;  
+  min-height: auto;
   height: 45px;
 }

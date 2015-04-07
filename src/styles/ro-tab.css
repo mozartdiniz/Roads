@@ -1,9 +1,10 @@
 /* Tab */
 ro-tab {
   position: relative;
-  left: 0;
   width: 100%;
   background: red;
+  display: block;
+  float: left;
 }
 
 ro-tab-label {
@@ -18,7 +19,7 @@ ro-tab-label {
   /* new flexbox syntax */
   order: 2;
   flex: 1 1 auto;
-  align-self: auto;  
+  align-self: auto;
 
   /* old flexbox syntax */
   -webkit-box-ordinal-group: 2;
@@ -33,7 +34,7 @@ ro-tab-label {
   -ms-flex-item-align: auto;
 
   min-width: 0px;
-  min-height: auto;  
+  min-height: auto;
   text-align: center;
   padding-top: 14px;
   display: block;
@@ -49,4 +50,33 @@ ro-tab-label[selected="true"] {
 
 ro-tab > ro-list {
   position: relative;
+}
+
+div.roTabLabelsWrapper,
+div.roTabContentWrapper {
+  height: inherit;
+  position: absolute;
+}
+
+div.roTabLabelsWrapper ro-tab-label,
+div.roTabContentWrapper ro-tab {
+  position: relative;
+  float: left;
+  display: block;
+}
+
+ro-tabs > ro-tab[selected] {
+  display: block !important;
+}
+
+ro-tabs > ro-tab {
+  display: none !important;
+}
+
+ro-tabs[tabwidth] > ro-tab[selected] {
+  display: block !important;
+}
+
+ro-tabs[tabwidth] > ro-tab {
+  display: block !important;
 }

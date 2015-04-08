@@ -313,7 +313,7 @@ var Ro = (function () {
             var date   = new Date (dateValue);
             var year   = date.getFullYear();
             var day    = date.getUTCDate();
-            var month  = date.getMonth()+1;
+            var month  = date.getUTCMonth()+1;
 
             format = format.replace(/yyyy/g, year);
             format = format.replace(/yy/g, String(year).substr(2,2));

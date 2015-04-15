@@ -4,15 +4,10 @@
     lifecycle: {
 
       created: function () {
-
-        this.create ();
-
       },
 
       inserted: function () {
-
-        this.insert ();
-
+        this.create ();
       },
       removed: function () {
       }
@@ -29,31 +24,48 @@
 
         this.xtag.itemsAreVisible = false;
 
-        this.xtag.overlay = document.createElement('ro-overlay');
-        this.xtag.hitArea = document.createElement('ro-hitarea');
-
+        this.insert ();
         this.parseList ();
 
       },
 
       insert: function () {
 
-        this.appendChild(this.xtag.hitArea);
-        this.parentElement.appendChild (this.xtag.overlay);
+        var existingOverlay = this.parentElement.querySelector ('ro-overlay');
 
-        var clickCallback = function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          this.toggleMenu ();
+        if (!existingOverlay) {
+
+          var overlay = document.createElement('ro-overlay');
+          var hitArea = document.createElement('ro-hitarea');
+
+          var clickCallback = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleMenu ();
+          }
+
+          hitArea.setAttribute ('onclick', 'this.parentNode.toggleMenu ()')
+
+          this.appendChild (hitArea);
+          this.parentElement.appendChild (overlay);
         }
-
-        this.xtag.hitArea.onclick = clickCallback.bind(this);
 
       },
 
       recreate: function () {
+
+        var overlay = this.parentElement.querySelector ('ro-overlay');
+        var hitArea = this.querySelector ('ro-hitarea');
+
+        if (overlay) {
+          overlay.parentElement.removeChild (overlay);
+        }
+
+        if (hitArea) {
+          hitArea.parentElement.removeChild (hitArea);
+        }
+
         this.create ();
-        this.insert ();
       },
 
       addItem: function (item) {
@@ -71,33 +83,32 @@
 
       hideItems: function () {
         this.setAttribute('state', 'hideItems');
-        this.xtag.overlay.setAttribute('state', 'hideItems');
-
+        this.nextElementSibling.setAttribute ('state', 'hideItems');
         this.xtag.itemsAreVisible = false;
       },
 
       showItems: function (items) {
         this.setAttribute('state', 'showItems');
-        this.xtag.overlay.setAttribute('state', 'showItems');
+        this.nextElementSibling.setAttribute ('state', 'showItems');
         this.xtag.itemsAreVisible = true;
       },
 
-        parseList: function () {
-            var items = this.querySelectorAll('ro-item');
-            for (var i = 0; i < items.length; i++) {
+      parseList: function () {
+          var items = this.querySelectorAll('ro-item');
+          for (var i = 0; i < items.length; i++) {
 
-                var itemActionFunction = new Function (items[i].getAttribute ('action'));
-                var action = (function (scope, func){
-                    return function () {
-                        func ();
-                        scope.hideItems ();
-                    };
-                }(this, itemActionFunction));
+              var itemActionFunction = new Function (items[i].getAttribute ('action'));
+              var action = (function (scope, func){
+                  return function () {
+                      func ();
+                      scope.hideItems ();
+                  };
+              }(this, itemActionFunction));
 
-                items[i].addEventListener ('click', action);
-                items[i].setAttribute ('text', Ro.templateEngine(items[i].getAttribute ('i18nKey')));
-            }
-        }
+              items[i].addEventListener ('click', action);
+              items[i].setAttribute ('text', Ro.templateEngine(items[i].getAttribute ('i18nKey')));
+          }
+      }
     }
   });
 

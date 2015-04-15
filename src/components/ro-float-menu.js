@@ -23,6 +23,7 @@
       create: function () {
 
         this.xtag.itemsAreVisible = false;
+        this.xtag.click = true;
 
         this.insert ();
         this.parseList ();
@@ -38,16 +39,11 @@
           var overlay = document.createElement('ro-overlay');
           var hitArea = document.createElement('ro-hitarea');
 
-          var clickCallback = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            this.toggleMenu ();
-          }
-
           hitArea.setAttribute ('onclick', 'this.parentNode.toggleMenu ()')
 
-          this.appendChild (hitArea);
           this.parentElement.appendChild (overlay);
+          this.appendChild (hitArea);
+
         }
 
       },
@@ -74,11 +70,19 @@
       },
 
       toggleMenu: function () {
-        if (this.xtag.itemsAreVisible) {
-           this.hideItems ();
-        } else {
-          this.showItems ();
+        if (this.xtag.click) {
+            this.xtag.click = false;
+            setTimeout (function () {
+                if (this.xtag.itemsAreVisible) {
+                   this.hideItems ();
+                   this.xtag.click = true;
+                } else {
+                  this.showItems ();
+                  this.xtag.click = true;
+                }
+            }.bind (this), 100);
         }
+
       },
 
       hideItems: function () {

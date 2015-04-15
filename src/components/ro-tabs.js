@@ -36,14 +36,13 @@
 
       render: function () {
 
+        var newTabs           = [];
         var tabsLabels        = this.querySelector ('ro-tabs-labels');
         var tabs              = this.querySelectorAll ('ro-tab');
-        var newTabs           = [];
         var tabsWidth         = this.getAttribute ('tabwidth');
+        var tabLabelTemplate  = this.querySelector ('ro-tab-label-template');
         var tabLabelsWrapper  = document.createElement ('div');
         var tabContentWrapper = document.createElement ('div');
-        var tabWrapperWidth   = parseInt (tabsWidth + 20) * tabs.length;
-        var tabLabelTemplate  = this.querySelector ('ro-tab-label-template');
 
         tabLabelsWrapper.className = 'roTabLabelsWrapper';
         tabContentWrapper.className = 'roTabContentWrapper';
@@ -141,7 +140,7 @@
           wrapper.style.width  = all + 'px';
           cWrapper.style.width = allContent + 'px';
 
-          setTimeout (function (scope, e, contentE) {
+          setTimeout (function (scope, e, contentE, tabs) {
 
             return function () {
 
@@ -162,7 +161,7 @@
                   scrollX: true,
                   scrollY: false,
                   mouseWheel: false,
-                  disableMouse: true,
+                  disableMouse: false,
                   disablePointer: true,
                   disableTouch: true,
                   probeType: 1,
@@ -170,6 +169,24 @@
                   snap: true,
                   preventDefault: true
               });
+
+              scope.contentScrollTab = {};
+
+              for (var i = 0; i < tabs.length; i++) {
+                scope.contentScrollTab[i+'scroll'] = new IScroll (tabs[i], {
+                    scrollbars: false,
+                    scrollX: false,
+                    scrollY: true,
+                    mouseWheel: false,
+                    disableMouse: false,
+                    disablePointer: true,
+                    disableTouch: false,
+                    probeType: 1,
+                    click: true,
+                    snap: false,
+                    preventDefault: true
+                });
+              };
 
               scope.myScroll.on('scroll', function () {
                 // do something
@@ -181,7 +198,7 @@
 
             }
 
-          }(this, scrollE, contScrE), 100);
+          }(this, scrollE, contScrE, tabs), 100);
 
         }
 
@@ -238,7 +255,13 @@
 
       getActive: function () {
 
-        return this.querySelector ('ro-tab-label[selected="true"]');
+        var tab = this.querySelector ('ro-tab-label[selected="true"]');
+
+        if (!tab) {
+          tab = this.querySelector ('ro-tab-label[tabindex="0"]');
+        }
+
+        return tab;
 
       },
 
@@ -317,6 +340,40 @@
         for (var i = 0; i < tabLabels.length; i++) {
           tabLabels[i].innerHTML = Ro.templateEngine (tabLabelTemplate, data[i]);
         };
+
+      },
+
+      removeTabByIndex: function (index) {
+
+        var tabLabel         = this.querySelector ('ro-tab-label[tabindex="' + index + '"]');
+        var tab              = this.querySelector ('ro-tab[tabindex="' + index + '"]');
+        var tabWrapper       = this.querySelector ('div.roTabContentWrapper');
+        var labelWrapper     = this.querySelector ('div.roTabLabelsWrapper');
+        var activeTabBouding = tabLabel.getBoundingClientRect ();
+
+        tabLabel.parentNode.removeChild (tabLabel);
+        tab.parentNode.removeChild (tab);
+
+        var remainingTabLabels = this.querySelectorAll ('ro-tab-label');
+        var remainingTabs      = this.querySelectorAll ('ro-tab');
+
+        for (var i = 0; i < remainingTabs.length; i++) {
+          remainingTabs[i].setAttribute ('tabindex', i);
+          remainingTabLabels[i].setAttribute ('tabindex', i);
+        };
+
+        labelWrapper.style.width = remainingTabs.length * activeTabBouding.width + 'px';
+        tabWrapper.style.width = remainingTabs.length * window.innerWidth + 'px';
+
+        this.setActive (remainingTabLabels[0], remainingTabs[0]);
+
+        try {
+          this.contentScroll.refresh();
+          this.myScroll.refresh();
+        }
+        catch(err) {
+          // do something
+        }
 
       }
     }

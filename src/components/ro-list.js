@@ -5,7 +5,6 @@
       created: function () {
         this.xtag.item = this.querySelector ('ro-item');
         this.xtag.itemTemplate = this.querySelector ('ro-item').innerHTML;
-
         this.buttons = {};
 
         //Add default buttons
@@ -64,45 +63,46 @@
       setAction: function (action) {
         this.action = action;
       },
-      parseList: function () {
+        parseList: function () {
 
-        var data = this.xtag.data;
+            var data = this.xtag.data;
 
-        this.innerHTML = '';
+            this.innerHTML = '';
 
-        this.xtag.itemAction = this.action || this.xtag.item.getAttribute ('action');
+            this.xtag.itemAction = this.action || this.xtag.item.getAttribute ('action');
 
-        for (var i = 0; i < data.length; i++) {
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+                var roItem = document.createElement ('ro-item');
+                var roContent = document.createElement ('ro-item-content');
+                var action = new Function (Ro.templateEngine (this.xtag.itemAction, data[i]));
 
-          var roItem = document.createElement ('ro-item');
-          var roContent = document.createElement ('ro-item-content');
-          var action = new Function (Ro.templateEngine (this.xtag.itemAction, data[i]));
+                item.itemIndex = i;
+                roItem.setAttribute ('itemIndex', i);
 
-          roItem.setAttribute ('itemIndex', i);
+                roContent.addEventListener ('click', action);
+                roContent.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
 
-          roContent.addEventListener ('click', action);
-          roContent.innerHTML = Ro.templateEngine (this.xtag.itemTemplate, data[i]);
+                if (this.getAttribute ('swipeable')) {
+                    roItem.appendChild (this.renderSwipeMenu ());
+                    this.addSwipeMenuActions (roItem, this);
+                }
 
-          if (this.getAttribute ('swipeable')) {
-            roItem.appendChild (this.renderSwipeMenu ());
-            this.addSwipeMenuActions (roItem, this);
-          }
+                for (var j = 0; j < this.activeButtons.length; j++) {
+                    roItem.appendChild (this.activeButtons[j]());
+                }
 
-          for (var j = 0; j < this.activeButtons.length; j++) {
-            roItem.appendChild (this.activeButtons[j]());
-          };
+                if (this.getAttribute ('selectable')) {
+                    roItem.appendChild (this.renderSelectableButton (data[i]));
+                }
 
-          if (this.getAttribute ('selectable')) {
-            roItem.appendChild (this.renderSelectableButton (data[i]));
-          }
+                roItem.appendChild (roContent);
 
-          roItem.appendChild (roContent);
+                this.appendChild (roItem);
 
-          this.appendChild (roItem);
+            }
 
-        };
-
-      },
+        },
 
       getButtonsInfo: function () {
 

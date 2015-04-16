@@ -102,6 +102,11 @@ ro-list ro-item ro-item-content {
   display: block;
   
   width: calc(100% - 80px);
+
+  word-break: break-all;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 ro-item-swipemenu {

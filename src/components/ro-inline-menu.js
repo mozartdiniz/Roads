@@ -33,7 +33,37 @@
             }
         },
         methods: {
+            hideAllMenus: function () {
+                var getRoList = function(roInlineMenu) {
+                    var node = roInlineMenu;
+                    var nodeName = node.nodeName.toLowerCase();
+
+                    while (nodeName !== 'ro-list') {
+                        node = node.parentNode;
+                        nodeName = node.nodeName.toLocaleLowerCase();
+                        if (node === 'body') {
+                            break;
+                        }
+                    }
+
+                    return node;
+                };
+                var roList = getRoList(this);
+                var roInlineMenus = roList.querySelectorAll('ro-inline-menu[state="showItems"]');
+
+                for (var i = 0, j = roInlineMenus.length; i < j; i++) {
+                    var roInlineMenu = roInlineMenus[i];
+                    roInlineMenu.hide();
+                }
+            },
             show: function () {
+
+                var viewSingletonMenu = this.getAttribute('viewSingletonMenu');
+
+                if (viewSingletonMenu) {
+                    this.hideAllMenus();
+                }
+
                 this.xtag.isVisible = true;
                 this.setAttribute('state', 'showItems');
             },
@@ -57,16 +87,17 @@
             parseLayout: function () {
 
                 this.removeHideButton();
+                var renderHideMenu = this.getAttribute('buttonHideMenu');
                 var items = this.querySelectorAll('ro-item');
                 var itemsLength = items.length;
-                var magicNumber = 20;
+                var magicNumber = (renderHideMenu) ? 20 : 0;
                 var widthItem = parseInt((this.clientWidth - magicNumber) / itemsLength) + 'px';
                 var renderHideButton = function () {
 
                     var hideButton = document.createElement('ro-item');
                     hideButton.setAttribute('icon', '');
                     hideButton.setAttribute('class', 'hideInlineMenu');
-                    hideButton.style.width = '20px';
+                    hideButton.style.width = magicNumber + 'px';
 
                     return hideButton;
 
@@ -80,7 +111,12 @@
 
                 }
 
-                this.appendChild(renderHideButton());
+                if (renderHideMenu) {
+                    this.appendChild(renderHideButton());
+                }
+
+                this.parentNode.className =  this.parentNode.className.replace('hasMenuInline').trim();
+                this.parentNode.className += ' hasMenuInline';
 
             }
         }

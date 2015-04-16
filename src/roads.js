@@ -182,6 +182,7 @@ var Ro = (function () {
             request.open(this.method, this.url, this.async);
             request.setRequestHeader('Content-Type', this.contentType);
             request.setRequestHeader("Cache-Control", "no-cache");
+            request.setRequestHeader("Pragma", "no-cache");
 
             request.withCredentials = true;
 

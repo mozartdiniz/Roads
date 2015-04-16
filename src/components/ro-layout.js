@@ -22,11 +22,8 @@
         this.parseLayout ();
       },
       parseLayout: function () {
-
-        var data = this.xtag.data;
-
-        this.innerHTML = Ro.templateEngine (this.template, data);
-
+          var data = this.xtag.data;
+          xtag.innerHTML(this, Ro.templateEngine (this.template, data));
       }      
     }
   });

@@ -38,14 +38,6 @@ ro-map-layer-group ro-item {
   float: right;
 }
 
-ro-map-layer-group ro-item:nth-of-type(1) {
-  border-radius: 4px 4px 0 0;
-}
-
-ro-map-layer-group :last-child {
-  border-radius: 0 0 4px 4px;
-}
-
 ro-map-layer-group[visible="false"] ro-item {
   display: none;
 }

@@ -270,30 +270,6 @@ ro-topbar ro-title {
   display: block;
 }
 
-ro-topbar ro-button:last-child {
-
-  /* new flexbox syntax */
-  order: 3;
-  flex: 0 0 45px;
-  align-self: auto;
-
-  /* old flexbox syntax */
-  -webkit-box-ordinal-group: 3;
-  -webkit-order: 3;
-  -ms-flex-order: 3;
-
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 45px;
-  -ms-flex: 0 0 45px;
-
-  -webkit-align-self: auto;
-  -ms-flex-item-align: auto;
-
-  min-width: 0px;
-  min-height: auto;
-  display: block;
-}
-
 ro-stage {
 
   /* new flexbox syntax */

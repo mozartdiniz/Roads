@@ -2,7 +2,7 @@
  * Created by adaltojunior on 4/1/15.
  */
 (function () {
-    xtag.register('ro-inline-menu',{
+    xtag.register('ro-inline-menu', {
         lifecycle: {
             created: function () {
                 this.hide();
@@ -34,7 +34,7 @@
         },
         methods: {
             hideAllMenus: function () {
-                var getRoList = function(roInlineMenu) {
+                var getRoList = function (roInlineMenu) {
                     var node = roInlineMenu;
                     var nodeName = node.nodeName.toLowerCase();
 
@@ -115,7 +115,7 @@
                     this.appendChild(renderHideButton());
                 }
 
-                this.parentNode.className =  this.parentNode.className.replace('hasMenuInline').trim();
+                this.parentNode.className = this.parentNode.className.replace('hasMenuInline').trim();
                 this.parentNode.className += ' hasMenuInline';
 
             }

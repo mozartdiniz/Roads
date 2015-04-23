@@ -69,7 +69,8 @@
                         if (tabLabelTemplate) {
                             tabLabel.innerHTML = Ro.templateEngine(this.xtag.labelTemplate);
                         } else {
-                            tabLabel.innerHTML = Ro.templateEngine(newTabs[i].getAttribute('label'));
+                            tabLabel.setAttribute('i18nKey', newTabs[i].getAttribute('label'));
+                            tabLabel.setAttribute('i18n', '');
                         }
 
                         tabLabel.setAttribute('tabIndex', i);

@@ -7,35 +7,8 @@
             },
             inserted: function () {
 
-                if (!this.querySelector('ro-map-canvas')) {
-
-                    this.map = document.createElement('ro-map-canvas');
-                    this.appendChild(this.map);
-
-                    this.parseLayers();
-
-                    if (this.getAttribute('layerGroup')) {
-                        this.createLayerGroup();
-                    }
-
-                    var initialLatitude = this.getAttribute('latitude') || "0";
-                    var initialLongitude = this.getAttribute('longitude') || "0";
-                    var initialZoom = this.getAttribute('zoom') || "1";
-                    var maxZoom = this.getAttribute('maxZoom') || "22";
-                    var minZoom = this.getAttribute('minZoom') || "1";
-                    var center = ol.proj.transform([parseFloat(initialLongitude), parseFloat(initialLatitude)], 'EPSG:4326', 'EPSG:3857')
-
-                    this.olMap = new ol.Map({
-                        layers: this.olLayers,
-                        target: this.map,
-                        renderer: 'canvas',
-                        view: new ol.View({
-                            center: center,
-                            zoom: parseInt(initialZoom),
-                            maxZoom: parseInt(maxZoom),
-                            minZoom: parseInt(minZoom)
-                        })
-                    });
+                if (!this.querySelector ('ro-map-canvas') && this.querySelector ('ro-layer')) {
+                    this.parse();
                 }
 
             },
@@ -49,6 +22,46 @@
         accessors: {},
         methods: {
 
+            parse: function () {
+
+                this.map = document.createElement('ro-map-canvas');
+                this.appendChild(this.map);
+
+                this.parseLayers();
+
+                if (this.getAttribute('layerGroup')) {
+                    this.createLayerGroup();
+                }
+
+                this.crs             = this.getAttribute('projection') || "EPSG:3857";
+
+                var initialLatitude  = this.getAttribute('latitude') || "0";
+                var initialLongitude = this.getAttribute('longitude') || "0";
+                var initialZoom      = this.getAttribute('zoom') || "1";
+                var maxZoom          = this.getAttribute('maxZoom') || "22";
+                var minZoom          = this.getAttribute('minZoom') || "1";
+                var center           = [parseFloat(initialLongitude), parseFloat(initialLatitude)];
+                var viewOpt          = {
+                    center: center,
+                    projection: this.crs,
+                    zoom: parseInt(initialZoom),
+                    maxZoom: parseInt(maxZoom),
+                    minZoom: parseInt(minZoom)
+                };
+
+                if (this.crs !== 'EPSG:3857') {
+                    viewOpt.projection = this.crs;
+                }
+
+                this.olMap = new ol.Map({
+                    layers: this.olLayers,
+                    target: this.map,
+                    renderer: 'canvas',
+                    view: new ol.View(viewOpt)
+                });
+
+            },
+
             parseLayers: function () {
 
                 this.olLayers = [];
@@ -57,15 +70,22 @@
                 for (var i = 0; i < this.roLayers.length; i++) {
                     this.olLayers.push(this.layerBuilder(this.roLayers[i]));
                 }
-                ;
 
             },
 
             layerBuilder: function (layer) {
 
-                var type = layer.getAttribute('source') || 'OSM';
+                var type       = layer.getAttribute('source') || 'OSM';
                 var imagerySet = layer.getAttribute('imagerySet') || '';
-                var visible = (layer.getAttribute('visible')) ? true : false;
+                var visible    = (layer.getAttribute('visible')) ? true : false;
+                var url        = layer.getAttribute('url') || '';
+                var format     = layer.getAttribute('format') || 'image/png8';
+                var layersName = layer.getAttribute('layers') || '';
+                var serverType = layer.getAttribute('servertype') || 'geoserver';
+                var tileSize   = layer.getAttribute('tilesize') || '512';
+                var CQL_FILTER = layer.getAttribute('CQL_FILTER') || '';
+                var version    = layer.getAttribute('version') || '1.1.1';
+                var resultLayer;
 
                 switch (type) {
                     case 'OSM':
@@ -84,15 +104,52 @@
                         });
                         break;
                     case 'Google':
+
+                        this.layerCrs = 'EPSG:3857';
+
                         return new ol.layer.Tile({
                             source: new ol.source.OSM({
                                 url: this.googleURLSwich(imagerySet)
                             })
                         });
+
                         break;
+                    case 'WMS':
+
+                        var projection       = ol.proj.get('EPSG:4326');
+                        var projectionExtent = projection.getExtent();
+                        var resolutions      = new Array(16);
+                        var maxResolution    = ol.extent.getWidth(projectionExtent) / (parseInt(tileSize));
+
+                        var z;
+                        for (z = 0; z < 16; ++z) {
+                            resolutions[z] = maxResolution / Math.pow(2, z);
+                        }
+
+                        this.layerCrs = 'EPSG:4326';
+
+                        resultLayer = new ol.layer.Tile({
+                            source: new ol.source.TileWMS({
+                                url: url,
+                                params: {
+                                    LAYERS: layersName,
+                                    FORMAT: format,
+                                    TRANSPARENT: 'true',
+                                    VERSION: version,
+                                    CQL_FILTER: CQL_FILTER,
+                                    FORMAT_OPTIONS: '',
+                                    TILED: true
+                                },
+                                serverType: serverType
+                            })
+                        });
+
+                        return resultLayer;
+
                     default:
                         return new ol.layer.Tile({
                             source: new ol.source.OSM(),
+                            resolutions: resolutions,
                             visible: visible
                         });
                 }
@@ -122,7 +179,6 @@
                 for (var i = 0; i < this.olLayers.length; i++) {
                     this.olLayers[i].setVisible(false);
                 }
-                ;
 
                 this.olLayers[index].setVisible(true);
             },
@@ -165,10 +221,9 @@
 
             setCenter: function (position) {
 
-                var view = this.olMap.getView();
-                var latlng = ol.proj.transform(
-                    [position.longitude, position.latitude], 'EPSG:4326', 'EPSG:3857'
-                );
+                var view   = this.olMap.getView();
+                var latlng = this.convertProjection (position);
+
                 view.setCenter(latlng);
 
             },
@@ -180,16 +235,26 @@
 
             },
 
+            convertProjection: function (coordinates)  {
+
+                if (this.crs !== this.layerCrs) {
+                    var ll = ol.proj.transform (
+                        [coordinates.longitude, coordinates.latitude], this.crs, this.layerCrs
+                    );
+                } else {
+                    ll = [coordinates.longitude, coordinates.latitude];
+                }
+
+                return ll;
+
+            },
+
             addMarker: function (position, markerContent) {
 
-                if (position.longitude && position.latitude) {
+                if (position.longitude && position.latitude && this.olMap) {
 
                     var markerEl = document.createElement('div');
-                    var ll = ol.proj.transform(
-                        [position.longitude, position.latitude],
-                        'EPSG:4326',
-                        'EPSG:3857'
-                    );
+                    var ll = this.convertProjection (position);
 
                     markerEl.className = 'roMarker';
 
@@ -220,16 +285,14 @@
             markerFocus: function (position) {
 
                 var focusEl = document.createElement('div');
-                var ll = ol.proj.transform(
-                    [position.longitude, position.latitude],
-                    'EPSG:4326',
-                    'EPSG:3857'
-                );
+                var ll = this.convertProjection (position);
+
                 var marker = new ol.Overlay({
                     element: focusEl,
                     positioning: 'buttom-left',
                     stopEvent: false
                 });
+
                 var callbackToTimeout = (function (scope, marker) {
                     return function () {
                         scope.olMap.removeOverlay(marker);
@@ -304,16 +367,22 @@
 
             clear: function () {
 
-                var overlays = this.olMap.getOverlays().getArray();
-                var map = this.olMap;
+                if (this.olMap) {
+                    var overlays = this.olMap.getOverlays().getArray();
+                    var map = this.olMap;
 
-                for (var l = overlays.length; l > 0; l--) {
+                    for (var l = overlays.length; l > 0; l--) {
 
-                    if (overlays[l - 1] && !overlays[l - 1].currentPosition) {
-                        map.removeOverlay(overlays[l - 1]);
+                        if (overlays[l - 1] && !overlays[l - 1].currentPosition) {
+                            map.removeOverlay(overlays[l - 1]);
+                        }
                     }
                 }
 
+            },
+
+            getOLMap: function () {
+                return this.olMap;
             }
         }
     });

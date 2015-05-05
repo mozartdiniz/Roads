@@ -111,20 +111,22 @@
 
                 to.show(fromID);
 
-                to.style.transition = '10ms';
 
-                to.style.zIndex = 2;
-                to.style.transition = '300ms';
-                to.style.transitionTimingFunction = 'linear';
-                to.style.webkitTransform = 'translateX(0)';
-                to.style.transform = 'translateX(0)';
+                to.style.cssText = Ro.styleGenerator ({
+                    'transition': '200ms',
+                    'transitionTimingFunction': 'linear',
+                    'webkitTransform': 'translateX(0)',
+                    'transform': 'translateX(0)',
+                    'zIndex': 1
+                });
 
-                from.style.transition = '10ms';
-                from.style.zIndex = 3;
-                from.style.transition = '300ms';
-                from.style.transitionTimingFunction = 'linear';
-                from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
-                from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+                from.style.cssText = Ro.styleGenerator ({
+                    'transition': '300ms',
+                    'transitionTimingFunction': 'linear',
+                    'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
+                    'transform': 'translateX(-' + window.innerWidth + 'px)',
+                    'zIndex': 3
+                });
 
                 Ro.i18n.translateView(to);
 
@@ -151,20 +153,21 @@
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
-                to.transition = '10ms';
-                to.style.zIndex = 3;
-                to.transition = '300ms';
-                to.style.transitionTimingFunction = 'linear';
-                to.style.webkitTransform = 'translateX(0)';
-                to.style.transform = 'translateX(0)';
+                to.style.cssText = Ro.styleGenerator ({
+                    'transition': '200ms',
+                    'transitionTimingFunction': 'linear',
+                    'webkitTransform': 'translateX(0)',
+                    'transform': 'translateX(0)',
+                    'zIndex': 3
+                });
 
-
-                from.transition = '10ms';
-                from.style.zIndex = 2;
-                from.transition = '300ms';
-                from.style.transitionTimingFunction = 'linear';
-                from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-                from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                from.style.cssText = Ro.styleGenerator ({
+                    'transition': '300ms',
+                    'transitionTimingFunction': 'linear',
+                    'webkitTransform': 'translateX(' + window.innerWidth + 'px)',
+                    'transform': 'translateX(' + window.innerWidth + 'px)',
+                    'zIndex': 2
+                });
 
                 Ro.i18n.translateView(to);
 

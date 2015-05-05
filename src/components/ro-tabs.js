@@ -128,6 +128,19 @@
         var cWrapper = this.querySelector('.roTabContentWrapper');
         var scrollE = this.querySelector('ro-tabs-labels');
         var contScrE = this.querySelector('ro-tabs-contents');
+        var scrollContentOptions = {
+          scrollbars: false,
+          scrollX: true,
+          scrollY: false,
+          mouseWheel: false,
+          disableMouse: false,
+          disablePointer: true,
+          disableTouch: true,
+          probeType: 1,
+          click: true,
+          snap: true,
+          preventDefault: true
+        };
 
         if (tabsWidth) {
 
@@ -152,24 +165,15 @@
                 mouseWheel: false,
                 probeType: 1,
                 click: true,
-                snap: true,
                 preventDefault: true,
                 snap: 'ro-tab-label'
               });
 
-              scope.contentScroll = new IScroll(contentE, {
-                scrollbars: false,
-                scrollX: true,
-                scrollY: false,
-                mouseWheel: false,
-                disableMouse: false,
-                disablePointer: true,
-                disableTouch: true,
-                probeType: 1,
-                click: true,
-                snap: true,
-                preventDefault: true
-              });
+              if (Ro.Environment.platform.isWPhone) {
+                scrollContentOptions.disableMouse = true;
+              }
+
+              scope.contentScroll = new IScroll(contentE, scrollContentOptions);
 
               scope.contentScrollTab = {};
 
@@ -264,6 +268,24 @@
 
         return tab;
 
+      },
+
+      goToNextTab: function () {
+        var active = this.getActive ();
+        var nextTab = active.nextElementSibling;
+
+        if (nextTab) {
+          this.tabClickCallback (nextTab);
+        }
+      },
+
+      goToPreviousTab: function () {
+        var active = this.getActive ();
+        var previusTab = active.previousElementSibling;
+
+        if (previusTab) {
+          this.tabClickCallback (previusTab);
+        }
       },
 
       scrollToTab: function (tab) {

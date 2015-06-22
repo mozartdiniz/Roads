@@ -170,8 +170,10 @@ var Ro = (function () {
         this.timeout     = 30000;
         this.ontimeout   = null;
         this.roSuccess   = null;
+          this.multipart   = null;
 
-        //callback for error
+
+          //callback for error
         this.error       = null;
 
         // do request
@@ -180,7 +182,9 @@ var Ro = (function () {
             var request = new XMLHttpRequest();
 
             request.open(this.method, this.url, this.async);
-            request.setRequestHeader('Content-Type', this.contentType);
+            if (!this.multipart) {
+                request.setRequestHeader('Content-Type', this.contentType);
+            }
             request.setRequestHeader("Cache-Control", "no-cache");
             request.setRequestHeader("Pragma", "no-cache");
 

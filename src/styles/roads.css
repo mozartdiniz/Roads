@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'roads';
   src:url('../fonts/roads.eot?') format('embedded-opentype'),
-    url('../fonts/roads.woff') format('woff'),
-    url('../fonts/roads.ttf') format('truetype'),
-    url('../fonts/roads.svg?4s9l5w#roads') format('svg');
+  url('../fonts/roads.woff') format('woff'),
+  url('../fonts/roads.ttf') format('truetype'),
+  url('../fonts/roads.svg?4s9l5w#roads') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -33,7 +33,7 @@
 }
 
 *::-webkit-scrollbar {
-    display:none;
+  display:none;
 }
 
 html {
@@ -159,6 +159,10 @@ ro-view {
   /* IMPORTANT: Don't ask me why, but if you remove the border transitions
   will not work in wp8 */
   border: 1px solid black;
+}
+
+ro-view[from="true"] * {
+  display: none;
 }
 
 ro-header {

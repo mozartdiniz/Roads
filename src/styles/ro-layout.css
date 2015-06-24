@@ -16,13 +16,13 @@ ro-layout ro-item {
   -webkit-box-orient: horizontal;
   -webkit-flex-direction: row;
   -webkit-justify-content: flex-start;
-  -webkit-align-content: stretch; 
+  -webkit-align-content: stretch;
 
   -moz-box-direction: normal;
   -moz-box-orient: horizontal;
   -moz-flex-direction: row;
   -moz-justify-content: flex-start;
-  -moz-align-content: stretch;     
+  -moz-align-content: stretch;
 }
 
 ro-layout ro-item > * {
@@ -36,7 +36,7 @@ ro-layout ro-item > * {
   display: inline-block;
   overflow: hidden;
   overflow-wrap: break-word;
-  text-overflow: ellipsis;  
+  text-overflow: ellipsis;
 }
 
 ro-layout ro-item ro-icon {
@@ -75,13 +75,13 @@ ro-layout ro-item[orientation="vertical"] {
   -webkit-box-orient: vertical;
   -webkit-flex-direction: column;
   -webkit-justify-content: flex-start;
-  -webkit-align-content: stretch; 
+  -webkit-align-content: stretch;
 
   -moz-box-direction: normal;
   -moz-box-orient: vertical;
   -moz-flex-direction: column;
   -moz-justify-content: flex-start;
-  -moz-align-content: stretch; 
+  -moz-align-content: stretch;
 
 }
 
@@ -104,5 +104,5 @@ ro-layout ro-item[orientation="vertical"] * {
   display: inline-block;
   overflow: hidden;
   overflow-wrap: break-word;
-  text-overflow: ellipsis;  
+  text-overflow: ellipsis;
 }

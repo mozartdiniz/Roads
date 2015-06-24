@@ -60,6 +60,12 @@
                 this.xtag.data = data;
                 this.parseList();
             },
+            addData: function (newItem) {
+                this.xtag.data.push (newItem);
+            },
+            removeDataItem: function (index) {
+                this.xtag.data.splice(index,1);
+            },
             getData: function () {
                 return this.xtag.data;
             },
@@ -75,35 +81,41 @@
                 this.xtag.itemAction = this.action || this.xtag.item.getAttribute('action');
 
                 for (var i = 0; i < data.length; i++) {
-                    var item = data[i];
-                    var roItem = document.createElement('ro-item');
-                    var roContent = document.createElement('ro-item-content');
-                    var action = new Function(Ro.templateEngine(this.xtag.itemAction, data[i]));
 
-                    item.itemIndex = i;
-                    roItem.setAttribute('itemIndex', i);
-
-                    roContent.addEventListener('click', action);
-                    roContent.innerHTML = Ro.templateEngine(this.xtag.itemTemplate, data[i]);
-
-                    if (this.getAttribute('swipeable')) {
-                        roItem.appendChild(this.renderSwipeMenu());
-                        this.addSwipeMenuActions(roItem, this);
-                    }
-
-                    for (var j = 0; j < this.activeButtons.length; j++) {
-                        roItem.appendChild(this.activeButtons[j]());
-                    }
-
-                    if (this.getAttribute('selectable')) {
-                        roItem.appendChild(this.renderSelectableButton(data[i]));
-                    }
-
-                    roItem.appendChild(roContent);
-
-                    this.appendChild(roItem);
+                    this.renderItem (data[i], i);
 
                 }
+
+            },
+
+            renderItem: function (data, i) {
+
+                var roItem    = document.createElement('ro-item');
+                var roContent = document.createElement('ro-item-content');
+                var action    = new Function(Ro.templateEngine(this.xtag.itemAction, data));
+
+                data.itemIndex = i;
+                roItem.setAttribute('itemIndex', i);
+
+                roContent.addEventListener('click', action);
+                roContent.innerHTML = Ro.templateEngine(this.xtag.itemTemplate, data);
+
+                if (this.getAttribute('swipeable')) {
+                    roItem.appendChild(this.renderSwipeMenu());
+                    this.addSwipeMenuActions(roItem, this);
+                }
+
+                for (var j = 0; j < this.activeButtons.length; j++) {
+                    roItem.appendChild(this.activeButtons[j]());
+                }
+
+                if (this.getAttribute('selectable')) {
+                    roItem.appendChild(this.renderSelectableButton(data));
+                }
+
+                roItem.appendChild(roContent);
+
+                this.appendChild(roItem);
 
             },
 

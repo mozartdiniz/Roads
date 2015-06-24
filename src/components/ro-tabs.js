@@ -154,9 +154,9 @@
           wrapper.style.width = all + 'px';
           cWrapper.style.width = allContent + 'px';
 
-          setTimeout(function (scope, e, contentE, tabs) {
+          setTimeout(function setTimeoutTabIScroll(scope, e, contentE, tabs) {
 
-            return function () {
+            return function setTimeoutTabIScrollReturn () {
 
               scope.myScroll = new IScroll(e, {
                 scrollbars: false,
@@ -178,19 +178,21 @@
               scope.contentScrollTab = {};
 
               for (var i = 0; i < tabs.length; i++) {
-                scope.contentScrollTab[i + 'scroll'] = new IScroll(tabs[i], {
-                  scrollbars: false,
-                  scrollX: false,
-                  scrollY: true,
-                  mouseWheel: false,
-                  disableMouse: false,
-                  disablePointer: true,
-                  disableTouch: false,
-                  probeType: 1,
-                  click: true,
-                  snap: false,
-                  preventDefault: true
-                });
+                setTimeout ((function (scope, i, tab) {
+                  scope.contentScrollTab[i + 'scroll'] = new IScroll(tab, {
+                    scrollbars: false,
+                    scrollX: false,
+                    scrollY: true,
+                    mouseWheel: false,
+                    disableMouse: false,
+                    disablePointer: true,
+                    disableTouch: false,
+                    probeType: 1,
+                    click: true,
+                    snap: false,
+                    preventDefault: true
+                  });
+                }(scope, i, tabs[i])), 100);
               }
 
               scope.myScroll.on('scroll', function () {

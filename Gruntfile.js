@@ -11,19 +11,19 @@ module.exports = function(grunt) {
       options: {
         stripBanners: true,
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-          '<%= grunt.template.today("yyyy-mm-dd") %> */',
+          '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
       dist: {
         src: ['src/*.js', 'src/components/*.js'],
-        dest: 'dist/<%= pkg.name %>.js',
-      },
+        dest: 'dist/<%= pkg.name %>.js'
+      }
     },
     concat_css: {
       options: {},
       all: {
         src: ['src/**/*.css'],
         dest: 'dist/roads.css'
-      },
+      }
     },
     uglify: {
       options: {

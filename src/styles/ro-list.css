@@ -49,8 +49,8 @@ ro-list ro-item {
   -ms-flex-align: stretch;
 
   min-width: 0px;
-  min-height: auto;  
-  height: 45px;  
+  min-height: auto;
+  height: 45px;
 }
 
 ro-list ro-item ro-checkbox {
@@ -72,15 +72,15 @@ ro-list ro-item ro-checkbox {
   -ms-flex-item-align: auto;
 
   min-width: 0px;
-  min-height: auto;  
-  display: block;  
+  min-height: auto;
+  display: block;
 }
 
 ro-list ro-item ro-item-content {
   /* new flexbox syntax */
   order: 2;
   flex: 1 1 auto;
-  align-self: auto;  
+  align-self: auto;
 
   /* old flexbox syntax */
   -webkit-box-ordinal-group: 2;
@@ -95,12 +95,12 @@ ro-list ro-item ro-item-content {
   -ms-flex-item-align: auto;
 
   min-width: 0px;
-  min-height: auto;  
+  min-height: auto;
   text-align: left;
   padding-top: 14px;
   padding: 10px;
   display: block;
-  
+
   width: calc(100% - 80px);
 
   word-break: break-all;
@@ -117,7 +117,7 @@ ro-item-swipemenu {
   background: green;
   top: 0;
   left: -100%;
-  border: none;      
+  border: none;
   color: white;
   font-weight: bold;
   transform: translateX(0px);

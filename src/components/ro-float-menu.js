@@ -98,6 +98,7 @@
 
             parseList: function () {
                 var items = this.querySelectorAll('ro-item');
+
                 for (var i = 0; i < items.length; i++) {
 
                     var itemActionFunction = new Function(items[i].getAttribute('action'));

@@ -1,3 +1,4 @@
+/* inline menu */
 @keyframes roadsShowInlineMenuItem {
     0%   {
         transform:translateX(100%);
@@ -90,7 +91,7 @@ ro-inline-menu[state="hideItems"]{
     -ms-animation-play-state: running;
     -ms-animation-fill-mode: forwards !important;
     -ms-animation: roadsHideInlineMenuItem 300ms;
-    visibility: hidden;
+    display: none;
 }
 
 ro-inline-menu[state="showItems"] {
@@ -105,7 +106,7 @@ ro-inline-menu[state="showItems"] {
     -ms-animation-play-state: running;
     -ms-animation-fill-mode: forwards !important;
     -ms-animation: roadsShowInlineMenuItem 300ms;
-    visibility: visible;
+    display: inline-block;
 
 }
 
@@ -116,6 +117,8 @@ ro-list ro-inline-menu > ro-item{
     border: none;
     margin: 0 -2px;
     height: inherit;
+    width: auto;
+    padding: 0 2px 0 2px;
 }
 
 ro-inline-menu ro-item::before{

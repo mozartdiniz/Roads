@@ -111,24 +111,49 @@
 
                 to.show(fromID);
 
+                to.removeAttribute('from');
+                to.setAttribute('to', 'true');
 
-                to.style.cssText = Ro.styleGenerator ({
-                    'transition': '200ms',
-                    'transitionTimingFunction': 'linear',
-                    'webkitTransform': 'translateX(0)',
-                    'transform': 'translateX(0)',
-                    'zIndex': 1
-                });
+                if (Ro.Environment.platform.isWPhone) {
+                    to.style.cssText = Ro.styleGenerator ({
+                        'transition': '200ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(0)',
+                        'transform': 'translateX(0)'
+                    });
+                } else {
+                    to.style.transition = '300ms';
+                    to.style.transitionTimingFunction = 'linear';
+                    to.style.webkitTransform = 'translateX(0)';
+                    to.style.transform = 'translateX(0)';
+                }
 
-                from.style.cssText = Ro.styleGenerator ({
-                    'transition': '300ms',
-                    'transitionTimingFunction': 'linear',
-                    'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
-                    'transform': 'translateX(-' + window.innerWidth + 'px)',
-                    'zIndex': 3
-                });
+
+                from.removeAttribute('to');
+                from.setAttribute('from', 'true');
+
+                if (Ro.Environment.platform.isWPhone) {
+                    from.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
+                        'transform': 'translateX(-' + window.innerWidth + 'px)'
+                    });
+                } else {
+                    from.style.transition = '300ms';
+                    from.style.transitionTimingFunction = 'linear';
+                    from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
+                    from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+                }
 
                 Ro.i18n.translateView(to);
+
+                setTimeout ((function (to, from) {
+                    return function () {
+                        to.style.zIndex = 2;
+                        from.style.zIndex = 3;
+                    };
+                }(to, from)), 50);
 
                 this.activeView = toID;
 
@@ -153,23 +178,49 @@
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
-                to.style.cssText = Ro.styleGenerator ({
-                    'transition': '200ms',
-                    'transitionTimingFunction': 'linear',
-                    'webkitTransform': 'translateX(0)',
-                    'transform': 'translateX(0)',
-                    'zIndex': 3
-                });
+                to.removeAttribute('from');
+                to.setAttribute('to', 'true');
 
-                from.style.cssText = Ro.styleGenerator ({
-                    'transition': '300ms',
-                    'transitionTimingFunction': 'linear',
-                    'webkitTransform': 'translateX(' + window.innerWidth + 'px)',
-                    'transform': 'translateX(' + window.innerWidth + 'px)',
-                    'zIndex': 2
-                });
+                if (Ro.Environment.platform.isWPhone) {
+                    to.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(0)',
+                        'transform': 'translateX(0)'
+                    });
+                } else {
+                    to.style.transition = '300ms';
+                    to.style.transitionTimingFunction = 'linear';
+                    to.style.webkitTransform = 'translateX(0)';
+                    to.style.transform = 'translateX(0)';
+                }
+
+
+                from.removeAttribute('to');
+                from.setAttribute('from', 'true');
+
+                if (Ro.Environment.platform.isWPhone) {
+                    from.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
+                        'transform': 'translateX(-' + window.innerWidth + 'px)'
+                    });
+                } else {
+                    from.style.transition = '300ms';
+                    from.style.transitionTimingFunction = 'linear';
+                    from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+                    from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                }
 
                 Ro.i18n.translateView(to);
+
+                setTimeout ((function (to, from) {
+                    return function () {
+                        to.style.zIndex = 3;
+                        from.style.zIndex = 2;
+                    };
+                }(to, from)), 50);
 
                 this.activeView = toID;
 

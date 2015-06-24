@@ -24,46 +24,49 @@ ro-stage[loading="true"]::after {
     border-radius: 100%;
     z-index: 11;
 
-    animation: rotateRoStageLoader 1s;
+    animation: roLoaderSpinner 2s;
+    animation-play-state: running;
     animation-timing-function: linear;
-    animation-fill-mode: forwards;
+    animation-fill-mode: forwards !important;
     animation-iteration-count: infinite;
 
-    -webkit-animation: rotateRoStageLoader 1s;
+    -webkit-animation: roLoaderSpinner 2s;
+    -webkit-animation-play-state: running;
     -webkit-animation-timing-function: linear;
-    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-fill-mode: forwards !important;
     -webkit-animation-iteration-count: infinite;
 
-    -ms-animation: rotateRoStageLoader 1s;
+    -ms-animation: roLoaderSpinner 2s;
+    -ms-animation-play-state: running;
     -ms-animation-timing-function: linear;
-    -ms-animation-fill-mode: forwards;
-    -ms-animation-iteration-count: infinite;    
+    -ms-animation-fill-mode: forwards !important;
+    -ms-animation-iteration-count: infinite;
 
 }
 
 @keyframes rotateRoStageLoader {
-    0% {      
-      transform: rotateZ(0deg);
-    }    
+    0% {
+        transform: rotateZ(0deg);
+    }
     100% {
-      transform: rotateZ(360deg);
+        transform: rotateZ(360deg);
     }
 }
 
 @-webkit-keyframes rotateRoStageLoader {
-    0% {      
-      -webkit-transform: rotateZ(0deg);
-    }    
+    0% {
+        -webkit-transform: rotateZ(0deg);
+    }
     100% {
-      -webkit-transform: rotateZ(360deg);
+        -webkit-transform: rotateZ(360deg);
     }
 }
 
 @-ms-keyframes rotateRoStageLoader {
-    0% {      
-      transform: rotateZ(0deg);
-    }    
+    0% {
+        transform: rotateZ(0deg);
+    }
     100% {
-      transform: rotateZ(360deg);
+        transform: rotateZ(360deg);
     }
 }

@@ -90,14 +90,15 @@
                 var renderHideMenu = this.getAttribute('buttonHideMenu');
                 var items = this.querySelectorAll('ro-item');
                 var itemsLength = items.length;
-                var magicNumber = (renderHideMenu) ? 20 : 0;
-                var widthItem = parseInt((this.clientWidth - magicNumber) / itemsLength) + 'px';
+                //var magicNumber = (renderHideMenu) ? 20 : 0;
+                //var widthItem = parseInt((this.clientWidth - magicNumber) / itemsLength) + 'px';
+
                 var renderHideButton = function () {
 
                     var hideButton = document.createElement('ro-item');
                     hideButton.setAttribute('icon', '');
                     hideButton.setAttribute('class', 'hideInlineMenu');
-                    hideButton.style.width = magicNumber + 'px';
+                    //hideButton.style.width = magicNumber + 'px';
 
                     return hideButton;
 
@@ -106,7 +107,7 @@
                 for (var i = 0; i < itemsLength; i++) {
 
                     var item = items[i];
-                    item.style.width = widthItem;
+                    //item.style.width = widthItem;
                     item.setAttribute('text', Ro.templateEngine(item.getAttribute('i18nKey')));
 
                 }

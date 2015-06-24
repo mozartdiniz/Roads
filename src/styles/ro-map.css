@@ -1,3 +1,5 @@
+/* Map */
+
 ro-map {
   height: 300px;
   text-align: center;
@@ -77,29 +79,29 @@ ro-map-canvas .focusMaker {
 
 /* Standard syntax */
 @keyframes rotateFocusMaker {
-    0% {
-      transform: rotateZ(0deg);
-    }
-    100% {
-      transform: rotateZ(360deg);
-    }
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }
 
 /* Chrome, Safari, Opera */
 @-webkit-keyframes rotateFocusMaker {
-    0% {
-      -webkit-transform: rotateZ(0deg);
-    }
-    100% {
-      -webkit-transform: rotateZ(360deg);
-    }
+  0% {
+    -webkit-transform: rotateZ(0deg);
+  }
+  100% {
+    -webkit-transform: rotateZ(360deg);
+  }
 }
 
 @-ms-keyframes rotateFocusMaker {
-    0% {
-      transform: rotateZ(0deg);
-    }
-    100% {
-      transform: rotateZ(360deg);
-    }
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }

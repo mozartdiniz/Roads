@@ -1,5 +1,9 @@
 var Ro = Ro || {};
 
+/**
+ * Ro.i18n is a helper to make your life easier when you need to make XMLHttpRequests
+ */
+
 Ro.Http = function () {
 
 	// set defaults

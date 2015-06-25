@@ -1,5 +1,11 @@
 var Ro = Ro || {};
 
+/**
+ * Filters are functions that will be used to evaluate the value when templateEngine() is replacing data in a
+ * template string. Roads come with some basic filters but is also easy create and use new ones.
+ *
+ */
+
 Ro.Filter = {
 	filters: {
 
@@ -67,6 +73,8 @@ Ro.Filter = {
 			return Ro.i18n.translations[i18nKey] || i18nKey;
 		}
 	},
+
+	// Used to add a new filter
 	register: function (filterName, filterImplementation) {
 
 		if (!filterName) {

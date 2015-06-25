@@ -1,5 +1,10 @@
 var Ro = Ro || {};
 
+/**
+ * Ro.Environment is used to check in what platform your app is running, Roads check these values when
+ * need to decide if a back-button will be showed, or something like that
+ */
+
 Ro.Environment = {
 	isTouchDevice: !!('ontouchstart' in window),
 	platform: {

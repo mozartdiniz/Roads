@@ -135,3 +135,17 @@ Both gotoView and backtoView will trigger 'show' method from related view contro
 	var list = document.querySelector ('ro-list');
 	var data = [{desciption: 'a'}, {desciption: 'b'}];
 	list.setData(data);
+
+### ro-input
+### ro-layout
+### ro-map
+### ro-tabs
+### ro-tabs
+#### ro-float-menu
+
+## Roads functions
+
+#### templateEngine()
+#### styleGenerator()
+#### Ro.Filter
+#### Ro.i18n

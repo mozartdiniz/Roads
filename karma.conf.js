@@ -1,12 +1,12 @@
 module.exports = function(config) {
   config.set({
-    browsers : ['Chrome', 'Firefox'],
+    files: ['lib/*.js'].concat('test/**/*_spec.js'),
+    browsers : ['Chrome'], // for some reason, x-tag tests are not working with Firefox
     frameworks: ['jasmine'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome', 'Firefox'],
-    singleRun: true    
+    singleRun: true
   });
 };

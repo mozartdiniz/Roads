@@ -1,14 +1,26 @@
-/*! roads - v0.0.1 - 2015-06-24 */var Ro = {
+/*! roads - v0.0.1 - 2015-06-25 */var Ro = {
+
+	/**
+	 * This is the very first function that Roads will run
+	 * @param {function} callback What will run after everything is finished
+	 *
+	 */
 
     init: function (callback) {
 
         Ro.Session = Ro.Session = {};
         var writeImports = function() {
 
+	        // Show loader before load files
             var loader = document.querySelector ('ro-loader');
             if (loader) {
                 loader.show();
             }
+
+	        /**
+	         * Search all link[rel="import"] tags, gets their contents and adds
+	         * inside of ro-app tag. Is how all views are added to project
+			*/
 
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
@@ -40,6 +52,9 @@
                     preventDefaultException: { tagName:/.*/ }
                 });
             }
+
+	        // This callback is delayed because look like that Trident, WP8 HTML engine, needs some time
+	        // to process all HTML, I'm not happy, but I still don't realize a better solution
 
             setTimeout (callback, 100);
 
@@ -87,6 +102,17 @@
 
     },
 
+    /**
+     * Style Generator will create a css Text and you can use it to change all styles at the same time.
+     * @param {object} styles The object that represents all styles that will be generated
+     *
+     *  {
+     *      color: 'red',
+     *      'background-color': '#ffeedd'
+     *  }
+     *
+     */
+
     styleGenerator : function (styles) {
 
         var style = '';
@@ -98,6 +124,24 @@
         return style;
 
     },
+
+	/**
+	 * Replace all content with a pattern {{}} by a value found in data parameter
+	 * @param {string} tpl The string that will have values replaced
+	 * @param {object} data Object with all data
+	 *
+	 *  "<div>SSN: {{user.info.ssn}}</div>"
+	 *
+	 *  {
+	 *     user: {
+	 *        info: {
+	 *           ssn: 333-444-555
+	 *        }
+	 *     }
+	 *  }
+	 *
+	 *
+	 */
 
     templateEngine : function (tpl, data) {
 
@@ -139,6 +183,13 @@
 
     },
 
+	/**
+	 * Search a specific value in a object by full path description
+	 * @param {object} data Object with all data
+	 * @param {string} key A full path representing where the value is 'data.users.data.ssn'
+	 *
+	 */
+
     findByKey : function (data, key) {
 
         var value  = data;
@@ -163,6 +214,10 @@
 };
 var Ro = Ro || {};
 
+/**
+ * Ro.i18n is responsible by translations and internationalization
+ */
+
 Ro.i18n = {
 	defaults: {
 		currency: "US$",
@@ -173,7 +228,25 @@ Ro.i18n = {
 		time: "HH:mm",
 		systemOfMeasurement: "METRIC" // METRIC | IMPERIAL
 	},
+
+	/**
+	 * Translations is a object that storage all text to be used as a translation
+	 *
+	 * {
+	 *    'user.name': 'User name',
+	 *    'user.pass': 'Password'
+	 * }
+	 *
+	 */
+
 	translations: {},
+
+	/**
+	 * Used to translante view layout
+	 *
+	 * @param {RoView} view Search for all DOM nodes with a [i18n] attribute and pass to translateElement()
+	 */
+
 	translateView: function (view) {
 
 		var elements = view.querySelectorAll('[i18n]');
@@ -181,6 +254,14 @@ Ro.i18n = {
 			this.translateElement (elements[i]);
 		}
 	},
+
+	/**
+	 * Check what needs to be translated, fis is only a [i18n] attribute, the translated value will be added as
+	 * innerHTML, but if i18n has a value this value will be used to set a attribute with translated text.
+	 *
+	 * @param {DOMObject} el
+	 */
+
 	translateElement: function (el) {
 		var i18n = el.getAttribute('i18n');
 
@@ -195,6 +276,13 @@ Ro.i18n = {
 
 	},
 
+	/**
+	 * Search translations by key, if there's no translations that match with this key, return
+	 * the key. This is useful to check if there's no missing translations
+	 *
+	 * @param {string} key
+	 */
+
 	getTranslationByKey : function(key){
 
 		var value = Ro.i18n.translations[key];
@@ -205,6 +293,15 @@ Ro.i18n = {
 
 		return key;
 	},
+
+	/**
+	 *
+	 * Search translations by key, if there's no translations that match with this key, return
+	 * the alternate value.
+	 *
+	 * @param {string} resourceId
+	 * @param {string} alternativeValue
+	 */
 
 	getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
 
@@ -219,6 +316,10 @@ Ro.i18n = {
 
 };
 var Ro = Ro || {};
+
+/**
+ * Ro.i18n is a helper to make your life easier when you need to make XMLHttpRequests
+ */
 
 Ro.Http = function () {
 
@@ -319,6 +420,12 @@ Ro.Globals = {
 };
 var Ro = Ro || {};
 
+/**
+ * Filters are functions that will be used to evaluate the value when templateEngine() is replacing data in a
+ * template string. Roads come with some basic filters but is also easy create and use new ones.
+ *
+ */
+
 Ro.Filter = {
 	filters: {
 
@@ -386,6 +493,8 @@ Ro.Filter = {
 			return Ro.i18n.translations[i18nKey] || i18nKey;
 		}
 	},
+
+	// Used to add a new filter
 	register: function (filterName, filterImplementation) {
 
 		if (!filterName) {
@@ -403,6 +512,11 @@ Ro.Events = {
 	}
 };
 var Ro = Ro || {};
+
+/**
+ * Ro.Environment is used to check in what platform your app is running, Roads check these values when
+ * need to decide if a back-button will be showed, or something like that
+ */
 
 Ro.Environment = {
 	isTouchDevice: !!('ontouchstart' in window),
@@ -424,14 +538,31 @@ Ro.Environment = {
 };
 var Ro = Ro || {};
 
+/**
+ * Controllers are simples classes that are be used to manipulates view layouts, if you need get new data from
+ * a REST service you will add a function with this call in a controller, that will pass the data for the
+ * Road component TAG. If you need a user interaction, you will implement a function in controller and call the
+ * specific method from a view tag.
+ *
+ *
+ * @param {string} viewID
+ * @param {object} methods
+ * @returns {Function}
+ *
+ * @constructor
+ */
+
 Ro.Controller = function (viewID, methods) {
 
 	var Controller = function () {
 
+		//Relate a view layout with this controller
 		this.view = document.querySelector ('[ro-controller="' + viewID + '"]');
 
 		this.init ();
 
+		// If there's a view method in the controller pass to related view, so RoApp will can run this
+		// function every time that this view become visible
 		if (this.show) {
 			this.view.setShowFunction (this.show.bind (this));
 		}

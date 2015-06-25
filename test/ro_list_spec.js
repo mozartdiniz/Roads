@@ -2,8 +2,6 @@ describe('RO-LIST tests', function () {
 
 	it('Should parse list', function () {
 
-		/*
-
 		var data = [{
 			description: 'a'
 		}, {
@@ -19,10 +17,8 @@ describe('RO-LIST tests', function () {
 
 		roList.setData (data);
 
-		expect(roList.childNodes.length).toBe(2);
+		expect(roList.childNodes.length).toBe(3);
 		expect(roList.childNodes[0].innerHTML).toBe('<ro-item-content>a</ro-item-content>');
-
-		*/
 
 	});
 

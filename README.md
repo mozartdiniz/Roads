@@ -256,8 +256,8 @@ Also is possible translate tag attributes
 	
 When you use a attribute i18n roads will get the attribute i18nKey, tranlated and will add as a innerHTML of this tag
 
-	        <ro-input type="text" 
-                  i18n="placeholder"
-                  i18nKey="{{views.form.userName | i18n}}">
+	<ro-input type="text" 
+		  i18n="placeholder"
+		  i18nKey="{{views.form.userName | i18n}}">
                   
 When you need translate a specific attribute set the value of i18n attribute with the attribute name you want translate, in previus example, Roads will get i18nKey, translate it and after that will the a new attribute placeholder with translated text.

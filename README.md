@@ -141,11 +141,43 @@ Both gotoView and backtoView will trigger 'show' method from related view contro
 ### ro-map
 ### ro-tabs
 ### ro-tabs
-#### ro-float-menu
+### ro-float-menu
 
 ## Roads functions
 
-#### templateEngine()
-#### styleGenerator()
-#### Ro.Filter
-#### Ro.i18n
+### templateEngine()
+
+Roads template engine combine any string with pattern {{}} and the data passed as argument
+
+	var template = '<div>{{desctiption}}</div>';
+	Ro.templateEngine (template, {
+		description: 'Hello!'
+	});
+	
+You salso can use more complex data	
+
+	var template = '<div>{{user.info.ssn}}</div>';
+	var user = {
+	   name: 'Jonh Smith',
+	   job: 'Front end developer',
+	   info: {
+	      ssn: 433-433-111
+	   }
+	}
+	Ro.templateEngine (template, user);
+	
+
+### styleGenerator()
+
+Sometimes developers need to change a large number of styles in a same DOM element, talking about performance, this may be slow if this element is already rendered. Style Generator will create a css Text and you can use it to change all styles at the same time
+
+	var e = document.createElement('div');
+
+	e.style.cssText = Ro.styleGenerator({
+		border: '1px solid red',
+		color: 'red',
+		'font-size': '12px'
+	});
+
+### Ro.Filter
+### Ro.i18n

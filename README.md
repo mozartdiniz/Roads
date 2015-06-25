@@ -143,6 +143,42 @@ Both gotoView and backtoView will trigger 'show' method from related view contro
 ### ro-tabs
 ### ro-float-menu
 
+![Alt text](https://cdn1.vox-cdn.com/thumbor/CHlsepYrnKp0JzEQro4rnda7BeY=/cdn0.vox-cdn.com/uploads/chorus_asset/file/3329476/inbox-3up.0.png)
+
+Float menu reproduce a very similar behavior to Android's Material Design.
+
+	<ro-float-menu icon="More" iconActive="Close" state="hideItems">
+
+		<ro-item icon="NewDocument"
+           text=""
+           i18n="text"
+           i18nKey="{{menus.newDocument | i18n}}"
+           action="RoApp.gotoView ('docs', 'newEdit');"></ro-item>
+
+		<ro-item icon="EditDocument"
+             text=""
+             i18n="text"
+             i18nKey="{{menus.editDocument | i18n}}"
+             action="RoApp.gotoView ('docs', 'docsEdit');"></ro-item>
+
+		<ro-item icon="DeleteDocument"
+             text=""
+             i18n="text"
+             i18nKey="{{menus.deleteDocument | i18n}}"
+             action="myApp.Documents.Delete()"></ro-item>
+
+	</ro-float-menu>
+
+Each ro-item will be rendered as a menu item
+
+**ro-float-menu[icon]** Icon attribute is the main menu icon
+
+**ro-float-menu[iconActive]** iconAtive is what will showed after you click in a menu.
+
+**ro-item[text]** Is a item text, if you don't need internationalization just add the description here, if so, use i18n and i18nKey to set up the translation info
+
+ **ro-item[action]** Is the function that will be triggered when user tap a menu item
+ 
 ## Roads functions
 
 ### templateEngine()
@@ -180,6 +216,28 @@ Sometimes developers need to change a large number of styles in a same DOM eleme
 	});
 
 ### Ro.Filter
+
+Filters are functions that will be used to evaluate the value when templateEngine() is replacing data in a template string. Roads come with some basic filters but is also easy create and use new ones.
+
+#### Date
+Is used to format date values
+
+	var template = '{{date | date}}';
+	var renderedTemplate = Ro.templateEngine(template, {
+		date: new Date('2015-06-25T01:05:55.973Z')
+	});
+	
+	>> "06/25/2015"
+	
+Roads will get Ro.i18n.defaults.date as default, if you want to use another pattern you can change Ro.i18n.defaults.date and you will have a new default value for your app, but you also can pass a new date format as a parameter
+
+	var template = '{{date | date:dd/MM/yyyy}}';
+	var renderedTemplate = Ro.templateEngine(template, {
+		date: new Date('2015-06-25T01:05:55.973Z')
+	});
+	
+	>> "25/06/2015"
+
 ### Ro.i18n
 
 i18n is a internationalization and localization layer you can use to change your app translation and to format your data between different patterns. i18n is nothing more than a specific templateEngine filter.
@@ -187,5 +245,19 @@ i18n is a internationalization and localization layer you can use to change your
 You should storage all your translations keys at Ro.i18n.translations object.
 
 	Ro.i18n.translations['hello.world'] = 'Olá Mundo!';
-	var template = '{{hello.world | i18n}}';
-	var renderedTemplate = Ro.templateEngine(template);				
+	var template = '<h1>{{hello.world | i18n}}</h1>';
+	var renderedTemplate = Ro.templateEngine(template);
+	
+	>> "<h1>Olá Mundo!</h1>"
+		
+Also is possible translate tag attributes
+
+	<ro-title i18n i18nKey="{{views.headers.myView | i18n}}"></ro-title>	
+	
+When you use a attribute i18n roads will get the attribute i18nKey, tranlated and will add as a innerHTML of this tag
+
+	        <ro-input type="text" 
+                  i18n="placeholder"
+                  i18nKey="{{views.form.userName | i18n}}">
+                  
+When you need translate a specific attribute set the value of i18n attribute with the attribute name you want translate, in previus example, Roads will get i18nKey, translate it and after that will the a new attribute placeholder with translated text.

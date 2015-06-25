@@ -14,7 +14,7 @@ module.exports = function(grunt) {
           '<%= grunt.template.today("yyyy-mm-dd") %> */'
       },
       dist: {
-        src: ['src/*.js', 'src/components/*.js'],
+        src: ['src/Roads.js', 'src/Roads.i18n.js', 'src/Roads.Http.js', 'src/Roads.Globals.js', 'src/Roads.Filter.js', 'src/Roads.Events.js', 'src/Roads.Environment.js' ,'src/Roads.Controller.js', 'src/components/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -46,18 +46,8 @@ module.exports = function(grunt) {
           },{
             src: 'dist/<%= pkg.name %>.css',
             dest: 'examples/master_detail_navigation/css/<%= pkg.name %>.css'
-          },
-          {
-            src: 'lib/x-tag.js',
-            dest: 'examples/contacts_maintenance/lib/x-tag.js'
-          },{
-            src: 'dist/<%= pkg.name %>.js',
-            dest: 'examples/contacts_maintenance/lib/<%= pkg.name %>.js'
-          },{
-            src: 'dist/<%= pkg.name %>.css',
-            dest: 'examples/contacts_maintenance/css/<%= pkg.name %>.css'
           }
-        ],
+        ]
       }
     },
     karma: {
@@ -70,8 +60,9 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('build', ['concat', 'uglify', 'concat_css']);
+  grunt.registerTask('build', ['karma', 'concat', 'uglify', 'concat_css']);
   grunt.registerTask('deploy', ['copy']);
+
   // Default action for people who'll be running "grunt" from project's folder
   grunt.registerTask('default', ['build']);
 };

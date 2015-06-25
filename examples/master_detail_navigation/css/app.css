@@ -1,1 +1,17 @@
+* {
+    border: none;
+}
 
+ro-app#RoApp {
+    background-color: rgb(130, 200, 236);
+}
+
+ro-item {
+    background-color: white;
+    border-bottom: 1px solid rgb(237, 237, 237);
+}
+
+ro-header {
+    background-color: rgb(0, 99, 142);
+    color: white;
+}

@@ -1,44 +1,55 @@
-Todo.Controllers.Tasks = new Ro.Controller ('tasks', {
-  
-  init: function () {
+Todo.Controllers.Tasks = new Ro.Controller('tasks', {
 
-    this.allTasks = [{
-      category_id: 1,
-      id: 1,
-      description: 'Call the boss and talk about my vacation'
-    },{
-      category_id: 2,
-      id: 20,
-      description: 'Go to the gym'
-    },{
-      category_id: 2,
-      id: 20,
-      description: 'Buy bacon'
-    },{
-      category_id: 4,
-      id: 34,
-      description: 'Call Mom'
-    }];
-  },
+	init: function () {
 
-  taskByCategory: function (categoryId) {
+		this.allTasks = [{
+			category_id: 1,
+			id: 1,
+			description: 'Call the boss and talk about my vacation'
+		}, {
+			category_id: 2,
+			id: 20,
+			description: 'Go to the gym'
+		}, {
+			category_id: 2,
+			id: 20,
+			description: 'Buy bacon'
+		}, {
+			category_id: 4,
+			id: 34,
+			description: 'Call Mom'
+		}];
 
-    var roList = this.view.querySelector ('ro-list');
-    roList.setData (this.findTasks (categoryId)); 
+	},
 
-  },
+	show: function () {
 
-  findTasks: function (categoryId) {
+		var bkButton = this.view.querySelector('ro-back-button');
 
-    var data = [];
+		bkButton.registerBackAction(function () {
+			RoApp.backtoView('tasks', 'categories');
+		});
 
-    for (var i = 0; i < this.allTasks.length; i++) {
-      if (this.allTasks[i].category_id === categoryId) {
-        data.push (this.allTasks[i]);
-      }
-    };
+	},
 
-    return data;
+	taskByCategory: function (categoryId) {
 
-  }
+		var roList = this.view.querySelector('ro-list');
+		roList.setData(this.findTasks(categoryId));
+
+	},
+
+	findTasks: function (categoryId) {
+
+		var data = [];
+
+		for (var i = 0; i < this.allTasks.length; i++) {
+			if (this.allTasks[i].category_id === categoryId) {
+				data.push(this.allTasks[i]);
+			}
+		}
+
+		return data;
+
+	}
 });

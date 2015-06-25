@@ -105,8 +105,10 @@
                     this.addSwipeMenuActions(roItem, this);
                 }
 
-                for (var j = 0; j < this.activeButtons.length; j++) {
-                    roItem.appendChild(this.activeButtons[j]());
+                if (this.activeButtons) {
+                    for (var j = 0; j < this.activeButtons.length; j++) {
+                        roItem.appendChild(this.activeButtons[j]());
+                    }
                 }
 
                 if (this.getAttribute('selectable')) {

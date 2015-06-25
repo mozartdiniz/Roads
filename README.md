@@ -38,13 +38,13 @@ Roads uses individual files to define each screen layout, in master detail examp
 		</ro-stage>
 	</ro-view>
 	
-**ro-view**	This is the screen layout base, the attribute id is to be referenced when you need navigate from one screen to another, the attribute ro-controller is which acontroller will control this view
+**ro-view**	This is the screen layout base, the attribute id is to be referenced when you need navigate from one screen to another, the attribute ro-controller is which acontroller will control this view.
 
 **ro-header** Is a placement where you can add everything that should be fixed at top of screen
 
-**ro-topbar** Render a top bar component
+**ro-topbar** Render a top bar component.
 
-**ro-back-button** If the app is running in a IOS or FirefoxOS display a backbutton to back to previous screen, if is running in a Android or Windows Phone this button will be automatically hidden
+**ro-back-button** If the app is running in a IOS or FirefoxOS display a backbutton to back to previous screen, if is running in a Android or Windows Phone this button will be automatically hidden.
 
 **ro-title** Where screen title goes
 
@@ -62,7 +62,7 @@ By default, each view will have a controller, but controllers can control how ma
 		}
 	});
 
-**init** This function will run when a new controller is initialized, usually this runs once and when the app is initialized
+**init** This function will run when a new controller is initialized, usually this runs once and when the app is initialized.
 
 **show** Runs every time that the views controlled by this controller become visible, you will use this method to update view content or change the backbutton callback function.
 
@@ -87,7 +87,7 @@ Here how a basic main.js file will look like:
 
 	});
 
-A typical Roads app should have a index.html file
+A typical Roads app should have a index.html file.
 
 	<!DOCTYPE html>
 	<html>
@@ -103,20 +103,20 @@ A typical Roads app should have a index.html file
 		</body>
 	</html>
 
-**link rel="import"** This tag is how you will relate your view files in the app, all these layouts will be loaded and only after that Ro.ini callback will run
+**link rel="import"** This tag is how you will relate your view files in the app, all these layouts will be loaded and only after that Ro.ini callback will run.
 
-**ro-load**: Is a loader component, Roads will use when is loading all your files
-**ro-app**: This is the main app tag, all other tags will be appended here
+**ro-load**: Is a loader component, Roads will use when is loading all your files.
+**ro-app**: This is the main app tag, all other tags will be appended here.
 
 ## Roads Tags
 
 ### ro-app
 
-**gotoView(from, to)** Is how you can navigate between views
+**gotoView(from, to)** Is how you can navigate between views.
 
-**backtoView(from, to)** Is the same as gotoView, but the animation is in inverse direction
+**backtoView(from, to)** Is the same as gotoView, but the animation is in inverse direction.
 
-Both gotoView and backtoView will trigger 'show' method from related view controller
+Both gotoView and backtoView will trigger 'show' method from related view controller.
 
 ### ro-list
 
@@ -126,9 +126,9 @@ Both gotoView and backtoView will trigger 'show' method from related view contro
       </ro-item>
     </ro-list>
 
-**ro-item** Is the item layout, will be used as a template, Ro uses the template engine to render ro-item content replacing all {{}} by related data
+**ro-item** Is the item layout, will be used as a template, Ro uses the template engine to render ro-item content replacing all {{}} by related data.
 
-**ro-item[action]** This is the function that will be trigged when user tap a ro-item, also is possible use dynamic parameters using template syntax, doSomething({{id}}) will be replaced by current item id
+**ro-item[action]** This is the function that will be trigged when user tap a ro-item, also is possible use dynamic parameters using template syntax, doSomething({{id}}) will be replaced by current item id.
 
 **setData()** Is how to add a list of items to a ro-list, every time that a setData() is called ro-list parse the content again.
 
@@ -147,14 +147,14 @@ Both gotoView and backtoView will trigger 'show' method from related view contro
 
 ### templateEngine()
 
-Roads template engine combine any string with pattern {{}} and the data passed as argument
+Roads template engine combine any string with pattern {{}} and the data passed as argument.
 
 	var template = '<div>{{desctiption}}</div>';
 	Ro.templateEngine (template, {
 		description: 'Hello!'
 	});
 	
-You salso can use more complex data	
+You salso can use more complex data.
 
 	var template = '<div>{{user.info.ssn}}</div>';
 	var user = {
@@ -169,7 +169,7 @@ You salso can use more complex data
 
 ### styleGenerator()
 
-Sometimes developers need to change a large number of styles in a same DOM element, talking about performance, this may be slow if this element is already rendered. Style Generator will create a css Text and you can use it to change all styles at the same time
+Sometimes developers need to change a large number of styles in a same DOM element, talking about performance, this may be slow if this element is already rendered. Style Generator will create a css Text and you can use it to change all styles at the same time.
 
 	var e = document.createElement('div');
 
@@ -181,3 +181,11 @@ Sometimes developers need to change a large number of styles in a same DOM eleme
 
 ### Ro.Filter
 ### Ro.i18n
+
+i18n is a internationalization and localization layer you can use to change your app translation and to format your data between different patterns. i18n is nothing more than a specific templateEngine filter.
+
+You should storage all your translations keys at Ro.i18n.translations object.
+
+	Ro.i18n.translations['hello.world'] = 'Olá Mundo!';
+	var template = '{{hello.world | i18n}}';
+	var renderedTemplate = Ro.templateEngine(template);				

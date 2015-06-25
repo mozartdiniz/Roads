@@ -1,7 +1,7 @@
 Roads
 =====
 
-Roads is a MVC JavaScript WebComponents based framework for mobile web apps development.
+Roads is a WebComponents based MVC JavaScript framework.
 
 ## Getting started
 

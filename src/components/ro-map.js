@@ -237,7 +237,7 @@
 
             convertProjection: function (coordinates)  {
 
-                if (this.crs !== this.layerCrs) {
+                if (this.layerCrs && this.crs !== this.layerCrs) {
                     var ll = ol.proj.transform (
                         [coordinates.longitude, coordinates.latitude], this.crs, this.layerCrs
                     );

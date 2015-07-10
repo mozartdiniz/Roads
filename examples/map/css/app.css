@@ -1,0 +1,15 @@
+* {
+    border: none;
+}
+
+ro-map {
+    height: 100vh;
+}
+
+ro-map-canvas .roMarker {
+    background: url('https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-128.png');
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    border: none;
+}

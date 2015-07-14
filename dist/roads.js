@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-07-10 */var Ro = {
+/*! roads - v0.0.1 - 2015-07-14 */var Ro = {
 
 	/**
 	 * This is the very first function that Roads will run
@@ -1993,9 +1993,9 @@ Ro.Controller = function (viewID, methods) {
         mainTabTag.tabClickCallback(this, tab);
       }
     },
-    accessors: {
-      enabled: 'coisa'
-    },
+
+    accessors: {},
+
     methods: {
 
       render: function () {
@@ -2035,6 +2035,7 @@ Ro.Controller = function (viewID, methods) {
             } else {
               tabLabel.setAttribute('i18nKey', newTabs[i].getAttribute('label'));
               tabLabel.setAttribute('i18n', '');
+              tabLabel.innerHTML = Ro.i18n.getTranslationByKey (tabLabel.getAttribute('i18nKey'));
             }
 
             tabLabel.setAttribute('tabIndex', i);

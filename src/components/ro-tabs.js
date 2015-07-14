@@ -29,9 +29,9 @@
         mainTabTag.tabClickCallback(this, tab);
       }
     },
-    accessors: {
-      enabled: 'coisa'
-    },
+
+    accessors: {},
+
     methods: {
 
       render: function () {
@@ -71,6 +71,7 @@
             } else {
               tabLabel.setAttribute('i18nKey', newTabs[i].getAttribute('label'));
               tabLabel.setAttribute('i18n', '');
+              tabLabel.innerHTML = Ro.i18n.getTranslationByKey (tabLabel.getAttribute('i18nKey'));
             }
 
             tabLabel.setAttribute('tabIndex', i);

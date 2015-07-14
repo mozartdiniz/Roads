@@ -1,0 +1,24 @@
+* {
+    border: none;
+}
+
+ro-topbar {
+    background-color: white;
+}
+
+ro-stage {
+    background-color: white;
+}
+
+ro-tab {
+    background-color: white;
+}
+
+ro-tab-label {
+    background: rgb(24, 127, 213);
+}
+
+ro-tab-label[selected="true"] {
+    border-bottom: 3px solid rgb(0, 7, 140);
+    background-color: rgb(20, 108, 182);
+}

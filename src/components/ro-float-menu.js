@@ -97,7 +97,9 @@
             },
 
             parseList: function () {
+
                 var items = this.querySelectorAll('ro-item');
+                var text  = '';
 
                 for (var i = 0; i < items.length; i++) {
 
@@ -109,8 +111,10 @@
                         };
                     }(this, itemActionFunction));
 
+                    text = items[i].getAttribute('i18nKey') || items[i].getAttribute('text');
+
                     items[i].addEventListener('click', action);
-                    items[i].setAttribute('text', Ro.templateEngine(items[i].getAttribute('i18nKey')));
+                    items[i].setAttribute('text', Ro.templateEngine(text));
                 }
             }
         }

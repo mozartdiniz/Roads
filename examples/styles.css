@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'roads';
+    src: url('../src/fonts/Material-Design-Iconic-Font.woff?v=2.1.0') format('woff'), url('../src/fonts/Material-Design-Iconic-Font.ttf?v=2.1.0') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'HelveticaNeue-Light';
+    src: url('../src/fonts/HelveticaNeue-Light.otf');
+}
+
+ro-stage {
+    background-color: rgb(168, 206, 226);
+}

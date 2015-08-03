@@ -14,6 +14,17 @@
         },
         events: {
             reveal: function () {
+            },
+            'click:delegate(ro-float-menu ro-item)': function (e) {
+
+                var actionAttr = this.getAttribute('action');
+
+                if (actionAttr) {
+                    new Function(actionAttr)();
+                }
+
+                this.parentNode.hideItems();
+
             }
         },
         accessors: {},
@@ -102,18 +113,7 @@
                 var text  = '';
 
                 for (var i = 0; i < items.length; i++) {
-
-                    var itemActionFunction = new Function(items[i].getAttribute('action'));
-                    var action = (function (scope, func) {
-                        return function () {
-                            func();
-                            scope.hideItems();
-                        };
-                    }(this, itemActionFunction));
-
                     text = items[i].getAttribute('i18nKey') || items[i].getAttribute('text');
-
-                    items[i].addEventListener('click', action);
                     items[i].setAttribute('text', Ro.templateEngine(text));
                 }
             }

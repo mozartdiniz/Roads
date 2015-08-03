@@ -23,23 +23,23 @@
 
 @-webkit-keyframes roadsShowInlineMenuItem {
     0%   {
-        -webkit-transform:translateX(100%);
+        -webkit-transform:translate3d(100vw, 0, 0);
     }
     20% {
         display: block;
     }
     100% {
-        -webkit-transform: translateX(0);
+        -webkit-transform:translate3d(0, 0, 0);;
     }
 }
 
 @-webkit-keyframes roadsHideInlineMenuItem {
     0%   {
-        -webkit-transform:translateX(0);
+        -webkit-transform:translate3d(0, 0, 0);;
     }
     100% {
         display: none;
-        -webkit-transform: translateX(100%);
+        -webkit-transform:translate3d(100vw, 0, 0);;
     }
 }
 

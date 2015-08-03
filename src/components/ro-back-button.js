@@ -20,7 +20,7 @@
         accessors: {},
         methods: {
             addListeners: function () {
-                this.addEventListener(Ro.Events.click(), function () {
+                this.addEventListener('click', function () {
                     Ro.Globals.backButtonFunction();
                 }, true);
             },

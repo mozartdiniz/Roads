@@ -23,9 +23,9 @@ ro-hitarea {
 }
 
 ro-float-menu::before {
-    content: "\e61e";
+    content: "\f19b";
     position: absolute;
-    margin-left: 18px;
+    margin-left: 29px;
     margin-top: 18px;
     font-size: 30px;
     color: #308B2A;
@@ -34,11 +34,11 @@ ro-float-menu::before {
 }
 
 ro-float-menu::after {
-    content: "\e61a";
+    content: '\f136';
     position: absolute;
-    margin-left: 19px;
-    margin-top: 18px;
-    font-size: 30px;
+    margin-left: 20px;
+    margin-top: 9px;
+    font-size: 43px;
     z-index: 2;
     color: #308B2A;
     opacity: 0;

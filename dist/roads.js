@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-07-14 */var Ro = {
+/*! roads - v0.0.1 - 2015-07-20 */var Ro = {
 
 	/**
 	 * This is the very first function that Roads will run
@@ -833,7 +833,7 @@ Ro.Controller = function (viewID, methods) {
         accessors: {},
         methods: {
             addListeners: function () {
-                this.addEventListener(Ro.Events.click(), function () {
+                this.addEventListener('click', function () {
                     Ro.Globals.backButtonFunction();
                 }, true);
             },

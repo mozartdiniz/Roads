@@ -1,24 +1,32 @@
 /* Back button */
+
+ro-view[mainPage] ro-back-button {
+  display: none;
+}
+
 ro-back-button {
   max-width: 30%;
   height: 100%;
-  width: 50%;
   display: inline-block;
+  width: 150px;
+  position: absolute;
+  z-index: 6;
 }
 
 ro-back-button::after {
-  font-size: 16px;
+  font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   content: attr(label);
-  margin-left: 25px;
-  margin-top: 7px;
+  margin-left: 21px;
+  margin-top: 14px;
   position: absolute;
+  white-space: nowrap;
 }
 
 ro-back-button::before {
   font-family: 'roads';
-  content: "\e608";
+  content: "\f2fa";
   color: white;
   position: absolute;
   width: 5px;
@@ -72,9 +80,9 @@ ro-hitarea {
 }
 
 ro-float-menu::before {
-    content: "\e61e";
+    content: "\f19b";
     position: absolute;
-    margin-left: 18px;
+    margin-left: 29px;
     margin-top: 18px;
     font-size: 30px;
     color: #308B2A;
@@ -83,11 +91,11 @@ ro-float-menu::before {
 }
 
 ro-float-menu::after {
-    content: "\e61a";
+    content: '\f136';
     position: absolute;
-    margin-left: 19px;
-    margin-top: 18px;
-    font-size: 30px;
+    margin-left: 20px;
+    margin-top: 9px;
+    font-size: 43px;
     z-index: 2;
     color: #308B2A;
     opacity: 0;
@@ -1268,10 +1276,8 @@ ro-tabs-labels {
 }
 @font-face {
   font-family: 'roads';
-  src:url('../fonts/roads.eot?') format('embedded-opentype'),
-  url('../fonts/roads.woff') format('woff'),
-  url('../fonts/roads.ttf') format('truetype'),
-  url('../fonts/roads.svg?4s9l5w#roads') format('svg');
+  src: url('../fonts/Material-Design-Iconic-Font.woff') format('woff'),
+  url('../fonts/Material-Design-Iconic-Font.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

@@ -376,3 +376,69 @@ ro-overlay[state="showItems"] {
         transform: scale3d(1,1,1);
     }
 }
+/* inline menu */
+@keyframes roadsShowInlineMenuItem {
+    0%   {
+        transform:translateX(100%);
+    }
+    20% {
+        display: block;
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes roadsHideInlineMenuItem {
+    0%   {
+        transform:translateX(0);
+    }
+    100% {
+        display: none;
+        transform: translateX(100%);
+    }
+}
+
+@-webkit-keyframes roadsShowInlineMenuItem {
+    0%   {
+        -webkit-transform:translateX(100%);
+    }
+    20% {
+        display: block;
+    }
+    100% {
+        -webkit-transform: translateX(0);
+    }
+}
+
+@-webkit-keyframes roadsHideInlineMenuItem {
+    0%   {
+        -webkit-transform:translateX(0);
+    }
+    100% {
+        display: none;
+        -webkit-transform: translateX(100%);
+    }
+}
+
+@-ms-keyframes roadsShowInlineMenuItem {
+    0%   {
+        transform:translateX(100%);
+    }
+    20% {
+        display: block;
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@-ms-keyframes roadsHideInlineMenuItem {
+    0%   {
+        transform:translateX(0);
+    }
+    100% {
+        display: none;
+        transform: translateX(100%);
+    }
+}

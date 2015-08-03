@@ -66,27 +66,37 @@
 
                     Ro.i18n.translateView(firstView);
 
-                    firstView.style.zIndex = 1;
-                    firstView.style.webkitTransition = '10ms';
-                    firstView.style.transition = '10ms';
-                    firstView.style.webkitTransform = 'translateX(0)';
-                    firstView.style.transform = 'translateX(0)';
+                    if (Ro.Environment.platform.isAndroid) {
+                        firstView.setAttribute('animation', 'to');
+                    } else {
+                        firstView.style.zIndex = 1;
+                        firstView.style.webkitTransition = '10ms';
+                        firstView.style.transition = '10ms';
+                        firstView.style.webkitTransform = 'translateX(0)';
+                        firstView.style.transform = 'translateX(0)';
+                    }
 
                     RoApp.activeView = firstView.id;
-
                 }
 
                 if (views) {
-                    for (var i = 0, l = views.length; i < l; i++) {
+                    if (Ro.Environment.platform.isAndroid) {
+                        for (var i = 0, l = views.length; i < l; i++) {
+                            views[i].setAttribute('animation', 'from');
+                        }
+                    } else {
+                        for (var i = 0, l = views.length; i < l; i++) {
 
-                        views[i].style.zIndex = 2;
-                        views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-                        views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
-                        views[i].style.webkitTransition = '10ms';
-                        views[i].style.transition = '10ms';
+                            views[i].style.zIndex = 2;
+                            views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+                            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
+                            views[i].style.webkitTransition = '10ms';
+                            views[i].style.transition = '10ms';
 
+                        }
                     }
                 }
+
 
             },
 
@@ -111,9 +121,6 @@
 
                 to.show(fromID);
 
-                to.removeAttribute('from');
-                to.setAttribute('to', 'true');
-
                 if (Ro.Environment.platform.isWPhone) {
                     to.style.cssText = Ro.styleGenerator ({
                         'transition': '200ms',
@@ -121,16 +128,14 @@
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     to.style.transition = '300ms';
                     to.style.transitionTimingFunction = 'linear';
                     to.style.webkitTransform = 'translateX(0)';
                     to.style.transform = 'translateX(0)';
+                } else {
+                    to.setAttribute('animation', 'to');
                 }
-
-
-                from.removeAttribute('to');
-                from.setAttribute('from', 'true');
 
                 if (Ro.Environment.platform.isWPhone) {
                     from.style.cssText = Ro.styleGenerator ({
@@ -139,11 +144,13 @@
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     from.style.transition = '300ms';
                     from.style.transitionTimingFunction = 'linear';
                     from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
                     from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+                } else {
+                    from.setAttribute('animation', 'from');
                 }
 
                 Ro.i18n.translateView(to);
@@ -178,9 +185,6 @@
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
-                to.removeAttribute('from');
-                to.setAttribute('to', 'true');
-
                 if (Ro.Environment.platform.isWPhone) {
                     to.style.cssText = Ro.styleGenerator ({
                         'transition': '300ms',
@@ -188,16 +192,14 @@
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     to.style.transition = '300ms';
                     to.style.transitionTimingFunction = 'linear';
                     to.style.webkitTransform = 'translateX(0)';
                     to.style.transform = 'translateX(0)';
+                } else {
+                    to.setAttribute('animation', 'to');
                 }
-
-
-                from.removeAttribute('to');
-                from.setAttribute('from', 'true');
 
                 if (Ro.Environment.platform.isWPhone) {
                     from.style.cssText = Ro.styleGenerator ({
@@ -206,11 +208,13 @@
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     from.style.transition = '300ms';
                     from.style.transitionTimingFunction = 'linear';
                     from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
                     from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                } else {
+                    from.setAttribute('animation', 'from');
                 }
 
                 Ro.i18n.translateView(to);

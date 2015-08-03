@@ -1,26 +1,26 @@
 var Ro = {
 
-	/**
-	 * This is the very first function that Roads will run
-	 * @param {function} callback What will run after everything is finished
-	 *
-	 */
+    /**
+     * This is the very first function that Roads will run
+     * @param {function} callback What will run after everything is finished
+     *
+     */
 
     init: function (callback) {
 
         Ro.Session = Ro.Session = {};
         var writeImports = function() {
 
-	        // Show loader before load files
+            // Show loader before load files
             var loader = document.querySelector ('ro-loader');
             if (loader) {
                 loader.show();
             }
 
-	        /**
-	         * Search all link[rel="import"] tags, gets their contents and adds
-	         * inside of ro-app tag. Is how all views are added to project
-			*/
+            /**
+             * Search all link[rel="import"] tags, gets their contents and adds
+             * inside of ro-app tag. Is how all views are added to project
+             */
 
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
@@ -53,8 +53,8 @@ var Ro = {
                 });
             }
 
-	        // This callback is delayed because look like that Trident, WP8 HTML engine, needs some time
-	        // to process all HTML, I'm not happy, but I still don't realize a better solution
+            // This callback is delayed because look like that Trident, WP8 HTML engine, needs some time
+            // to process all HTML, I'm not happy, but I still don't realize a better solution
 
             setTimeout (callback, 100);
 
@@ -125,23 +125,23 @@ var Ro = {
 
     },
 
-	/**
-	 * Replace all content with a pattern {{}} by a value found in data parameter
-	 * @param {string} tpl The string that will have values replaced
-	 * @param {object} data Object with all data
-	 *
-	 *  "<div>SSN: {{user.info.ssn}}</div>"
-	 *
-	 *  {
+    /**
+     * Replace all content with a pattern {{}} by a value found in data parameter
+     * @param {string} tpl The string that will have values replaced
+     * @param {object} data Object with all data
+     *
+     *  "<div>SSN: {{user.info.ssn}}</div>"
+     *
+     *  {
 	 *     user: {
 	 *        info: {
 	 *           ssn: 333-444-555
 	 *        }
 	 *     }
 	 *  }
-	 *
-	 *
-	 */
+     *
+     *
+     */
 
     templateEngine : function (tpl, data) {
 
@@ -183,12 +183,12 @@ var Ro = {
 
     },
 
-	/**
-	 * Search a specific value in a object by full path description
-	 * @param {object} data Object with all data
-	 * @param {string} key A full path representing where the value is 'data.users.data.ssn'
-	 *
-	 */
+    /**
+     * Search a specific value in a object by full path description
+     * @param {object} data Object with all data
+     * @param {string} key A full path representing where the value is 'data.users.data.ssn'
+     *
+     */
 
     findByKey : function (data, key) {
 

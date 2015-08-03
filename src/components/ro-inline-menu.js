@@ -1,6 +1,3 @@
-/**
- * Created by adaltojunior on 4/1/15.
- */
 (function () {
     xtag.register('ro-inline-menu', {
         lifecycle: {

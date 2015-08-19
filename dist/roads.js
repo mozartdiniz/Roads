@@ -1,26 +1,26 @@
-/*! roads - v0.0.1 - 2015-07-20 */var Ro = {
+/*! roads - v0.0.1 - 2015-08-18 */var Ro = {
 
-	/**
-	 * This is the very first function that Roads will run
-	 * @param {function} callback What will run after everything is finished
-	 *
-	 */
+    /**
+     * This is the very first function that Roads will run
+     * @param {function} callback What will run after everything is finished
+     *
+     */
 
     init: function (callback) {
 
         Ro.Session = Ro.Session = {};
         var writeImports = function() {
 
-	        // Show loader before load files
+            // Show loader before load files
             var loader = document.querySelector ('ro-loader');
             if (loader) {
                 loader.show();
             }
 
-	        /**
-	         * Search all link[rel="import"] tags, gets their contents and adds
-	         * inside of ro-app tag. Is how all views are added to project
-			*/
+            /**
+             * Search all link[rel="import"] tags, gets their contents and adds
+             * inside of ro-app tag. Is how all views are added to project
+             */
 
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
@@ -53,8 +53,8 @@
                 });
             }
 
-	        // This callback is delayed because look like that Trident, WP8 HTML engine, needs some time
-	        // to process all HTML, I'm not happy, but I still don't realize a better solution
+            // This callback is delayed because look like that Trident, WP8 HTML engine, needs some time
+            // to process all HTML, I'm not happy, but I still don't realize a better solution
 
             setTimeout (callback, 100);
 
@@ -125,23 +125,23 @@
 
     },
 
-	/**
-	 * Replace all content with a pattern {{}} by a value found in data parameter
-	 * @param {string} tpl The string that will have values replaced
-	 * @param {object} data Object with all data
-	 *
-	 *  "<div>SSN: {{user.info.ssn}}</div>"
-	 *
-	 *  {
+    /**
+     * Replace all content with a pattern {{}} by a value found in data parameter
+     * @param {string} tpl The string that will have values replaced
+     * @param {object} data Object with all data
+     *
+     *  "<div>SSN: {{user.info.ssn}}</div>"
+     *
+     *  {
 	 *     user: {
 	 *        info: {
 	 *           ssn: 333-444-555
 	 *        }
 	 *     }
 	 *  }
-	 *
-	 *
-	 */
+     *
+     *
+     */
 
     templateEngine : function (tpl, data) {
 
@@ -183,12 +183,12 @@
 
     },
 
-	/**
-	 * Search a specific value in a object by full path description
-	 * @param {object} data Object with all data
-	 * @param {string} key A full path representing where the value is 'data.users.data.ssn'
-	 *
-	 */
+    /**
+     * Search a specific value in a object by full path description
+     * @param {object} data Object with all data
+     * @param {string} key A full path representing where the value is 'data.users.data.ssn'
+     *
+     */
 
     findByKey : function (data, key) {
 
@@ -646,27 +646,37 @@ Ro.Controller = function (viewID, methods) {
 
                     Ro.i18n.translateView(firstView);
 
-                    firstView.style.zIndex = 1;
-                    firstView.style.webkitTransition = '10ms';
-                    firstView.style.transition = '10ms';
-                    firstView.style.webkitTransform = 'translateX(0)';
-                    firstView.style.transform = 'translateX(0)';
+                    if (Ro.Environment.platform.isAndroid) {
+                        firstView.setAttribute('animation', 'to');
+                    } else {
+                        firstView.style.zIndex = 1;
+                        firstView.style.webkitTransition = '10ms';
+                        firstView.style.transition = '10ms';
+                        firstView.style.webkitTransform = 'translateX(0)';
+                        firstView.style.transform = 'translateX(0)';
+                    }
 
                     RoApp.activeView = firstView.id;
-
                 }
 
                 if (views) {
-                    for (var i = 0, l = views.length; i < l; i++) {
+                    if (Ro.Environment.platform.isAndroid) {
+                        for (var i = 0, l = views.length; i < l; i++) {
+                            views[i].setAttribute('animation', 'from');
+                        }
+                    } else {
+                        for (var i = 0, l = views.length; i < l; i++) {
 
-                        views[i].style.zIndex = 2;
-                        views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-                        views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
-                        views[i].style.webkitTransition = '10ms';
-                        views[i].style.transition = '10ms';
+                            views[i].style.zIndex = 2;
+                            views[i].style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+                            views[i].style.transform = 'translateX(' + window.innerWidth + 'px)';
+                            views[i].style.webkitTransition = '10ms';
+                            views[i].style.transition = '10ms';
 
+                        }
                     }
                 }
+
 
             },
 
@@ -691,9 +701,6 @@ Ro.Controller = function (viewID, methods) {
 
                 to.show(fromID);
 
-                to.removeAttribute('from');
-                to.setAttribute('to', 'true');
-
                 if (Ro.Environment.platform.isWPhone) {
                     to.style.cssText = Ro.styleGenerator ({
                         'transition': '200ms',
@@ -701,16 +708,14 @@ Ro.Controller = function (viewID, methods) {
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     to.style.transition = '300ms';
                     to.style.transitionTimingFunction = 'linear';
                     to.style.webkitTransform = 'translateX(0)';
                     to.style.transform = 'translateX(0)';
+                } else {
+                    to.setAttribute('animation', 'to');
                 }
-
-
-                from.removeAttribute('to');
-                from.setAttribute('from', 'true');
 
                 if (Ro.Environment.platform.isWPhone) {
                     from.style.cssText = Ro.styleGenerator ({
@@ -719,11 +724,13 @@ Ro.Controller = function (viewID, methods) {
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     from.style.transition = '300ms';
                     from.style.transitionTimingFunction = 'linear';
                     from.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
                     from.style.transform = 'translateX(-' + window.innerWidth + 'px)';
+                } else {
+                    from.setAttribute('animation', 'from');
                 }
 
                 Ro.i18n.translateView(to);
@@ -758,9 +765,6 @@ Ro.Controller = function (viewID, methods) {
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
-                to.removeAttribute('from');
-                to.setAttribute('to', 'true');
-
                 if (Ro.Environment.platform.isWPhone) {
                     to.style.cssText = Ro.styleGenerator ({
                         'transition': '300ms',
@@ -768,16 +772,14 @@ Ro.Controller = function (viewID, methods) {
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     to.style.transition = '300ms';
                     to.style.transitionTimingFunction = 'linear';
                     to.style.webkitTransform = 'translateX(0)';
                     to.style.transform = 'translateX(0)';
+                } else {
+                    to.setAttribute('animation', 'to');
                 }
-
-
-                from.removeAttribute('to');
-                from.setAttribute('from', 'true');
 
                 if (Ro.Environment.platform.isWPhone) {
                     from.style.cssText = Ro.styleGenerator ({
@@ -786,11 +788,13 @@ Ro.Controller = function (viewID, methods) {
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
-                } else {
+                } else if (Ro.Environment.platform.isIOS) {
                     from.style.transition = '300ms';
                     from.style.transitionTimingFunction = 'linear';
                     from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
                     from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                } else {
+                    from.setAttribute('animation', 'from');
                 }
 
                 Ro.i18n.translateView(to);
@@ -946,6 +950,74 @@ Ro.Controller = function (viewID, methods) {
 
 })();
 (function () {
+    xtag.register('ro-draw', {
+        lifecycle: {
+            inserted: function () {
+                this.renderCanvas();
+            }
+
+        },
+        events: {
+            'touchstart:delegate(ro-draw > canvas)': function () {
+                this.parentNode.movements = [];
+            },
+            'touchend:delegate(ro-draw > canvas)': function () {
+                this.parentNode.movements = [];
+            },
+            'touchmove:delegate(ro-draw > canvas)': function (e) {
+                this.parentNode.drawLine(e);
+            }
+
+        },
+        methods: {
+            renderCanvas: function () {
+                if (!this.querySelector('canvas')) {
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = this.offsetWidth;
+                    canvas.height = this.offsetHeight;
+                    this.appendChild(canvas);
+
+                }
+            },
+            drawLine: function (e) {
+
+                var changeTouch = e.changedTouches[0];
+                var axisX = changeTouch.pageX - this.offsetLeft;
+                var axisY = changeTouch.pageY - this.offsetTop;
+                var movementsLength = this.movements.length;
+                var context = this.querySelector('canvas').getContext('2d');
+
+                context.strokeStyle = this.getAttribute('strokeStyle');
+                context.lineJoin = this.getAttribute('lineJoin');
+                context.lineWidth = this.getAttribute('lineWidth');
+                context.beginPath();
+
+                if (movementsLength) {
+                    var lastIndex = movementsLength - 1;
+                    var previousMovement = this.movements[lastIndex];
+                    context.moveTo(previousMovement[0], previousMovement[1]);
+                } else {
+                    context.moveTo(axisX, axisY);
+                }
+
+                context.lineTo(axisX, axisY);
+                context.closePath();
+                context.stroke();
+                this.movements.push([axisX, axisY]);
+
+            },
+            eraseAllcontent: function () {
+                var context = this.querySelector('canvas').getContext('2d');
+                context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
+            },
+            getContent: function () {
+
+            }
+        }
+    });
+})();
+(function () {
 
     xtag.register('ro-float-menu', {
         lifecycle: {
@@ -961,6 +1033,20 @@ Ro.Controller = function (viewID, methods) {
         },
         events: {
             reveal: function () {
+            },
+            'click:delegate(ro-float-menu ro-item)': function (e) {
+
+                var actionAttr = this.getAttribute('action');
+
+                if (actionAttr) {
+                    new Function(actionAttr)();
+                }
+
+                if (this.parentNode) {
+                    this.parentNode.hideItems();
+                }
+
+
             }
         },
         accessors: {},
@@ -1049,18 +1135,7 @@ Ro.Controller = function (viewID, methods) {
                 var text  = '';
 
                 for (var i = 0; i < items.length; i++) {
-
-                    var itemActionFunction = new Function(items[i].getAttribute('action'));
-                    var action = (function (scope, func) {
-                        return function () {
-                            func();
-                            scope.hideItems();
-                        };
-                    }(this, itemActionFunction));
-
                     text = items[i].getAttribute('i18nKey') || items[i].getAttribute('text');
-
-                    items[i].addEventListener('click', action);
                     items[i].setAttribute('text', Ro.templateEngine(text));
                 }
             }
@@ -1212,7 +1287,6 @@ Ro.Controller = function (viewID, methods) {
 
     });
 }());
-
 (function () {
 
     xtag.register('ro-input', {

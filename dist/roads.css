@@ -55,6 +55,22 @@ ro-checkbox[checked="false"] {
 ro-checkbox input[type="checkbox"] {
   display: none;
 }
+ro-draw{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+ro-draw canvas{
+    background-color: #fff;
+    display: block;
+    z-index: 10;
+    margin:0;
+    padding: 0;
+}
 /* Float menu */
 ro-float-menu {
     font-family: 'roads';
@@ -499,7 +515,6 @@ ro-overlay[state="showItems"] {
         transform: translateX(100%);
     }
 }
-
 ro-inline-menu{
     width: 100%;
     height: 100%;
@@ -1293,13 +1308,9 @@ ro-tabs-labels {
   border-bottom: 1px solid rgb(231, 231, 231);
   border-right: 1px solid rgb(231, 231, 231);
 
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: none;
   -moz-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-
-  -webkit-font-smoothing: antialiased;
-  -ms-font-smoothing: antialiased;
-  font-smoothing: antialiased;
+  font-smoothing: none;
 
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
@@ -1318,7 +1329,7 @@ html {
 
 body {
   -webkit-touch-callout: none;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: none;
   -webkit-text-size-adjust: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
@@ -1343,7 +1354,7 @@ body {
   margin: 0;
   padding: 0;
   word-wrap: break-word;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizeSpeed;
 
   position: absolute;
   overflow-y: scroll;
@@ -1428,15 +1439,88 @@ ro-view {
   right: 0;
   bottom: 0;
   top: 0;
-  transition: 500ms;
   background-color: white;
   /* IMPORTANT: Don't ask me why, but if you remove the border transitions
   will not work in wp8 */
   border: 1px solid black;
 }
 
-ro-view[from="true"] * {
-  display: none;
+ro-view[animation="to"] {
+  animation-play-state: running;
+  animation: toView forwards 500ms;
+  -webkit-transform: translateX(0);
+  -webkit-animation-play-state: running;
+  -webkit-animation: toView forwards 500ms;
+}
+
+ro-view[animation="from"] {
+  animation-play-state: running;
+  animation: fromView forwards 500ms;
+  -webkit-animation-play-state: running;
+  -webkit-animation: fromView forwards 500ms;
+}
+
+@-webkit-keyframes fromView {
+  0% {
+    -webkit-transition: 500ms;
+    -webkit-transition-timing-function: ease-in;
+    -webkit-transform: translateX(0);
+  }
+  50% {
+    -webkit-transition: 500ms;
+    -webkit-transition-timing-function: ease-in;
+    -webkit-transform: translateX(0);
+  }
+  100% {
+    -webkit-transition: 500ms;
+    -webkit-transition-timing-function: ease-in;
+    -webkit-transform: translateX(100vw);
+  }
+}
+
+@-webkit-keyframes toView {
+  0% {
+    -webkit-transition: 500ms;
+    -webkit-transition-timing-function: ease-out;
+    -webkit-transform: translateX(100vw);
+  }
+  100% {
+    -webkit-transition: 500ms;
+    -webkit-transition-timing-function: ease-out;
+    -webkit-transform: translateX(0);
+  }
+}
+
+@keyframes fromView {
+  0% {
+    transition: 500ms;
+    transition-timing-function: ease-in;
+    transform: translateX(0);
+  }
+  50% {
+    transition: 500ms;
+    transition-timing-function: ease-in;
+    transform: translateX(0);
+  }
+  100% {
+    transition-delay: 1s;
+    transition: 500ms;
+    transition-timing-function: ease-in;
+    transform: translateX(100vw);
+  }
+}
+
+@keyframes toView {
+  0% {
+    transition: 500ms;
+    transition-timing-function: ease-out;
+    transform: translateX(100vw);
+  }
+  100% {
+    transition: 500ms;
+    transition-timing-function: ease-out;
+    transform: translateX(0);
+  }
 }
 
 ro-header {

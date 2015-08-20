@@ -23,7 +23,10 @@
                     new Function(actionAttr)();
                 }
 
-                this.parentNode.hideItems();
+                if (this.parentNode) {
+                    this.parentNode.hideItems();
+                }
+
 
             }
         },

@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-08-18 */var Ro = {
+/*! roads - v0.0.1 - 2015-09-08 */var Ro = {
 
     /**
      * This is the very first function that Roads will run
@@ -955,7 +955,6 @@ Ro.Controller = function (viewID, methods) {
             inserted: function () {
                 this.renderCanvas();
             }
-
         },
         events: {
             'touchstart:delegate(ro-draw > canvas)': function () {
@@ -1011,8 +1010,8 @@ Ro.Controller = function (viewID, methods) {
                 var context = this.querySelector('canvas').getContext('2d');
                 context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
             },
-            getContent: function () {
-
+            getDraw: function () {
+                return this.querySelector('canvas').getContext('2d').canvas.toDataURL();
             }
         }
     });
@@ -1297,15 +1296,11 @@ Ro.Controller = function (viewID, methods) {
                     this.xtag.field = document.createElement('input');
                     this.xtag.field.type = this.getAttribute('type');
                     this.xtag.field.value = this.getAttribute('value');
-                    this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
-                    this.xtag.field.setAttribute('i18nKey', this.getAttribute('i18nKey'));
-                    this.xtag.field.placeholder = this.getAttribute('placeholder');
                     this.xtag.field.name = this.getAttribute('name');
 
-                    this.xtag.icon = document.createElement('ro-icon');
-                    this.xtag.icon.setAttribute('iconName', this.getAttribute('icon'));
+                    this.addPlaceholder();
+                    this.addIcon();
 
-                    this.appendChild(this.xtag.icon);
                     this.appendChild(this.xtag.field);
 
                     this.removeAttribute('i18n');
@@ -1319,10 +1314,30 @@ Ro.Controller = function (viewID, methods) {
         },
         events: {},
         accessors: {},
-        methods: {}
+        methods: {
+            addPlaceholder: function(){
+                var placeholder = this.getAttribute('placeholder');
+                if(placeholder || placeholder == ""){
+                    this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
+                    this.xtag.field.setAttribute('i18nKey', this.getAttribute('i18nKey'));
+                    this.xtag.field.placeholder = placeholder;
+                }
+                delete placeholder;
+            },
+            addIcon: function(){
+                var icon = this.getAttribute('icon');
+                if(icon){
+                    this.xtag.icon = document.createElement('ro-icon');
+                    this.xtag.icon.setAttribute('iconName', icon);
+                    this.appendChild(this.xtag.icon);
+                }
+                delete icon;
+            }
+        }
     });
 
 })();
+
 (function () {
 
     xtag.register('ro-layout', {

@@ -29,7 +29,7 @@
         methods: {
             addPlaceholder: function(){
                 var placeholder = this.getAttribute('placeholder');
-                if(placeholder || placeholder == ""){
+                if(placeholder || placeholder === ""){
                     this.xtag.field.setAttribute('i18n', this.getAttribute('i18n'));
                     this.xtag.field.setAttribute('i18nKey', this.getAttribute('i18nKey'));
                     this.xtag.field.placeholder = placeholder;

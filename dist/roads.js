@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-09-08 */var Ro = {
+/*! roads - v0.0.1 - 2015-09-10 */var Ro = {
 
     /**
      * This is the very first function that Roads will run
@@ -1297,6 +1297,10 @@ Ro.Controller = function (viewID, methods) {
                     this.xtag.field.type = this.getAttribute('type');
                     this.xtag.field.value = this.getAttribute('value');
                     this.xtag.field.name = this.getAttribute('name');
+
+                    if(this.getAttribute('mandatory') === ""){
+                        this.xtag.field.setAttribute("mandatory", "");
+                    }
 
                     this.addPlaceholder();
                     this.addIcon();

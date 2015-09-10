@@ -10,6 +10,10 @@
                     this.xtag.field.value = this.getAttribute('value');
                     this.xtag.field.name = this.getAttribute('name');
 
+                    if(this.getAttribute('mandatory') === ""){
+                        this.xtag.field.setAttribute("mandatory", "");
+                    }
+
                     this.addPlaceholder();
                     this.addIcon();
 

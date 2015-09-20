@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-09-10 */var Ro = {
+/*! roads - v0.0.1 - 2015-09-20 */var Ro = {
 
     /**
      * This is the very first function that Roads will run
@@ -209,6 +209,18 @@
     dateToIEandSafari: function (date) {
 
         return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');
+
+    },
+
+    extend: function (a, b) {
+
+        for (k in a) {
+            if (!b[k]) {
+                b[k] = a[k];
+            }
+        }
+
+        return b;
 
     }
 };

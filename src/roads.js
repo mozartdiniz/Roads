@@ -210,5 +210,17 @@ var Ro = {
 
         return (date.substring(0, date.lastIndexOf("+") + 4) + 'Z').replace('+', '.');
 
+    },
+
+    extend: function (a, b) {
+
+        for (k in a) {
+            if (!b[k]) {
+                b[k] = a[k];
+            }
+        }
+
+        return b;
+
     }
 };

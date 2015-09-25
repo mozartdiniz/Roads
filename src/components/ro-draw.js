@@ -18,6 +18,15 @@
             },
             'touchmove:delegate(ro-draw > canvas)': function (e) {
                 this.parentNode.drawLine(e);
+            },
+            'mousedown:delegate(ro-draw > canvas)': function () {
+                this.parentNode.movements = [];
+            },
+            'mouseup:delegate(ro-draw > canvas)': function () {
+                this.parentNode.movements = [];
+            },
+            'mousemove:delegate(ro-draw > canvas)': function (e) {
+                this.parentNode.drawLine(e);
             }
 
         },
@@ -35,8 +44,8 @@
             drawLine: function (e) {
 
                 var changeTouch = e.changedTouches[0];
-                var axisX = changeTouch.pageX - this.offsetLeft;
-                var axisY = changeTouch.pageY - this.offsetTop;
+                var axisX = changeTouch.clientX - this.offsetLeft;
+                var axisY = changeTouch.clientY - this.offsetTop;
                 var movementsLength = this.movements.length;
                 var context = this.querySelector('canvas').getContext('2d');
 

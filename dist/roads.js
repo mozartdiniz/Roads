@@ -1,4 +1,4 @@
-/*! roads - v0.0.1 - 2015-09-28 */var Ro = {
+/*! roads - v0.0.1 - 2015-09-30 */var Ro = {
 
     /**
      * This is the very first function that Roads will run
@@ -1007,6 +1007,10 @@ Ro.Controller = function (viewID, methods) {
                 var axisY = changeTouch.clientY - this.offsetTop;
                 var movementsLength = this.movements.length;
                 var context = this.querySelector('canvas').getContext('2d');
+
+                if (Ro.Environment.platform.isIOS) {
+                    axisY -= 50;
+                }
 
                 context.strokeStyle = this.getAttribute('strokeStyle');
                 context.lineJoin = this.getAttribute('lineJoin');

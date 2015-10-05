@@ -49,7 +49,7 @@
                 var movementsLength = this.movements.length;
                 var context = this.querySelector('canvas').getContext('2d');
 
-                if (Ro.Environment.platform.isIOS) {
+                if (Ro.Environment.platform.isIOS || Ro.Environment.platform.isWPhone) {
                     axisY -= 50;
                 }
 

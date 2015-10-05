@@ -525,7 +525,10 @@ ro-inline-menu{
     top: 0;
     left: 0;
     z-index: 10;
-    display: inline-block;
+    flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
     right: -100%;
 }
 
@@ -556,8 +559,8 @@ ro-inline-menu[state="showItems"] {
     -ms-animation-play-state: running;
     -ms-animation-fill-mode: forwards !important;
     -ms-animation: roadsShowInlineMenuItem 300ms;
-    display: inline-block;
-
+    display: flex;
+    display: -webkit-flex;
 }
 
 ro-list ro-inline-menu > ro-item{
@@ -569,6 +572,8 @@ ro-list ro-inline-menu > ro-item{
     height: inherit;
     width: auto;
     padding: 0 2px 0 2px;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
 }
 
 ro-inline-menu ro-item::before{

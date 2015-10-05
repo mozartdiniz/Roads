@@ -1011,6 +1011,10 @@ Ro.Controller = function (viewID, methods) {
                 var movementsLength = this.movements.length;
                 var context = this.querySelector('canvas').getContext('2d');
 
+                if (Ro.Environment.platform.isIOS || Ro.Environment.platform.isWPhone) {
+                    axisY -= 50;
+                }
+
                 context.strokeStyle = this.getAttribute('strokeStyle');
                 context.lineJoin = this.getAttribute('lineJoin');
                 context.lineWidth = this.getAttribute('lineWidth');

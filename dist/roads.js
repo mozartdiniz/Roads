@@ -473,7 +473,9 @@ Ro.Filter = {
 				throw 'Roads.Filter.date: timeValue is mandatory';
 			}
 
-			if (Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) {
+			var iOSVersion = Ro.Environment.getIOSVersion();
+
+			if (Ro.Environment.platform.isWPhone || (Ro.Environment.platform.isIOS && iOSVersion[0] < 9)) {
 				timeValue = Ro.dateToIEandSafari (timeValue);
 			}
 
@@ -535,6 +537,14 @@ var Ro = Ro || {};
 
 Ro.Environment = {
 	isTouchDevice: !!('ontouchstart' in window),
+	getIOSVersion: function () {
+
+		if (/iP(hone|od|ad)/.test(navigator.platform)) {
+			// supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+			var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+			return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+		}
+	},
 	platform: {
 		androidVersion: (function (){
 			var isAndroid = navigator.userAgent.match(/Android([^;]*)/);

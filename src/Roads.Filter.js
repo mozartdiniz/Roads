@@ -38,10 +38,8 @@ Ro.Filter = {
 				throw 'Roads.Filter.date: timeValue is mandatory';
 			}
 
-			var iOSVersion = Ro.Environment.getIOSVersion();
-
-			if (Ro.Environment.platform.isWPhone || (Ro.Environment.platform.isIOS && iOSVersion[0] < 9)) {
-				timeValue = Ro.dateToIEandSafari (timeValue);
+            if ((Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) && typeof timeValue === 'string') {
+                timeValue = Ro.dateToIEandSafari (timeValue);
 			}
 
 			var format  = timeFormat || Ro.i18n.defaults.time;

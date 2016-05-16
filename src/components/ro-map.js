@@ -3,7 +3,9 @@
     xtag.register('ro-map', {
         lifecycle: {
             created: function () {
-                Ro.Session.Map = Ro.Session.Map = {};
+                Ro = Ro || {};
+                Ro.Session = Ro.Session || {};
+                Ro.Session.Map = Ro.Session.Map || {};
             },
             inserted: function () {
 
@@ -24,10 +26,10 @@
 
             parse: function () {
 
+                this.parseLayers();
+
                 this.map = document.createElement('ro-map-canvas');
                 this.appendChild(this.map);
-
-                this.parseLayers();
 
                 if (this.getAttribute('layerGroup')) {
                     this.createLayerGroup();
@@ -57,6 +59,7 @@
                     layers: this.olLayers,
                     target: this.map,
                     renderer: 'canvas',
+                    pixelRatio: 1,
                     view: new ol.View(viewOpt)
                 });
 
@@ -65,10 +68,15 @@
             parseLayers: function () {
 
                 this.olLayers = [];
-                this.roLayers = this.querySelectorAll('ro-layer');
+
+                if (!this.roLayers) {
+                    this.roLayers = this.querySelectorAll('ro-layer');
+                } else {
+                    this.innerHTML = '';
+                }
 
                 for (var i = 0; i < this.roLayers.length; i++) {
-                    this.olLayers.push(this.layerBuilder(this.roLayers[i]));
+                    this.olLayers.push (this.layerBuilder (this.roLayers[i]));
                 }
 
             },
@@ -128,18 +136,23 @@
 
                         this.layerCrs = 'EPSG:4326';
 
+                        var params = {
+                            LAYERS: layersName,
+                            FORMAT: format,
+                            TRANSPARENT: 'true',
+                            VERSION: version,
+                            FORMAT_OPTIONS: '',
+                            TILED: true
+                        };
+
+                        if (CQL_FILTER) {
+                            params.CQL_FILTER = CQL_FILTER;
+                        }
+
                         resultLayer = new ol.layer.Tile({
                             source: new ol.source.TileWMS({
                                 url: url,
-                                params: {
-                                    LAYERS: layersName,
-                                    FORMAT: format,
-                                    TRANSPARENT: 'true',
-                                    VERSION: version,
-                                    CQL_FILTER: CQL_FILTER,
-                                    FORMAT_OPTIONS: '',
-                                    TILED: true
-                                },
+                                params: params,
                                 serverType: serverType
                             })
                         });

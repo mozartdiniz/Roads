@@ -1,7 +1,3 @@
-/**
- * Created by adaltojunior on 8/17/15.
- */
-
 (function () {
     xtag.register('ro-draw', {
         lifecycle: {
@@ -43,6 +39,7 @@
             },
             drawLine: function (e) {
 
+                this.movements = this.movements || [];
                 var changeTouch = e.changedTouches[0];
                 var axisX = changeTouch.clientX - this.offsetLeft;
                 var axisY = changeTouch.clientY - this.offsetTop;
@@ -73,8 +70,11 @@
 
             },
             eraseAllcontent: function () {
-                var context = this.querySelector('canvas').getContext('2d');
-                context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
+                var canvas = this.querySelector('canvas');
+                if (canvas) {
+                    var context = canvas.getContext('2d');
+                    context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
+                }
             },
             getDraw: function () {
                 return this.querySelector('canvas').getContext('2d').canvas.toDataURL();

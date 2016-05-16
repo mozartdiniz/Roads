@@ -16,18 +16,6 @@
             reveal: function () {
             },
             'click:delegate(ro-float-menu ro-item)': function (e) {
-
-                var actionAttr = this.getAttribute('action');
-
-                if (actionAttr) {
-                    new Function(actionAttr)();
-                }
-
-                if (this.parentNode) {
-                    this.parentNode.hideItems();
-                }
-
-
             }
         },
         accessors: {},
@@ -100,13 +88,17 @@
 
             hideItems: function () {
                 this.setAttribute('state', 'hideItems');
-                this.nextElementSibling.setAttribute('state', 'hideItems');
+                if (this.nextElementSibling) {
+                    this.nextElementSibling.setAttribute('state', 'hideItems');
+                }
                 this.xtag.itemsAreVisible = false;
             },
 
             showItems: function () {
                 this.setAttribute('state', 'showItems');
-                this.nextElementSibling.setAttribute('state', 'showItems');
+                if (this.nextElementSibling) {
+                    this.nextElementSibling.setAttribute('state', 'showItems');
+                }
                 this.xtag.itemsAreVisible = true;
             },
 
@@ -118,6 +110,7 @@
                 for (var i = 0; i < items.length; i++) {
                     text = items[i].getAttribute('i18nKey') || items[i].getAttribute('text');
                     items[i].setAttribute('text', Ro.templateEngine(text));
+                    items[i].setAttribute('onclick', items[i].getAttribute('action') + '; (this.parentNode) ? this.parentNode.hideItems() : false;');
                 }
             }
         }

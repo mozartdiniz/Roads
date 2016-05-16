@@ -6,6 +6,8 @@
 
                 if (Ro.Environment.platform.isIOS && !this.className.match(/isIOS/)) {
                     this.className += "isIOS ";
+                } else if (Ro.Environment.platform.isWPhone && !this.className.match(/isWPhone/)) {
+                    this.className += "isWPhone ";
                 }
 
             },

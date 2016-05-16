@@ -36,12 +36,7 @@
 
             inserted: function () {
 
-                this.putViewsInFirstPosition();
 
-                setTimeout(function () {
-                    var loader = document.querySelector('ro-loader');
-                    loader.hide();
-                }, 500);
 
             },
 
@@ -54,8 +49,22 @@
 
             }
         },
-        accessors: {},
+        accessors: {
+        },
         methods: {
+
+            saveAddView: function (view) {
+
+                howManyScreensCanLeft = 0;
+
+                if (RoApp.firstChild.childNodes.length > howManyScreensCanLeft) {
+                    if (RoApp.firstChild.childNodes[0].id !== view.id) {
+                        RoApp.firstChild.removeChild(RoApp.firstChild.childNodes[0]);
+                    }
+                }
+
+                RoApp.firstChild.appendChild (xtag.clone (view));
+            },
 
             putViewsInFirstPosition: function () {
 
@@ -100,41 +109,41 @@
 
             },
 
-            gotoView: function (fromID, toID) {
+            showController: function (controller) {
 
-                var from, to;
+                console.log ('controller.viewID: ' + controller.viewID);
 
-                from = document.getElementById(fromID);
-                to = document.getElementById(toID);
-
-                if (!from) {
-                    throw 'ro-view: "From" view can not be found';
+                if (!controller) {
+                    throw 'controller object is mandatory';
                 }
 
-                if (!to) {
-                    throw 'ro-view: "To" view can not be found';
+                var from = document.getElementById(RoApp.activeView);
+                var toController = controller;
+
+                var appendedTo = document.getElementById(controller.viewID);
+
+                if (!appendedTo) {
+                    this.saveAddView (controller.view);
                 }
 
-                if (to === from) {
-                    throw 'ro-view: "To" and "From" can not be the same';
+                if (controller.show) {
+                    controller.show (from);
                 }
-
-                to.show(fromID);
 
                 if (Ro.Environment.platform.isWPhone) {
-                    to.style.cssText = Ro.styleGenerator ({
+                    toController.view.style.cssText = Ro.styleGenerator ({
                         'transition': '200ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    to.style.transition = '300ms';
-                    to.style.transitionTimingFunction = 'linear';
-                    to.style.webkitTransform = 'translateX(0)';
-                    to.style.transform = 'translateX(0)';
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
                 } else {
-                    to.setAttribute('animation', 'to');
+                    toController.view.setAttribute('animation', 'to');
                 }
 
                 if (Ro.Environment.platform.isWPhone) {
@@ -153,82 +162,202 @@
                     from.setAttribute('animation', 'from');
                 }
 
-                Ro.i18n.translateView(to);
+                Ro.i18n.translateView(toController.view);
 
-                setTimeout ((function (to, from) {
+                setTimeout ((function (to) {
                     return function () {
                         to.style.zIndex = 2;
-                        from.style.zIndex = 3;
                     };
-                }(to, from)), 50);
+                }(toController.view)), 50);
 
-                this.activeView = toID;
+                this.activeView = toController.viewID;
 
             },
 
-            backtoView: function (fromID, toID) {
+            gotoView: function (fromID, toID) {
 
-                var from, to;
+                var toController   = Ro.views[toID].controller,
+                    fromController = Ro.views[fromID].controller;
 
-                from = document.getElementById(fromID);
-                to = document.getElementById(toID);
 
-                if (!from) {
+                console.log ('from: ' + fromID + ' -> ' + toID);
+
+                var toView = Ro.views[toID].dom;
+
+                appendedTo = document.getElementById(toID);
+
+                if (fromController.beforeDelete) {
+                    fromController.beforeDelete ();
+                }
+
+                if (!appendedTo) {
+                    toController.view = toView;
+                    this.saveAddView (toView);
+                }
+
+                if (!fromController.view) {
                     throw 'ro-view: "From" view can not be found';
                 }
 
-                if (!to) {
+                if (!toController.view) {
                     throw 'ro-view: "To" view can not be found';
                 }
 
-                if (to === from) {
+                if (fromID === toID) {
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
+                var roMenus = document.querySelectorAll('ro-float-menu');
+
+                if (roMenus && roMenus.length) {
+                    for (var i = 0, l = roMenus.length; i<l; i++) {
+                        roMenus[i].hideItems();
+                    }
+                }
+
+                if (toController.show) {
+                    toController.show(fromID);
+                }
+
                 if (Ro.Environment.platform.isWPhone) {
-                    to.style.cssText = Ro.styleGenerator ({
-                        'transition': '300ms',
+                    toController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '200ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    to.style.transition = '300ms';
-                    to.style.transitionTimingFunction = 'linear';
-                    to.style.webkitTransform = 'translateX(0)';
-                    to.style.transform = 'translateX(0)';
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
                 } else {
-                    to.setAttribute('animation', 'to');
+                    toController.view.setAttribute('animation', 'to');
                 }
 
                 if (Ro.Environment.platform.isWPhone) {
-                    from.style.cssText = Ro.styleGenerator ({
+                    fromController.view.style.cssText = Ro.styleGenerator ({
                         'transition': '300ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    from.style.transition = '300ms';
-                    from.style.transitionTimingFunction = 'linear';
-                    from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-                    from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                    fromController.view.style.transition = '300ms';
+                    fromController.view.style.transitionTimingFunction = 'linear';
+                    fromController.view.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
+                    fromController.view.style.transform = 'translateX(-' + window.innerWidth + 'px)';
                 } else {
-                    from.setAttribute('animation', 'from');
+                    fromController.view.setAttribute('animation', 'from');
                 }
 
-                Ro.i18n.translateView(to);
+                Ro.i18n.translateView(toController.view);
+
+                setTimeout ((function (to, from) {
+                    return function () {
+                        to.style.zIndex = 2;
+                        from.style.zIndex = 3;
+                    };
+                }(toController.view, fromController.view)), 50);
+
+                this.activeView = toID;
+
+                if (Ro.views[fromID] && Ro.views[fromID].dom) {
+                    Ro.views[fromID].dom.setAttribute('background', 'true');
+                }
+
+                if (Ro.views[toID] && Ro.views[toID].dom) {
+                    Ro.views[toID].dom.setAttribute('background', 'false');
+                }
+
+            },
+
+            backtoView: function (fromID, toID) {
+
+                console.log ('from: ' + fromID + ' -> ' + toID);
+
+                var toController   = Ro.views[toID].controller,
+                    fromController = Ro.views[fromID].controller;
+
+                var toView = Ro.views[toID].dom;
+
+                appendedTo = document.getElementById(toID);
+
+                if (fromController.beforeDelete) {
+                    fromController.beforeDelete ();
+                }
+
+                if (!appendedTo) {
+                    toController.view = toView;
+                    this.saveAddView (toView);
+                }
+
+                if (!fromController.view) {
+                    throw 'ro-view: "From" view can not be found';
+                }
+
+                if (!toController.view) {
+                    throw 'ro-view: "To" view can not be found';
+                }
+
+                if (fromID === toID) {
+                    throw 'ro-view: "To" and "From" can not be the same';
+                }
+
+                if (toController.show) {
+                    toController.show(fromID);
+                }
+
+                if (Ro.Environment.platform.isWPhone) {
+                    toController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(0)',
+                        'transform': 'translateX(0)'
+                    });
+                } else if (Ro.Environment.platform.isIOS) {
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
+                } else {
+                    toController.view.setAttribute('animation', 'to');
+                }
+
+                if (Ro.Environment.platform.isWPhone) {
+                    fromController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
+                        'transform': 'translateX(-' + window.innerWidth + 'px)'
+                    });
+                } else if (Ro.Environment.platform.isIOS) {
+                    fromController.view.style.transition = '300ms';
+                    fromController.view.style.transitionTimingFunction = 'linear';
+                    fromController.view.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+                    fromController.view.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                } else {
+                    fromController.view.setAttribute('animation', 'from');
+                }
+
+                Ro.i18n.translateView(toController.view);
 
                 setTimeout ((function (to, from) {
                     return function () {
                         to.style.zIndex = 3;
                         from.style.zIndex = 2;
                     };
-                }(to, from)), 50);
+                }(toController.view, fromController.view)), 50);
 
                 this.activeView = toID;
 
-                to.show(fromID);
+                if (Ro.views[fromID] && Ro.views[fromID].dom) {
+                    Ro.views[fromID].dom.setAttribute('background', 'true');
+                }
+
+                if (Ro.views[toID] && Ro.views[toID].dom) {
+                    Ro.views[toID].dom.setAttribute('background', 'false');
+                }
 
             }
         }

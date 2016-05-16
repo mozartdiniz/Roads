@@ -7,27 +7,16 @@ var Ro = Ro || {};
  * specific method from a view tag.
  *
  *
- * @param {string} viewID
+ * @param {string} controllerID
  * @param {object} methods
  * @returns {Function}
  *
  * @constructor
  */
 
-Ro.Controller = function (viewID, methods) {
+Ro.Controller = function (controllerID, methods) {
 
 	var Controller = function () {
-
-		//Relate a view layout with this controller
-		this.view = document.querySelector ('[ro-controller="' + viewID + '"]');
-
-		this.init ();
-
-		// If there's a view method in the controller pass to related view, so RoApp will can run this
-		// function every time that this view become visible
-		if (this.show) {
-			this.view.setShowFunction (this.show.bind (this));
-		}
 
 	};
 
@@ -37,6 +26,20 @@ Ro.Controller = function (viewID, methods) {
 		}
 	}
 
-	return Controller;
+	return function (viewID) {
+
+		Ro.controllers[controllerID] = new Controller ();
+
+		if (viewID) {
+
+			Controller.prototype.viewID = viewID;
+			Controller.prototype.view   = Ro.views[viewID].dom;
+			Ro.views[viewID].controller = Ro.controllers[controllerID];
+
+		}
+
+		Ro.controllers[controllerID].init ();
+
+	}
 
 };

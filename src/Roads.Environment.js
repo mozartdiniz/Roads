@@ -28,6 +28,7 @@ Ro.Environment = {
 		isIPad: navigator.userAgent.match('iPad') !== null,
 		isWPhone: navigator.userAgent.match(/Trident/) ? true : false,
 		isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false,
-		isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false
+		isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false,
+		isWindowsPhoneUniversalApp: false
 	}
 };

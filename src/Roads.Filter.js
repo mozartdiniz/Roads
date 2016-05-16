@@ -32,15 +32,46 @@ Ro.Filter = {
 
 		},
 
+		toDate: function (stringDate, stringFormat) {
+
+			var defaultI18nFormat =  Ro.i18n.defaults.date + ' ' + Ro.i18n.defaults.time;
+			var format = (stringFormat) ? stringFormat : defaultI18nFormat;
+			var getByChar = function (char) {
+				return parseInt(stringDate.substring(format.indexOf(char), format.lastIndexOf(char) + 1));
+			};
+
+			var year = getByChar('y');
+			var month =  getByChar('M');
+			var day = getByChar('d');
+			var hour = getByChar('H') || getByChar('h') || 0;
+			var minute = getByChar('m') || 0;
+			var second = getByChar('s') || 0;
+			var is12Hours = format.match(/h/);
+			var isUTC = format.match(/T|\+0000|Z/);
+
+			if (year.toString().length === 2) {
+				year += (year > 68) ? 1900 : 2000;
+			}
+
+			if (is12Hours) {
+				hour = hour * 2;
+			}
+
+			if (isUTC) {
+				return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+			} else {
+				return new Date(year, month - 1, day, hour, minute, second);
+			}
+
+		},
+
 		time: function (timeValue, key, timeFormat) {
 
 			if (!timeValue) {
 				throw 'Roads.Filter.date: timeValue is mandatory';
 			}
 
-			var iOSVersion = Ro.Environment.getIOSVersion();
-
-			if (Ro.Environment.platform.isWPhone || (Ro.Environment.platform.isIOS && iOSVersion[0] < 9)) {
+			if ((Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) && typeof timeValue === 'string') {
 				timeValue = Ro.dateToIEandSafari (timeValue);
 			}
 
@@ -63,9 +94,17 @@ Ro.Filter = {
 			return format;
 		},
 
-		float: function (value) {
+		float: function (value, decimalPlaces) {
 			if (value) {
-				return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
+
+				if (decimalPlaces) {
+					if (typeof value === 'string') {
+						value = parseFloat (value);
+					}
+					value = value.toFixed (decimalPlaces);
+				}
+
+				return (value + '').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
 			}
 
 			return '0';

@@ -5,14 +5,18 @@ var Ro = {
      * @param {function} callback What will run after everything is finished
      *
      */
+    controllers: {},
 
     init: function (callback) {
 
         Ro.Session = Ro.Session = {};
+        Ro.Environment.platform.isWindowsPhoneUniversalApp = (window.WinJS && window.WinJS.Application) ? true : false;
+
         var writeImports = function() {
 
             // Show loader before load files
             var loader = document.querySelector ('ro-loader');
+
             if (loader) {
                 loader.show();
             }
@@ -25,12 +29,32 @@ var Ro = {
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
 
+            Ro.views = {};
 
             for (var i = 0; i < imports.length; i++) {
+
                 var view  = imports[i].import.body.querySelector ('ro-view');
                 var clone = view.cloneNode(true);
 
-                RoApp.appendChild (clone);
+                Ro.views[view.getAttribute('id')] = {
+                    dom: clone,
+                    controller: {}
+                };
+
+                if (view.getAttribute('mainpage') !== null) {
+                    RoApp.appendChild (clone);
+
+                    for (key in Ro.controllers) {
+
+                        if (key === view.getAttribute('id')) {
+                            Ro.controllers[key].view = view;
+                        }
+                    }
+
+                    loader.hide();
+
+                }
+
             }
 
             var stageToScroll = document.querySelector('ro-stage[scroll]');
@@ -94,10 +118,16 @@ var Ro = {
 
             }, false);
 
-            document.addEventListener ("backbutton", function () {
-                Ro.Globals.backButtonFunction ();
-            }, false);
-
+            if (Ro.Environment.platform.isWindowsPhoneUniversalApp) {
+                Windows.Phone.UI.Input.HardwareButtons.onbackpressed = function (e) {
+                    e.handled = true;
+                    Ro.Globals.backButtonFunction(e);
+                };
+            } else {
+                document.addEventListener ("backbutton", function () {
+                    Ro.Globals.backButtonFunction ();
+                }, false);
+            }
         }, false);
 
     },

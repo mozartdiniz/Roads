@@ -36,12 +36,11 @@ Ro.Http = function () {
 		request.setRequestHeader("Cache-Control", "no-cache");
 		request.setRequestHeader("Pragma", "no-cache");
 
-    if (this.customHeader) {
-        for (var header in this.customHeader){
-          request.setRequestHeader(header, this.customHeader[header]);
-        }
-    }
-
+		if (this.customHeader && this.customHeader.length) {
+			this.customHeader.forEach(function (header) {
+				request.setRequestHeader(header.key, header.value);
+			});
+		}
 		request.withCredentials = true;
 
 		//closure

@@ -158,51 +158,50 @@
           setTimeout(function setTimeoutTabIScroll(scope, e, contentE, tabs) {
 
             return function setTimeoutTabIScrollReturn () {
+              if (e.children[0]) {
+                scope.myScroll = new IScroll(e, {
+                  scrollbars: false,
+                  scrollX: true,
+                  scrollY: false,
+                  mouseWheel: false,
+                  probeType: 1,
+                  click: true,
+                  preventDefault: true,
+                  snap: 'ro-tab-label'
+                });
 
-              scope.myScroll = new IScroll(e, {
-                scrollbars: false,
-                scrollX: true,
-                scrollY: false,
-                mouseWheel: false,
-                probeType: 1,
-                click: true,
-                preventDefault: true,
-                snap: 'ro-tab-label'
-              });
+                if (Ro.Environment.platform.isWPhone) {
+                  scrollContentOptions.disableMouse = true;
+                }
+                scope.contentScroll = new IScroll(contentE, scrollContentOptions);
 
-              if (Ro.Environment.platform.isWPhone) {
-                scrollContentOptions.disableMouse = true;
+                scope.contentScrollTab = {};
+
+                for (var i = 0; i < tabs.length; i++) {
+                  setTimeout ((function (scope, i, tab) {
+                    scope.contentScrollTab[i + 'scroll'] = new IScroll(tab, {
+                      scrollbars: false,
+                      scrollX: false,
+                      scrollY: true,
+                      mouseWheel: false,
+                      disableMouse: false,
+                      disablePointer: true,
+                      disableTouch: false,
+                      probeType: 1,
+                      click: true,
+                      snap: false,
+                      preventDefault: true
+                    });
+                  }(scope, i, tabs[i])), 100);
+                }
+                scope.myScroll.on('scroll', function () {
+                  // do something
+                });
+
+                scope.myScroll.on('scrollEnd', function () {
+                  this.tabClickCallback(this.eligibleTab());
+                }.bind(scope));
               }
-
-              scope.contentScroll = new IScroll(contentE, scrollContentOptions);
-
-              scope.contentScrollTab = {};
-
-              for (var i = 0; i < tabs.length; i++) {
-                setTimeout ((function (scope, i, tab) {
-                  scope.contentScrollTab[i + 'scroll'] = new IScroll(tab, {
-                    scrollbars: false,
-                    scrollX: false,
-                    scrollY: true,
-                    mouseWheel: false,
-                    disableMouse: false,
-                    disablePointer: true,
-                    disableTouch: false,
-                    probeType: 1,
-                    click: true,
-                    snap: false,
-                    preventDefault: true
-                  });
-                }(scope, i, tabs[i])), 100);
-              }
-
-              scope.myScroll.on('scroll', function () {
-                // do something
-              });
-
-              scope.myScroll.on('scrollEnd', function () {
-                this.tabClickCallback(this.eligibleTab());
-              }.bind(scope));
 
             }
 
@@ -237,15 +236,25 @@
         var tabsWidth = this.getAttribute('tabwidth');
 
         if (tabsWidth) {
-          this.scrollToTab(tabLabel);
+          setTimeout (function (scope, tabLabel) {
+            return function () {
+              scope.scrollToTab(tabLabel);
+            };
+          }(this, tabLabel), 50);
         }
 
-        this.hideOtherTabs();
+        setTimeout ((function (tabLabel, tab, scope) {
+          return function () {
 
-        tabLabel.setAttribute('selected', true);
-        tab.setAttribute('selected', true);
+            scope.hideOtherTabs();
 
-        tab.style.display = 'block';
+            tabLabel.setAttribute('selected', true);
+            tab.setAttribute('selected', true);
+
+            tab.style.display = 'block';
+
+          };
+        }(tabLabel, tab, this)), 100);
 
       },
 
@@ -255,8 +264,10 @@
         var tabs = this.querySelectorAll('ro-tab');
 
         for (var i = 0; i < tabsLabels.length; i++) {
+
           tabsLabels[i].removeAttribute('selected');
           tabs[i].removeAttribute('selected');
+
         }
 
       },
@@ -293,33 +304,42 @@
 
       scrollToTab: function (tab) {
 
-        var tabBouding = tab.getBoundingClientRect();
-        var parentWidth = tab.parentNode.getBoundingClientRect().width;
-        var activeTab = this.getActive();
-        var activeTabBouding = activeTab.getBoundingClientRect();
-        var i = parseInt(tab.getAttribute('tabindex'));
-        var whereToGo = tabBouding.width * i - parseInt(tabBouding.width / 3);
-        var coefficient = -1;
+        if (tab) {
+          var tabBouding  = tab.getBoundingClientRect();
+          var parentWidth = tab.parentNode.getBoundingClientRect().width;
+          var activeTab   = this.getActive();
+          var activeTabBouding = activeTab.getBoundingClientRect();
+          var i = parseInt(tab.getAttribute('tabindex'));
+          var whereToGo = tabBouding.width * i - parseInt(tabBouding.width / 3);
+          var coefficient = -1;
 
-        if (whereToGo < 0) {
-          whereToGo = 0;
-        }
+          if (whereToGo < 0) {
+            whereToGo = 0;
+          }
 
-        if (whereToGo + tabBouding.width + parseInt(tabBouding.width / 3) === parentWidth) {
-          whereToGo = (tabBouding.width * i) - (window.innerWidth - tabBouding.width);
-        }
+          if (whereToGo + tabBouding.width + parseInt(tabBouding.width / 3) === parentWidth) {
+            whereToGo = (tabBouding.width * i) - (window.innerWidth - tabBouding.width);
+          }
 
-        if (tabBouding.left > 0 && tabBouding.left < activeTabBouding.left) {
-          coefficient = 1;
-        }
+          if (tabBouding.left > 0 && tabBouding.left < activeTabBouding.left) {
+            coefficient = 1;
+          }
 
-        if (activeTab.getAttribute('tabindex') !== tab.getAttribute('tabindex')) {
-          setTimeout(function (scope, left, c, i) {
-            return function () {
-              scope.myScroll.scrollTo(left * c, 0, 300);
-              scope.contentScroll.scrollTo(i * window.innerWidth * c, 0, 300);
-            };
-          }(this, whereToGo, coefficient, i), 100);
+          if (activeTab.getAttribute('tabindex') !== tab.getAttribute('tabindex')) {
+            setTimeout(function (scope, left, c, i) {
+              return function () {
+
+                var scrollTime = 300;
+
+                if (Ro.Environment.platform.isWPhone) {
+                  scrollTime = 50;
+                }
+
+                scope.myScroll.scrollTo(left * c, 0, scrollTime);
+                scope.contentScroll.scrollTo(i * window.innerWidth * c, 0, scrollTime);
+              };
+            }(this, whereToGo, coefficient, i), 100);
+          }
         }
 
       },

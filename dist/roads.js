@@ -1393,13 +1393,22 @@ Ro.Controller = function (viewID, methods) {
                     mandatory = this.getAttribute("mandatory"),
                     maxsize = this.getAttribute("maxsize"),
                     pattern = this.getAttribute("pattern"),
-                    valid = true;
+                    valid = true,
+                    regex = null,
+                    match = null;
 
                 if(maxsize && value.length > maxsize){
                     valid = "MAXSIZE";
                 }
-                if(pattern && !(value.match(new RegExp(pattern))[0] === value)){
-                    valid = "PATTERN";
+                if(pattern && value.length !== 0){
+                    regex = new RegExp(pattern);
+                    match = value.match(regex);
+
+                    if(match && !(match[0] === value)){
+                        valid = "PATTERN";
+                    }else if(!regex.test(value)){
+                        valid = "PATTERN";
+                    }
                 }
                 if(mandatory !== null && value.length === 0){
                     valid = "MANDATORY";

@@ -6,19 +6,16 @@
                 if (!this.innerHTML.trim()) {
 
                     this.xtag.field = document.createElement('input');
-                    this.xtag.field.type = this.getAttribute('type');
-                    this.xtag.field.value = this.getAttribute('value');
-                    this.xtag.field.name = this.getAttribute('name');
+                    
+                    (function(field, attributes) {
+						var name, value;
+						Object.keys(attributes).forEach(function(attr) {
+							name = attributes[attr].name;
+							value = attributes[attr].value;
 
-                    if(this.getAttribute("pattern")){
-                        this.xtag.field.setAttribute("pattern", this.getAttribute("pattern"));
-                    }
-                    if(this.getAttribute("maxsize")){
-                        this.xtag.field.setAttribute("maxsize", this.getAttribute("maxsize"));
-                    }
-                    if(this.getAttribute('mandatory') === ""){
-                        this.xtag.field.setAttribute("mandatory", "");
-                    }
+							field.setAttribute(name, value);
+						});
+					}(this.xtag.field, this.attributes));
 
                     this.addPlaceholder();
                     this.addIcon();

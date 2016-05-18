@@ -8,14 +8,14 @@
                     this.xtag.field = document.createElement('input');
 
                     (function(field, attributes) {
-          						var name, value;
-          						Object.keys(attributes).forEach(function(attr) {
-          							name = attributes[attr].name;
-          							value = attributes[attr].value;
+  						var name, value;
+  						Object.keys(attributes).forEach(function(attr) {
+  							name = attributes[attr].name;
+  							value = attributes[attr].value;
 
-          							field.setAttribute(name, value);
-          						});
-          					}(this.xtag.field, this.attributes));
+  							field.setAttribute(name, value);
+  						});
+  					}(this.xtag.field, this.attributes));
 
                     this.addPlaceholder();
                     this.addIcon();

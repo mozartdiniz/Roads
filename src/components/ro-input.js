@@ -10,10 +10,10 @@
                     (function(field, attributes) {
   			var name, value;
   			Object.keys(attributes).forEach(function(attr) {
-  				name = attributes[attr].name;
-  				value = attributes[attr].value;
+  			   name = attributes[attr].name;
+  			   value = attributes[attr].value;
 
-  				field.setAttribute(name, value);
+  		           field.setAttribute(name, value);
   			});
           	    }(this.xtag.field, this.attributes));
 

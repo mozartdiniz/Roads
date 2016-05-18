@@ -1,18 +1,22 @@
-/*! roads - v0.0.1 - 2015-10-05 */var Ro = {
+/*! roads - v0.0.1 - 2016-05-18 */var Ro = {
 
     /**
      * This is the very first function that Roads will run
      * @param {function} callback What will run after everything is finished
      *
      */
+    controllers: {},
 
     init: function (callback) {
 
         Ro.Session = Ro.Session = {};
+        Ro.Environment.platform.isWindowsPhoneUniversalApp = (window.WinJS && window.WinJS.Application) ? true : false;
+
         var writeImports = function() {
 
             // Show loader before load files
             var loader = document.querySelector ('ro-loader');
+
             if (loader) {
                 loader.show();
             }
@@ -25,12 +29,32 @@
             var imports = document.querySelectorAll ('link[rel="import"]');
             var RoApp   = document.querySelector ('ro-app ro-scroll');
 
+            Ro.views = {};
 
             for (var i = 0; i < imports.length; i++) {
+
                 var view  = imports[i].import.body.querySelector ('ro-view');
                 var clone = view.cloneNode(true);
 
-                RoApp.appendChild (clone);
+                Ro.views[view.getAttribute('id')] = {
+                    dom: clone,
+                    controller: {}
+                };
+
+                if (view.getAttribute('mainpage') !== null) {
+                    RoApp.appendChild (clone);
+
+                    for (key in Ro.controllers) {
+
+                        if (key === view.getAttribute('id')) {
+                            Ro.controllers[key].view = view;
+                        }
+                    }
+
+                    loader.hide();
+
+                }
+
             }
 
             var stageToScroll = document.querySelector('ro-stage[scroll]');
@@ -94,10 +118,16 @@
 
             }, false);
 
-            document.addEventListener ("backbutton", function () {
-                Ro.Globals.backButtonFunction ();
-            }, false);
-
+            if (Ro.Environment.platform.isWindowsPhoneUniversalApp) {
+                Windows.Phone.UI.Input.HardwareButtons.onbackpressed = function (e) {
+                    e.handled = true;
+                    Ro.Globals.backButtonFunction(e);
+                };
+            } else {
+                document.addEventListener ("backbutton", function () {
+                    Ro.Globals.backButtonFunction ();
+                }, false);
+            }
         }, false);
 
     },
@@ -231,100 +261,100 @@ var Ro = Ro || {};
  */
 
 Ro.i18n = {
-	defaults: {
-		currency: "US$",
-		date: "MM/dd/yyyy",
-		decimalSymbol: ",",
-		digitalGrouping: ".",
-		language: "en",
-		time: "HH:mm",
-		systemOfMeasurement: "METRIC" // METRIC | IMPERIAL
-	},
+    defaults: {
+        currency: "US$",
+        date: "MM/dd/yyyy",
+        decimalSymbol: ",",
+        digitalGrouping: ".",
+        language: "en",
+        time: "HH:mm",
+        systemOfMeasurement: "METRIC" // METRIC | IMPERIAL
+    },
 
-	/**
-	 * Translations is a object that storage all text to be used as a translation
-	 *
-	 * {
+    /**
+     * Translations is a object that storage all text to be used as a translation
+     *
+     * {
 	 *    'user.name': 'User name',
 	 *    'user.pass': 'Password'
 	 * }
-	 *
-	 */
+     *
+     */
 
-	translations: {},
+    translations: {},
 
-	/**
-	 * Used to translante view layout
-	 *
-	 * @param {RoView} view Search for all DOM nodes with a [i18n] attribute and pass to translateElement()
-	 */
+    /**
+     * Used to translante view layout
+     *
+     * @param {RoView} view Search for all DOM nodes with a [i18n] attribute and pass to translateElement()
+     */
 
-	translateView: function (view) {
+    translateView: function (view) {
 
-		var elements = view.querySelectorAll('[i18n]');
-		for (var i = elements.length - 1; i >= 0; i--) {
-			this.translateElement (elements[i]);
-		}
-	},
+        var elements = view.querySelectorAll('[i18n]');
+        for (var i = elements.length - 1; i >= 0; i--) {
+            this.translateElement(elements[i]);
+        }
+    },
 
-	/**
-	 * Check what needs to be translated, fis is only a [i18n] attribute, the translated value will be added as
-	 * innerHTML, but if i18n has a value this value will be used to set a attribute with translated text.
-	 *
-	 * @param {DOMObject} el
-	 */
+    /**
+     * Check what needs to be translated, fis is only a [i18n] attribute, the translated value will be added as
+     * innerHTML, but if i18n has a value this value will be used to set a attribute with translated text.
+     *
+     * @param {DOMObject} el
+     */
 
-	translateElement: function (el) {
-		var i18n = el.getAttribute('i18n');
+    translateElement: function (el) {
+        var i18n = el.getAttribute('i18n');
 
-		switch (i18n) {
-			case '':
-				el.innerHTML = Ro.templateEngine(el.getAttribute('i18nKey'));
-				break;
-			default:
-				el.setAttribute(i18n, Ro.templateEngine(el.getAttribute('i18nKey')));
-				break;
-		}
+        switch (i18n) {
+            case '':
+                el.innerHTML = Ro.templateEngine(el.getAttribute('i18nKey'));
+                break;
+            default:
+                el.setAttribute(i18n, Ro.templateEngine(el.getAttribute('i18nKey')));
+                break;
+        }
 
-	},
+    },
 
-	/**
-	 * Search translations by key, if there's no translations that match with this key, return
-	 * the key. This is useful to check if there's no missing translations
-	 *
-	 * @param {string} key
-	 */
+    /**
+     * Search translations by key, if there's no translations that match with this key, return
+     * the key. This is useful to check if there's no missing translations
+     *
+     * @param {string} key
+     */
 
-	getTranslationByKey : function(key){
+    getTranslationByKey: function (key) {
 
-		var value = Ro.i18n.translations[key];
+        var value = Ro.i18n.translations[key];
 
-		if (value){
-			return value;
-		}
+        if (value) {
+            return value;
+        }
 
-		return key;
-	},
+        return key;
+    },
 
-	/**
-	 *
-	 * Search translations by key, if there's no translations that match with this key, return
-	 * the alternate value.
-	 *
-	 * @param {string} resourceId
-	 * @param {string} alternativeValue
-	 */
+    /**
+     *
+     * Search translations by key, if there's no translations that match with this key, return
+     * the alternate value.
+     *
+     * @param {string} resourceId
+     * @param {string} alternativeValue
+     */
 
-	getTranslationByKeyOrAlternative : function (resourceId, alternativeValue){
+    getTranslationByKeyOrAlternative: function (resourceId, alternativeValue) {
 
-		var message = Ro.i18n.getTranslationByKey (resourceId);
+        var message = Ro.i18n.getTranslationByKey(resourceId);
 
-		if (alternativeValue && message === resourceId) {
-			return alternativeValue;
-		}
+        if (alternativeValue && message === resourceId) {
+            return alternativeValue;
+        }
 
-		return message;
-	}
+        return message;
+    }
 
 };
 var Ro = Ro || {};
@@ -365,12 +395,11 @@ Ro.Http = function () {
 		request.setRequestHeader("Cache-Control", "no-cache");
 		request.setRequestHeader("Pragma", "no-cache");
 
-    if (this.customHeader) {
-        for (var header in this.customHeader){
-          request.setRequestHeader(header, this.customHeader[header]);
-        }
-    }
-
+		if (this.customHeader && this.customHeader.length) {
+			this.customHeader.forEach(function (header) {
+				request.setRequestHeader(header.key, header.value);
+			});
+		}
 		request.withCredentials = true;
 
 		//closure
@@ -467,15 +496,46 @@ Ro.Filter = {
 
 		},
 
+		toDate: function (stringDate, stringFormat) {
+
+			var defaultI18nFormat =  Ro.i18n.defaults.date + ' ' + Ro.i18n.defaults.time;
+			var format = (stringFormat) ? stringFormat : defaultI18nFormat;
+			var getByChar = function (char) {
+				return parseInt(stringDate.substring(format.indexOf(char), format.lastIndexOf(char) + 1));
+			};
+
+			var year = getByChar('y');
+			var month =  getByChar('M');
+			var day = getByChar('d');
+			var hour = getByChar('H') || getByChar('h') || 0;
+			var minute = getByChar('m') || 0;
+			var second = getByChar('s') || 0;
+			var is12Hours = format.match(/h/);
+			var isUTC = format.match(/T|\+0000|Z/);
+
+			if (year.toString().length === 2) {
+				year += (year > 68) ? 1900 : 2000;
+			}
+
+			if (is12Hours) {
+				hour = hour * 2;
+			}
+
+			if (isUTC) {
+				return new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+			} else {
+				return new Date(year, month - 1, day, hour, minute, second);
+			}
+
+		},
+
 		time: function (timeValue, key, timeFormat) {
 
 			if (!timeValue) {
 				throw 'Roads.Filter.date: timeValue is mandatory';
 			}
 
-			var iOSVersion = Ro.Environment.getIOSVersion();
-
-			if (Ro.Environment.platform.isWPhone || (Ro.Environment.platform.isIOS && iOSVersion[0] < 9)) {
+			if ((Ro.Environment.platform.isWPhone || Ro.Environment.platform.isIOS) && typeof timeValue === 'string') {
 				timeValue = Ro.dateToIEandSafari (timeValue);
 			}
 
@@ -498,9 +558,17 @@ Ro.Filter = {
 			return format;
 		},
 
-		float: function (value) {
+		float: function (value, decimalPlaces) {
 			if (value) {
-				return (value+'').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
+
+				if (decimalPlaces) {
+					if (typeof value === 'string') {
+						value = parseFloat (value);
+					}
+					value = value.toFixed (decimalPlaces);
+				}
+
+				return (value + '').replace('.', Ro.i18n.defaults.decimalSymbol) || '';
 			}
 
 			return '0';
@@ -558,7 +626,8 @@ Ro.Environment = {
 		isIPad: navigator.userAgent.match('iPad') !== null,
 		isWPhone: navigator.userAgent.match(/Trident/) ? true : false,
 		isIOS: (navigator.userAgent.match('iPhone') || navigator.userAgent.match('iPad')) ? true : false,
-		isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false
+		isFxOS: (navigator.userAgent.match(/Mozilla\/5.0 \(Mobile;/) || navigator.userAgent.match('iPad')) ? true : false,
+		isWindowsPhoneUniversalApp: false
 	}
 };
 var Ro = Ro || {};
@@ -570,27 +639,16 @@ var Ro = Ro || {};
  * specific method from a view tag.
  *
  *
- * @param {string} viewID
+ * @param {string} controllerID
  * @param {object} methods
  * @returns {Function}
  *
  * @constructor
  */
 
-Ro.Controller = function (viewID, methods) {
+Ro.Controller = function (controllerID, methods) {
 
 	var Controller = function () {
-
-		//Relate a view layout with this controller
-		this.view = document.querySelector ('[ro-controller="' + viewID + '"]');
-
-		this.init ();
-
-		// If there's a view method in the controller pass to related view, so RoApp will can run this
-		// function every time that this view become visible
-		if (this.show) {
-			this.view.setShowFunction (this.show.bind (this));
-		}
 
 	};
 
@@ -600,7 +658,21 @@ Ro.Controller = function (viewID, methods) {
 		}
 	}
 
-	return Controller;
+	return function (viewID) {
+
+		Ro.controllers[controllerID] = new Controller ();
+
+		if (viewID) {
+
+			Controller.prototype.viewID = viewID;
+			Controller.prototype.view   = Ro.views[viewID].dom;
+			Ro.views[viewID].controller = Ro.controllers[controllerID];
+
+		}
+
+		Ro.controllers[controllerID].init ();
+
+	}
 
 };
 (function () {
@@ -641,12 +713,7 @@ Ro.Controller = function (viewID, methods) {
 
             inserted: function () {
 
-                this.putViewsInFirstPosition();
 
-                setTimeout(function () {
-                    var loader = document.querySelector('ro-loader');
-                    loader.hide();
-                }, 500);
 
             },
 
@@ -659,8 +726,22 @@ Ro.Controller = function (viewID, methods) {
 
             }
         },
-        accessors: {},
+        accessors: {
+        },
         methods: {
+
+            saveAddView: function (view) {
+
+                howManyScreensCanLeft = 0;
+
+                if (RoApp.firstChild.childNodes.length > howManyScreensCanLeft) {
+                    if (RoApp.firstChild.childNodes[0].id !== view.id) {
+                        RoApp.firstChild.removeChild(RoApp.firstChild.childNodes[0]);
+                    }
+                }
+
+                RoApp.firstChild.appendChild (xtag.clone (view));
+            },
 
             putViewsInFirstPosition: function () {
 
@@ -705,41 +786,41 @@ Ro.Controller = function (viewID, methods) {
 
             },
 
-            gotoView: function (fromID, toID) {
+            showController: function (controller) {
 
-                var from, to;
+                console.log ('controller.viewID: ' + controller.viewID);
 
-                from = document.getElementById(fromID);
-                to = document.getElementById(toID);
-
-                if (!from) {
-                    throw 'ro-view: "From" view can not be found';
+                if (!controller) {
+                    throw 'controller object is mandatory';
                 }
 
-                if (!to) {
-                    throw 'ro-view: "To" view can not be found';
+                var from = document.getElementById(RoApp.activeView);
+                var toController = controller;
+
+                var appendedTo = document.getElementById(controller.viewID);
+
+                if (!appendedTo) {
+                    this.saveAddView (controller.view);
                 }
 
-                if (to === from) {
-                    throw 'ro-view: "To" and "From" can not be the same';
+                if (controller.show) {
+                    controller.show (from);
                 }
-
-                to.show(fromID);
 
                 if (Ro.Environment.platform.isWPhone) {
-                    to.style.cssText = Ro.styleGenerator ({
+                    toController.view.style.cssText = Ro.styleGenerator ({
                         'transition': '200ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    to.style.transition = '300ms';
-                    to.style.transitionTimingFunction = 'linear';
-                    to.style.webkitTransform = 'translateX(0)';
-                    to.style.transform = 'translateX(0)';
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
                 } else {
-                    to.setAttribute('animation', 'to');
+                    toController.view.setAttribute('animation', 'to');
                 }
 
                 if (Ro.Environment.platform.isWPhone) {
@@ -758,82 +839,202 @@ Ro.Controller = function (viewID, methods) {
                     from.setAttribute('animation', 'from');
                 }
 
-                Ro.i18n.translateView(to);
+                Ro.i18n.translateView(toController.view);
 
-                setTimeout ((function (to, from) {
+                setTimeout ((function (to) {
                     return function () {
                         to.style.zIndex = 2;
-                        from.style.zIndex = 3;
                     };
-                }(to, from)), 50);
+                }(toController.view)), 50);
 
-                this.activeView = toID;
+                this.activeView = toController.viewID;
 
             },
 
-            backtoView: function (fromID, toID) {
+            gotoView: function (fromID, toID) {
 
-                var from, to;
+                var toController   = Ro.views[toID].controller,
+                    fromController = Ro.views[fromID].controller;
 
-                from = document.getElementById(fromID);
-                to = document.getElementById(toID);
 
-                if (!from) {
+                console.log ('from: ' + fromID + ' -> ' + toID);
+
+                var toView = Ro.views[toID].dom;
+
+                appendedTo = document.getElementById(toID);
+
+                if (fromController.beforeDelete) {
+                    fromController.beforeDelete ();
+                }
+
+                if (!appendedTo) {
+                    toController.view = toView;
+                    this.saveAddView (toView);
+                }
+
+                if (!fromController.view) {
                     throw 'ro-view: "From" view can not be found';
                 }
 
-                if (!to) {
+                if (!toController.view) {
                     throw 'ro-view: "To" view can not be found';
                 }
 
-                if (to === from) {
+                if (fromID === toID) {
                     throw 'ro-view: "To" and "From" can not be the same';
                 }
 
+                var roMenus = document.querySelectorAll('ro-float-menu');
+
+                if (roMenus && roMenus.length) {
+                    for (var i = 0, l = roMenus.length; i<l; i++) {
+                        roMenus[i].hideItems();
+                    }
+                }
+
+                if (toController.show) {
+                    toController.show(fromID);
+                }
+
                 if (Ro.Environment.platform.isWPhone) {
-                    to.style.cssText = Ro.styleGenerator ({
-                        'transition': '300ms',
+                    toController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '200ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(0)',
                         'transform': 'translateX(0)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    to.style.transition = '300ms';
-                    to.style.transitionTimingFunction = 'linear';
-                    to.style.webkitTransform = 'translateX(0)';
-                    to.style.transform = 'translateX(0)';
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
                 } else {
-                    to.setAttribute('animation', 'to');
+                    toController.view.setAttribute('animation', 'to');
                 }
 
                 if (Ro.Environment.platform.isWPhone) {
-                    from.style.cssText = Ro.styleGenerator ({
+                    fromController.view.style.cssText = Ro.styleGenerator ({
                         'transition': '300ms',
                         'transitionTimingFunction': 'linear',
                         'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
                         'transform': 'translateX(-' + window.innerWidth + 'px)'
                     });
                 } else if (Ro.Environment.platform.isIOS) {
-                    from.style.transition = '300ms';
-                    from.style.transitionTimingFunction = 'linear';
-                    from.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
-                    from.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                    fromController.view.style.transition = '300ms';
+                    fromController.view.style.transitionTimingFunction = 'linear';
+                    fromController.view.style.webkitTransform = 'translateX(-' + window.innerWidth + 'px)';
+                    fromController.view.style.transform = 'translateX(-' + window.innerWidth + 'px)';
                 } else {
-                    from.setAttribute('animation', 'from');
+                    fromController.view.setAttribute('animation', 'from');
                 }
 
-                Ro.i18n.translateView(to);
+                Ro.i18n.translateView(toController.view);
+
+                setTimeout ((function (to, from) {
+                    return function () {
+                        to.style.zIndex = 2;
+                        from.style.zIndex = 3;
+                    };
+                }(toController.view, fromController.view)), 50);
+
+                this.activeView = toID;
+
+                if (Ro.views[fromID] && Ro.views[fromID].dom) {
+                    Ro.views[fromID].dom.setAttribute('background', 'true');
+                }
+
+                if (Ro.views[toID] && Ro.views[toID].dom) {
+                    Ro.views[toID].dom.setAttribute('background', 'false');
+                }
+
+            },
+
+            backtoView: function (fromID, toID) {
+
+                console.log ('from: ' + fromID + ' -> ' + toID);
+
+                var toController   = Ro.views[toID].controller,
+                    fromController = Ro.views[fromID].controller;
+
+                var toView = Ro.views[toID].dom;
+
+                appendedTo = document.getElementById(toID);
+
+                if (fromController.beforeDelete) {
+                    fromController.beforeDelete ();
+                }
+
+                if (!appendedTo) {
+                    toController.view = toView;
+                    this.saveAddView (toView);
+                }
+
+                if (!fromController.view) {
+                    throw 'ro-view: "From" view can not be found';
+                }
+
+                if (!toController.view) {
+                    throw 'ro-view: "To" view can not be found';
+                }
+
+                if (fromID === toID) {
+                    throw 'ro-view: "To" and "From" can not be the same';
+                }
+
+                if (toController.show) {
+                    toController.show(fromID);
+                }
+
+                if (Ro.Environment.platform.isWPhone) {
+                    toController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(0)',
+                        'transform': 'translateX(0)'
+                    });
+                } else if (Ro.Environment.platform.isIOS) {
+                    toController.view.style.transition = '300ms';
+                    toController.view.style.transitionTimingFunction = 'linear';
+                    toController.view.style.webkitTransform = 'translateX(0)';
+                    toController.view.style.transform = 'translateX(0)';
+                } else {
+                    toController.view.setAttribute('animation', 'to');
+                }
+
+                if (Ro.Environment.platform.isWPhone) {
+                    fromController.view.style.cssText = Ro.styleGenerator ({
+                        'transition': '300ms',
+                        'transitionTimingFunction': 'linear',
+                        'webkitTransform': 'translateX(-' + window.innerWidth + 'px)',
+                        'transform': 'translateX(-' + window.innerWidth + 'px)'
+                    });
+                } else if (Ro.Environment.platform.isIOS) {
+                    fromController.view.style.transition = '300ms';
+                    fromController.view.style.transitionTimingFunction = 'linear';
+                    fromController.view.style.webkitTransform = 'translateX(' + window.innerWidth + 'px)';
+                    fromController.view.style.transform = 'translateX(' + window.innerWidth + 'px)';
+                } else {
+                    fromController.view.setAttribute('animation', 'from');
+                }
+
+                Ro.i18n.translateView(toController.view);
 
                 setTimeout ((function (to, from) {
                     return function () {
                         to.style.zIndex = 3;
                         from.style.zIndex = 2;
                     };
-                }(to, from)), 50);
+                }(toController.view, fromController.view)), 50);
 
                 this.activeView = toID;
 
-                to.show(fromID);
+                if (Ro.views[fromID] && Ro.views[fromID].dom) {
+                    Ro.views[fromID].dom.setAttribute('background', 'true');
+                }
+
+                if (Ro.views[toID] && Ro.views[toID].dom) {
+                    Ro.views[toID].dom.setAttribute('background', 'false');
+                }
 
             }
         }
@@ -1015,6 +1216,7 @@ Ro.Controller = function (viewID, methods) {
             },
             drawLine: function (e) {
 
+                this.movements = this.movements || [];
                 var changeTouch = e.changedTouches[0];
                 var axisX = changeTouch.clientX - this.offsetLeft;
                 var axisY = changeTouch.clientY - this.offsetTop;
@@ -1045,8 +1247,11 @@ Ro.Controller = function (viewID, methods) {
 
             },
             eraseAllcontent: function () {
-                var context = this.querySelector('canvas').getContext('2d');
-                context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
+                var canvas = this.querySelector('canvas');
+                if (canvas) {
+                    var context = canvas.getContext('2d');
+                    context.clearRect(0,0, this.offsetWidth, this.offsetHeight);
+                }
             },
             getDraw: function () {
                 return this.querySelector('canvas').getContext('2d').canvas.toDataURL();
@@ -1072,18 +1277,6 @@ Ro.Controller = function (viewID, methods) {
             reveal: function () {
             },
             'click:delegate(ro-float-menu ro-item)': function (e) {
-
-                var actionAttr = this.getAttribute('action');
-
-                if (actionAttr) {
-                    new Function(actionAttr)();
-                }
-
-                if (this.parentNode) {
-                    this.parentNode.hideItems();
-                }
-
-
             }
         },
         accessors: {},
@@ -1156,13 +1349,17 @@ Ro.Controller = function (viewID, methods) {
 
             hideItems: function () {
                 this.setAttribute('state', 'hideItems');
-                this.nextElementSibling.setAttribute('state', 'hideItems');
+                if (this.nextElementSibling) {
+                    this.nextElementSibling.setAttribute('state', 'hideItems');
+                }
                 this.xtag.itemsAreVisible = false;
             },
 
             showItems: function () {
                 this.setAttribute('state', 'showItems');
-                this.nextElementSibling.setAttribute('state', 'showItems');
+                if (this.nextElementSibling) {
+                    this.nextElementSibling.setAttribute('state', 'showItems');
+                }
                 this.xtag.itemsAreVisible = true;
             },
 
@@ -1174,6 +1371,7 @@ Ro.Controller = function (viewID, methods) {
                 for (var i = 0; i < items.length; i++) {
                     text = items[i].getAttribute('i18nKey') || items[i].getAttribute('text');
                     items[i].setAttribute('text', Ro.templateEngine(text));
+                    items[i].setAttribute('onclick', items[i].getAttribute('action') + '; (this.parentNode) ? this.parentNode.hideItems() : false;');
                 }
             }
         }
@@ -1289,15 +1487,12 @@ Ro.Controller = function (viewID, methods) {
                 var renderHideMenu = this.getAttribute('buttonHideMenu');
                 var items = this.querySelectorAll('ro-item');
                 var itemsLength = items.length;
-                //var magicNumber = (renderHideMenu) ? 20 : 0;
-                //var widthItem = parseInt((this.clientWidth - magicNumber) / itemsLength) + 'px';
 
                 var renderHideButton = function () {
 
                     var hideButton = document.createElement('ro-item');
                     hideButton.setAttribute('icon', '');
                     hideButton.setAttribute('class', 'hideInlineMenu');
-                    //hideButton.style.width = magicNumber + 'px';
 
                     return hideButton;
 
@@ -1306,7 +1501,6 @@ Ro.Controller = function (viewID, methods) {
                 for (var i = 0; i < itemsLength; i++) {
 
                     var item = items[i];
-                    //item.style.width = widthItem;
                     item.setAttribute('text', Ro.templateEngine(item.getAttribute('i18nKey')));
 
                 }
@@ -1332,19 +1526,16 @@ Ro.Controller = function (viewID, methods) {
                 if (!this.innerHTML.trim()) {
 
                     this.xtag.field = document.createElement('input');
-                    this.xtag.field.type = this.getAttribute('type');
-                    this.xtag.field.value = this.getAttribute('value');
-                    this.xtag.field.name = this.getAttribute('name');
 
-                    if(this.getAttribute("pattern")){
-                        this.xtag.field.setAttribute("pattern", this.getAttribute("pattern"));
-                    }
-                    if(this.getAttribute("maxsize")){
-                        this.xtag.field.setAttribute("maxsize", this.getAttribute("maxsize"));
-                    }
-                    if(this.getAttribute('mandatory') === ""){
-                        this.xtag.field.setAttribute("mandatory", "");
-                    }
+                    (function(field, attributes) {
+  			var name, value;
+  			Object.keys(attributes).forEach(function(attr) {
+  			   name = attributes[attr].name;
+  			   value = attributes[attr].value;
+
+  			   field.setAttribute(name, value);
+  			});
+  		    }(this.xtag.field, this.attributes));
 
                     this.addPlaceholder();
                     this.addIcon();
@@ -1393,22 +1584,13 @@ Ro.Controller = function (viewID, methods) {
                     mandatory = this.getAttribute("mandatory"),
                     maxsize = this.getAttribute("maxsize"),
                     pattern = this.getAttribute("pattern"),
-                    valid = true,
-                    regex = null,
-                    match = null;
+                    valid = true;
 
                 if(maxsize && value.length > maxsize){
                     valid = "MAXSIZE";
                 }
-                if(pattern && value.length !== 0){
-                    regex = new RegExp(pattern);
-                    match = value.match(regex);
-
-                    if(match && !(match[0] === value)){
-                        valid = "PATTERN";
-                    }else if(!regex.test(value)){
-                        valid = "PATTERN";
-                    }
+                if(pattern && !(value.match(new RegExp(pattern))[0] === value)){
+                    valid = "PATTERN";
                 }
                 if(mandatory !== null && value.length === 0){
                     valid = "MANDATORY";
@@ -1419,6 +1601,7 @@ Ro.Controller = function (viewID, methods) {
     });
 
 })();
+
 (function () {
 
     xtag.register('ro-layout', {
@@ -1454,9 +1637,20 @@ Ro.Controller = function (viewID, methods) {
     xtag.register('ro-list', {
         lifecycle: {
             created: function () {
+
+                var noDataItem = this.querySelector('ro-nodata-item');
+                var itemTemplate = this.querySelector('ro-item');
+
                 this.xtag.item = this.querySelector('ro-item');
-                this.xtag.itemTemplate = this.querySelector('ro-item').innerHTML;
                 this.buttons = {};
+
+                if (itemTemplate) {
+                    this.xtag.itemTemplate = itemTemplate.innerHTML;
+                }
+
+                if (noDataItem) {
+                    this.xtag.noDataItemTemplate = noDataItem.innerHTML;
+                }
 
                 //Add default buttons
                 this.addButton({
@@ -1484,7 +1678,13 @@ Ro.Controller = function (viewID, methods) {
                     },
                     didSwipeItem: function (e) {
                     }
-                }
+                };
+
+                this.renderes = {
+                    listItem: this.listItem
+                };
+
+                noDataItem = null;
 
             },
             inserted: function () {
@@ -1502,8 +1702,24 @@ Ro.Controller = function (viewID, methods) {
                     });
                 }
 
+                nextElement = null;
+
             },
             removed: function () {
+            }
+        },
+        events: {
+            'click:delegate(ro-item-content)': function (e) {
+
+                var action = this.parentNode.getAttribute('action');
+
+                if (action) {
+                    new Function(action)(this);
+                }
+
+                e.stopImmediatePropagation();
+
+                action = null;
             }
         },
         methods: {
@@ -1526,29 +1742,87 @@ Ro.Controller = function (viewID, methods) {
             parseList: function () {
 
                 var data = this.xtag.data;
+                var dataLength = data.length;
 
-                this.innerHTML = '';
+                xtag.innerHTML (this, '');
 
                 this.xtag.itemAction = this.action || this.xtag.item.getAttribute('action');
 
-                for (var i = 0; i < data.length; i++) {
+                if (dataLength) {
+                    data.forEach(function (item, index) {
+                        this.renderes['listItem'].apply (this, [item, index]);
+                    }.bind(this));
+                } else if (this.xtag.noDataItemTemplate)  {
 
-                    this.renderItem (data[i], i);
+                    var element = document.createElement('ro-nodata-item');
+                    element.innerHTML = Ro.templateEngine(this.xtag.noDataItemTemplate, []);
 
+                    this.appendChild(element);
                 }
+
+                data = null;
+                dataLength = null;
 
             },
 
-            renderItem: function (data, i) {
+            getButtonsInfo: function () {
+
+                var attribute = this.getAttribute('actionButtons');
+                var buttons = false;
+
+                if (attribute) {
+                    buttons = attribute.split(',').map(function (item) {
+                        return this.buttons [item.trim()];
+                    }.bind(this));
+                }
+
+                attribute = null;
+
+                return buttons;
+
+            },
+
+            addButton: function (button) {
+                this.buttons[button.name] = button.action;
+            },
+
+            checkBoxAction: function (e) {
+
+                if (e.target.parentElement.querySelector('input[type="checkbox"]').checked) {
+                    e.target.parentElement.parentElement.setAttribute('checked', true);
+                    this.xtag.callbacks.didSelectedItem(e);
+                } else {
+                    e.target.parentElement.parentElement.removeAttribute('checked');
+                    this.xtag.callbacks.didUnSelectedItem(e);
+                }
+            },
+
+            renderSelectableButton: function (data) {
+
+                var cbox = document.createElement('ro-checkbox');
+                cbox.appendChild(this.renderes.selectableButton(data));
+                cbox.addEventListener('click', this.checkBoxAction.bind(this));
+
+                return cbox;
+            },
+
+            selectedItems: function () {
+                return this.querySelectorAll('ro-item[checked="true"]');
+            },
+
+            selectableButton: function () {
+                return document.createTextNode('');
+            },
+            listItem: function (data, i) {
 
                 var roItem    = document.createElement('ro-item');
                 var roContent = document.createElement('ro-item-content');
-                var action    = new Function(Ro.templateEngine(this.xtag.itemAction, data));
 
                 data.itemIndex = i;
+
+                roItem.setAttribute('action', Ro.templateEngine(this.xtag.itemAction, data));
                 roItem.setAttribute('itemIndex', i);
 
-                roContent.addEventListener('click', action);
                 roContent.innerHTML = Ro.templateEngine(this.xtag.itemTemplate, data);
 
                 if (this.getAttribute('swipeable')) {
@@ -1570,52 +1844,8 @@ Ro.Controller = function (viewID, methods) {
 
                 this.appendChild(roItem);
 
-            },
-
-            getButtonsInfo: function () {
-
-                var attribute = this.getAttribute('actionButtons');
-                var buttons = false;
-
-                if (attribute) {
-                    buttons = attribute.split(',').map(function (item) {
-                        return this.buttons [item.trim()];
-                    }.bind(this));
-                }
-
-                return buttons;
-
-            },
-
-            addButton: function (button) {
-                this.buttons[button.name] = button.action;
-            },
-
-            renderSelectableButton: function (data) {
-
-                var cbox = document.createElement('ro-checkbox');
-                cbox.appendChild(this.renderes.selectableButton(data));
-                cbox.addEventListener('click', function (e) {
-                    if (cbox.querySelector('input[type="checkbox"]').checked) {
-                        e.target.parentElement.parentElement.setAttribute('checked', true);
-                        this.xtag.callbacks.didSelectedItem(e);
-                    } else {
-                        e.target.parentElement.parentElement.removeAttribute('checked');
-                        this.xtag.callbacks.didUnSelectedItem(e);
-                    }
-                }.bind(this));
-
-                return cbox;
-            },
-
-            selectedItems: function () {
-                return this.querySelectorAll('ro-item[checked="true"]');
-            },
-
-            renderes: {
-                selectableButton: function () {
-                    return document.createTextNode('');
-                }
+                roItem = null;
+                roContent = null;
             },
 
             setCallback: function (callback) {
@@ -1630,39 +1860,49 @@ Ro.Controller = function (viewID, methods) {
 
                 var roItemSwipemenu = document.createElement('ro-item-swipemenu');
                 roItemSwipemenu.setAttribute('swipeMenuLabel', Ro.templateEngine(this.getAttribute('i18nKey')));
+                var swipeFlow = this.getAttribute('swipeflow');
+
+                if (swipeFlow) {
+                    roItemSwipemenu.setAttribute('pan', swipeFlow);
+                }
 
                 return roItemSwipemenu;
             },
 
             addSwipeMenuActions: function (item, scope) {
 
-                var items = this.querySelectorAll('ro-item ro-item-swipemenu');
                 var hammertime = new Hammer(item);
-
-                hammertime.on('panright', function (e) {
-
+                var panFunction = function (e) {
                     var menu = item.firstElementChild;
+                    var value = e.deltaX;
+                    var positiveValue = value;
 
-                    if (menu && e.deltaX > (window.innerWidth / 2)) {
-
-                        menu.className = 'goMenu';
-
-                    } else if (menu && e.deltaX > 50) {
-
-                        menu.className = '';
-                        menu.style.webkitTransform = 'translateX(' + e.deltaX + 'px)';
-                        menu.style.transform = 'translateX(' + e.deltaX + 'px)';
+                    if (e.type === "panleft") {
+                        positiveValue = value * -1;
                     }
 
-                });
-
-                hammertime.on('panend', function (e) {
+                    if (menu && positiveValue > (window.innerWidth / 2)) {
+                        menu.className = 'goMenu';
+                    } else  if (menu && positiveValue > 50) {
+                        menu.className = '';
+                        menu.style.webkitTransform = 'translateX(' + value + 'px)';
+                        menu.style.transform = 'translateX(' + value + 'px)';
+                    }
+                };
+                var panEndFunction = function (e) {
 
                     var menu = item.firstElementChild;
+                    var value = e.deltaX;
+                    var positiveValue = value;
 
-                    if (e.deltaX < (window.innerWidth / 2) && menu) {
+                    if (value < 0) {
+                        positiveValue = value * -1;
+                    }
+
+                    if (menu && positiveValue < (window.innerWidth / 2)) {
                         menu.className = 'backMenu';
-                    } else {
+                    } else if (menu.className.indexOf('goMenu') !== -1) {
+
                         scope.xtag.callbacks.didSwipeItem(item);
 
                         setTimeout((function (item) {
@@ -1670,8 +1910,22 @@ Ro.Controller = function (viewID, methods) {
                         }(item)), 1000);
                     }
 
-                });
+                };
+                var swipeFlow = this.getAttribute('swipeflow');
 
+                if (!swipeFlow) {
+                    swipeFlow = 'panright';
+                }
+
+                hammertime.on(swipeFlow, panFunction);
+                hammertime.on('panend', panEndFunction);
+
+            },
+
+            clear: function () {
+                Ro.DOM.purge (this);
+                Ro.DOM.vanish (this);
+                this.innerHTML = '';
             }
 
         }
@@ -1722,7 +1976,9 @@ Ro.Controller = function (viewID, methods) {
     xtag.register('ro-map', {
         lifecycle: {
             created: function () {
-                Ro.Session.Map = Ro.Session.Map = {};
+                Ro = Ro || {};
+                Ro.Session = Ro.Session || {};
+                Ro.Session.Map = Ro.Session.Map || {};
             },
             inserted: function () {
 
@@ -1743,10 +1999,10 @@ Ro.Controller = function (viewID, methods) {
 
             parse: function () {
 
+                this.parseLayers();
+
                 this.map = document.createElement('ro-map-canvas');
                 this.appendChild(this.map);
-
-                this.parseLayers();
 
                 if (this.getAttribute('layerGroup')) {
                     this.createLayerGroup();
@@ -1776,6 +2032,7 @@ Ro.Controller = function (viewID, methods) {
                     layers: this.olLayers,
                     target: this.map,
                     renderer: 'canvas',
+                    pixelRatio: 1,
                     view: new ol.View(viewOpt)
                 });
 
@@ -1784,10 +2041,15 @@ Ro.Controller = function (viewID, methods) {
             parseLayers: function () {
 
                 this.olLayers = [];
-                this.roLayers = this.querySelectorAll('ro-layer');
+
+                if (!this.roLayers) {
+                    this.roLayers = this.querySelectorAll('ro-layer');
+                } else {
+                    this.innerHTML = '';
+                }
 
                 for (var i = 0; i < this.roLayers.length; i++) {
-                    this.olLayers.push(this.layerBuilder(this.roLayers[i]));
+                    this.olLayers.push (this.layerBuilder (this.roLayers[i]));
                 }
 
             },
@@ -1847,18 +2109,23 @@ Ro.Controller = function (viewID, methods) {
 
                         this.layerCrs = 'EPSG:4326';
 
+                        var params = {
+                            LAYERS: layersName,
+                            FORMAT: format,
+                            TRANSPARENT: 'true',
+                            VERSION: version,
+                            FORMAT_OPTIONS: '',
+                            TILED: true
+                        };
+
+                        if (CQL_FILTER) {
+                            params.CQL_FILTER = CQL_FILTER;
+                        }
+
                         resultLayer = new ol.layer.Tile({
                             source: new ol.source.TileWMS({
                                 url: url,
-                                params: {
-                                    LAYERS: layersName,
-                                    FORMAT: format,
-                                    TRANSPARENT: 'true',
-                                    VERSION: version,
-                                    CQL_FILTER: CQL_FILTER,
-                                    FORMAT_OPTIONS: '',
-                                    TILED: true
-                                },
+                                params: params,
                                 serverType: serverType
                             })
                         });
@@ -2296,51 +2563,50 @@ Ro.Controller = function (viewID, methods) {
           setTimeout(function setTimeoutTabIScroll(scope, e, contentE, tabs) {
 
             return function setTimeoutTabIScrollReturn () {
+              if (e.children[0]) {
+                scope.myScroll = new IScroll(e, {
+                  scrollbars: false,
+                  scrollX: true,
+                  scrollY: false,
+                  mouseWheel: false,
+                  probeType: 1,
+                  click: true,
+                  preventDefault: true,
+                  snap: 'ro-tab-label'
+                });
 
-              scope.myScroll = new IScroll(e, {
-                scrollbars: false,
-                scrollX: true,
-                scrollY: false,
-                mouseWheel: false,
-                probeType: 1,
-                click: true,
-                preventDefault: true,
-                snap: 'ro-tab-label'
-              });
+                if (Ro.Environment.platform.isWPhone) {
+                  scrollContentOptions.disableMouse = true;
+                }
+                scope.contentScroll = new IScroll(contentE, scrollContentOptions);
 
-              if (Ro.Environment.platform.isWPhone) {
-                scrollContentOptions.disableMouse = true;
+                scope.contentScrollTab = {};
+
+                for (var i = 0; i < tabs.length; i++) {
+                  setTimeout ((function (scope, i, tab) {
+                    scope.contentScrollTab[i + 'scroll'] = new IScroll(tab, {
+                      scrollbars: false,
+                      scrollX: false,
+                      scrollY: true,
+                      mouseWheel: false,
+                      disableMouse: false,
+                      disablePointer: true,
+                      disableTouch: false,
+                      probeType: 1,
+                      click: true,
+                      snap: false,
+                      preventDefault: true
+                    });
+                  }(scope, i, tabs[i])), 100);
+                }
+                scope.myScroll.on('scroll', function () {
+                  // do something
+                });
+
+                scope.myScroll.on('scrollEnd', function () {
+                  this.tabClickCallback(this.eligibleTab());
+                }.bind(scope));
               }
-
-              scope.contentScroll = new IScroll(contentE, scrollContentOptions);
-
-              scope.contentScrollTab = {};
-
-              for (var i = 0; i < tabs.length; i++) {
-                setTimeout ((function (scope, i, tab) {
-                  scope.contentScrollTab[i + 'scroll'] = new IScroll(tab, {
-                    scrollbars: false,
-                    scrollX: false,
-                    scrollY: true,
-                    mouseWheel: false,
-                    disableMouse: false,
-                    disablePointer: true,
-                    disableTouch: false,
-                    probeType: 1,
-                    click: true,
-                    snap: false,
-                    preventDefault: true
-                  });
-                }(scope, i, tabs[i])), 100);
-              }
-
-              scope.myScroll.on('scroll', function () {
-                // do something
-              });
-
-              scope.myScroll.on('scrollEnd', function () {
-                this.tabClickCallback(this.eligibleTab());
-              }.bind(scope));
 
             }
 
@@ -2375,15 +2641,25 @@ Ro.Controller = function (viewID, methods) {
         var tabsWidth = this.getAttribute('tabwidth');
 
         if (tabsWidth) {
-          this.scrollToTab(tabLabel);
+          setTimeout (function (scope, tabLabel) {
+            return function () {
+              scope.scrollToTab(tabLabel);
+            };
+          }(this, tabLabel), 50);
         }
 
-        this.hideOtherTabs();
+        setTimeout ((function (tabLabel, tab, scope) {
+          return function () {
 
-        tabLabel.setAttribute('selected', true);
-        tab.setAttribute('selected', true);
+            scope.hideOtherTabs();
 
-        tab.style.display = 'block';
+            tabLabel.setAttribute('selected', true);
+            tab.setAttribute('selected', true);
+
+            tab.style.display = 'block';
+
+          };
+        }(tabLabel, tab, this)), 100);
 
       },
 
@@ -2393,8 +2669,10 @@ Ro.Controller = function (viewID, methods) {
         var tabs = this.querySelectorAll('ro-tab');
 
         for (var i = 0; i < tabsLabels.length; i++) {
+
           tabsLabels[i].removeAttribute('selected');
           tabs[i].removeAttribute('selected');
+
         }
 
       },
@@ -2431,33 +2709,42 @@ Ro.Controller = function (viewID, methods) {
 
       scrollToTab: function (tab) {
 
-        var tabBouding = tab.getBoundingClientRect();
-        var parentWidth = tab.parentNode.getBoundingClientRect().width;
-        var activeTab = this.getActive();
-        var activeTabBouding = activeTab.getBoundingClientRect();
-        var i = parseInt(tab.getAttribute('tabindex'));
-        var whereToGo = tabBouding.width * i - parseInt(tabBouding.width / 3);
-        var coefficient = -1;
+        if (tab) {
+          var tabBouding  = tab.getBoundingClientRect();
+          var parentWidth = tab.parentNode.getBoundingClientRect().width;
+          var activeTab   = this.getActive();
+          var activeTabBouding = activeTab.getBoundingClientRect();
+          var i = parseInt(tab.getAttribute('tabindex'));
+          var whereToGo = tabBouding.width * i - parseInt(tabBouding.width / 3);
+          var coefficient = -1;
 
-        if (whereToGo < 0) {
-          whereToGo = 0;
-        }
+          if (whereToGo < 0) {
+            whereToGo = 0;
+          }
 
-        if (whereToGo + tabBouding.width + parseInt(tabBouding.width / 3) === parentWidth) {
-          whereToGo = (tabBouding.width * i) - (window.innerWidth - tabBouding.width);
-        }
+          if (whereToGo + tabBouding.width + parseInt(tabBouding.width / 3) === parentWidth) {
+            whereToGo = (tabBouding.width * i) - (window.innerWidth - tabBouding.width);
+          }
 
-        if (tabBouding.left > 0 && tabBouding.left < activeTabBouding.left) {
-          coefficient = 1;
-        }
+          if (tabBouding.left > 0 && tabBouding.left < activeTabBouding.left) {
+            coefficient = 1;
+          }
 
-        if (activeTab.getAttribute('tabindex') !== tab.getAttribute('tabindex')) {
-          setTimeout(function (scope, left, c, i) {
-            return function () {
-              scope.myScroll.scrollTo(left * c, 0, 300);
-              scope.contentScroll.scrollTo(i * window.innerWidth * c, 0, 300);
-            };
-          }(this, whereToGo, coefficient, i), 100);
+          if (activeTab.getAttribute('tabindex') !== tab.getAttribute('tabindex')) {
+            setTimeout(function (scope, left, c, i) {
+              return function () {
+
+                var scrollTime = 300;
+
+                if (Ro.Environment.platform.isWPhone) {
+                  scrollTime = 50;
+                }
+
+                scope.myScroll.scrollTo(left * c, 0, scrollTime);
+                scope.contentScroll.scrollTo(i * window.innerWidth * c, 0, scrollTime);
+              };
+            }(this, whereToGo, coefficient, i), 100);
+          }
         }
 
       },
@@ -2560,6 +2847,7 @@ Ro.Controller = function (viewID, methods) {
     });
 
 })();
+
 (function () {
 
     xtag.register('ro-view', {
@@ -2568,6 +2856,8 @@ Ro.Controller = function (viewID, methods) {
 
                 if (Ro.Environment.platform.isIOS && !this.className.match(/isIOS/)) {
                     this.className += "isIOS ";
+                } else if (Ro.Environment.platform.isWPhone && !this.className.match(/isWPhone/)) {
+                    this.className += "isWPhone ";
                 }
 
             },
